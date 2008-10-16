@@ -78,6 +78,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'djime.tracker',
 )
 
 # If there is one, load the local overrides file.
