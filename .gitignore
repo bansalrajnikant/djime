@@ -1,0 +1,9 @@
+# Python bytecode
+*.py[co]
+
+# Activestate Komodo project files.
+*.kpf
+
+# Local settings override file.
+settings_override.py
+
