@@ -72,8 +72,16 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.admindocs',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
 )
+
+# If there is one, load the local overrides file.
+try:
+    from settings_override import *
+except ImportError:
+    pass
