@@ -1,8 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import User
 import datetime
 
 class Slip(models.Model):
     name = models.CharField(max_length=128)
+    user = models.ForeignKey(User, related_name="slips", blank=True, null=True)
     #project = models.ForeignKey(Project)
     #client = models.ForeignKey(Client)
     #type = models.CharField(max_length=32)
@@ -20,6 +22,7 @@ class TimeSlice(models.Model):
     begin = models.DateTimeField(auto_now_add=True)
     end = models.DateTimeField(null=True, blank=True)
     slip = models.ForeignKey(Slip)
+    user = models.ForeignKey(User, related_name="timeslices", blank=True, null=True)
     duration = models.PositiveIntegerField(editable=False, default=0)
 
     def __unicode__(self):
