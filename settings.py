@@ -84,6 +84,6 @@ INSTALLED_APPS = (
 
 # If there is one, load the local overrides file.
 try:
-    from settings_override import *
+    from local_settings import *
 except ImportError:
     pass

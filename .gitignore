@@ -5,5 +5,5 @@
 *.kpf
 
 # Local settings override file.
-settings_override.py
+local_settings.py
 
