@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
+from math import floor
 
 class Slip(models.Model):
     name = models.CharField(max_length=128)
@@ -14,6 +15,24 @@ class Slip(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def display_time(self):
+        seconds = 0
+        for slice in self.timeslice_set.all():
+            seconds += slice.duration
+
+        delta = datetime.timedelta(0, seconds)
+
+        duration = {
+            'days': delta.days,
+            'hours': floor(delta.seconds / 3600),
+            'minutes': floor((delta.seconds % 3600) / 60),
+            'seconds': delta.seconds % 60
+        }
+
+        return '%02i:%02i:%02i:%02i' % (duration['days'],duration['hours'],
+                                        duration['minutes'],duration['seconds'])
+
 
     class Meta:
         ordering = ["-created"]
