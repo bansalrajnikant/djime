@@ -4,6 +4,10 @@
 # Activestate Komodo project files.
 *.kpf
 
+# Mac OS X cruft
+.DS_Store
+._*
+
 # Local settings override file.
 local_settings.py
 
