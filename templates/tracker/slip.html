@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Slip" %}: {{ slip.id }}{% endblock %}
+
+{% block body %}
+    <h2>{{ slip.name }}</h2>
+    <p>Total time: {{ slip.display_time }}</p>
+{% endblock %}
