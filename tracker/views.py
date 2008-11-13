@@ -1,10 +1,14 @@
 from django.http import *
 from django.shortcuts import render_to_response, get_object_or_404
 from djime.tracker.models import Slip, TimeSlice
+from django.contrib.auth.decorators import login_required
+
 
 def index(request):
     return render_to_response('tracker/index.html', {})
 
+
+@login_required()
 def slip(request, slip_id):
     valid_methods = ('GET', 'PUT', 'DELETE')
 
@@ -12,11 +16,11 @@ def slip(request, slip_id):
         return HttpResponseNotAllowed(('GET', 'PUT', 'DELETE'))
     else:
         slip = get_object_or_404(Slip, pk=slip_id)
+        if request.user != slip.user:
+            return HttpResponseForbidden('Access denied')
 
         if request.method == 'GET':
             return render_to_response('tracker/slip.html', {'slip': slip})
-
-
 
 
 
