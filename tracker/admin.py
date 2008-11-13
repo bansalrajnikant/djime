@@ -1,8 +1,14 @@
 from django.contrib import admin
 from djime.tracker.models import Slip, TimeSlice
 
+
+class InlineTimeSlice(admin.TabularInline):
+    model = TimeSlice
+    extra = 2
+
 class SlipAdmin(admin.ModelAdmin):
     list_display = ['name', 'user', 'display_time']
+    inlines = [InlineTimeSlice]
 
 class TimeSliceAdmin(admin.ModelAdmin):
     list_display = ['begin', 'end', 'duration']
