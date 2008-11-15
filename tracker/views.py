@@ -34,10 +34,10 @@ def slip(request, slip_id):
             return HttpResponse('We did nothing with slip %s' % slip.name)
 
 
-
-
+@login_required()
 def slip_action(request, slip_id, action):
     return HttpResponseNotAllowed(('PUT',))
 
+@login_required()
 def slip_create(request):
     return HttpResponseNotAllowed(('POST',))
