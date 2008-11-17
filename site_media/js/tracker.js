@@ -6,17 +6,11 @@ $(document).ready(function () {
     $("#delete-dialog-box").dialog({
       buttons: {
         "Delete this slip": function() {
-          $.delete_(document.URL, {}, function (data, textStatus){
-            if (textStatus == "success") {
-              // If deleting succeeds, redirect to the tracker index page.
-              document.location.href = '/tracker/'
-            }
-          });
-          $(this).dialog("close");
-
+            $.delete_('/tracker/slip/1');
+            $(this).dialog("close");
         },
         "Cancel": function() {
-          $(this).dialog("close");
+            $(this).dialog("close");
         }
       }
     });
