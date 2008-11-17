@@ -1,6 +1,6 @@
 import unittest
 import urllib
-from django.test.client import Client, BOUNDARY, MULTIPART_CONTENT
+from django.test.client import *
 from django.contrib.auth.models import User
 from django.utils.http import urlencode
 from djime.tracker.models import Slip, TimeSlice
