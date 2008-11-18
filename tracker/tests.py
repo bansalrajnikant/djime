@@ -222,7 +222,7 @@ class SlipRESTActionsTestCase(unittest.TestCase):
         response = self.client.get('/tracker/slip/%i/' % self.fish.pk)
 
         # Create the slip
-        response = self.client.post('/tracker/slip/create/',
+        response = self.client.post('/tracker/slip/add/',
                                     {'name': 'Working all night with 5 ponies'})
 
         # now lets see if our slip has been created

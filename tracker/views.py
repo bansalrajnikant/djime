@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from djime.tracker.models import Slip, TimeSlice
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
+from django.contrib.auth.models import User
 
 
 def index(request):
@@ -40,4 +41,9 @@ def slip_action(request, slip_id, action):
 
 @login_required()
 def slip_create(request):
-    return HttpResponseNotAllowed(('POST',))
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(('POST',))
+    name = request.POST['name']
+    newSlip = Slip.objects.create(user = request.user, name = name)
+    newSlip.save()
+    return HttpResponse('Your slip "%s" has been created' % name)
