@@ -30,10 +30,14 @@
         </div>
 
         <div id="footer">{% block footer %}{% endblock %}</div>
-        <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.rest.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}js/tracker.js"></script>
-        {% block extra_footer %}
-        {% endblock %}
+        <div id="closure">
+            <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
+            <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.rest.js"></script>
+            <script type="text/javascript" src="{{ MEDIA_URL }}js/tracker.js"></script>
+            {% block closure %}
+            {# This is supposed to contain the final bits on the website. Use it for
+               JavaScript loading and HTML used in JavaScript.#}
+            {% endblock %}
+        </div>
     </body>
 </html>
