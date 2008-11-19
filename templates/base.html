@@ -21,11 +21,13 @@
 <body>
   <div id="doc" class="yui-t4">
     <div id="hd">
-      <h1 id="site-header">Djime</h1>
-      <div class="login">
-        {% block login %}{% endblock %}
-        {% block locale_switcher %}{% endblock %}
-        <div style="text-align: right;"></div>
+      <div id="header">
+        <div class="login">
+          {% block login %}{% endblock %}
+          {% block locale_switcher %}{% endblock %}
+        </div>
+        <h1 id="site-header">Djime</h1>
+        &nbsp;
       </div>
       <div id="main-menu-bar">
         {% block main_menu %}
