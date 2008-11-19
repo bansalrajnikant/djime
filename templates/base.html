@@ -1,43 +1,68 @@
-{% load i18n %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>Djime | {% block head_title %}Time tracker{% endblock %}</title>
-        <!--[if IE]><style>
-            div {
-                zoom: 1; /* trigger hasLayout */
-            }
-        </style><![endif]-->
-        <script type="text/javascript"> </script>
-        {% block extra_head %}
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  {% load i18n %}
+  {% spaceless %}
+  <title>Djime | {% block head_title %}Time tracker{% endblock %}</title>
+  <link type="text/css" rel="stylesheet" media="all" href="{{ MEDIA_URL }}css/reset-fonts-grids.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ MEDIA_URL }}css/djime.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ MEDIA_URL }}css/tracker.css" />
+  <!--[if IE]><style>
+    div {
+      zoom: 1; /* trigger hasLayout */
+    }
+  </style><![endif]-->
+  <script type="text/javascript"> </script>
+  {% block extra_head %}
+  {% endblock %}
+</head>
+
+<body>
+  <div id="doc" class="yui-t4">
+    <div id="hd">
+      <h1 id="site-header">Djime</h1>
+      <div class="login">
+        {% block login %}{% endblock %}
+        {% block locale_switcher %}{% endblock %}
+        <div style="text-align: right;"></div>
+      </div>
+      <div id="main-menu-bar">
+        {% block main_menu %}
         {% endblock %}
-    </head>
+      </div>
+    </div>
+    <div id="bd">
+      <div id="yui-main">
+        <div id="content" class="yui-b">
+          {% if messages %}
+            <ul id="messages">
+              {% for message in messages %}
+              <li id="message_{{ forloop.counter }}"><a href="#" onclick="$('#message_{{ forloop.counter }}').fadeOut(); return false;"><small>{% trans "clear" %}</small></a> {{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
 
-    <body>
-        <div id="content">
-            {% if messages %}
-                <ul id="messages">
-                    {% for message in messages %}
-                    <li id="message_{{ forloop.counter }}"><a href="#" onclick="$('#message_{{ forloop.counter }}').fadeOut(); return false;"><small>{% trans "clear" %}</small></a> {{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-
-            {% block content %}
-            {% endblock %}
+          {% block content %}
+          {% endblock %}
 
         </div>
-
-        <div id="footer">{% block footer %}{% endblock %}</div>
-        <div id="closure">
-            <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
-            <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.rest.js"></script>
-            <script type="text/javascript" src="{{ MEDIA_URL }}js/tracker.js"></script>
-            {% block closure %}
-            {# This is supposed to contain the final bits on the website. Use it for
-               JavaScript loading and HTML used in JavaScript.#}
-            {% endblock %}
-        </div>
-    </body>
+      </div>
+      <div id="sidebar" class="yui-b">
+        {% block sidebar %}
+        {% endblock %}
+      </div>
+    </div>
+    <div id="ft">{% block footer %}{% endblock %}</div>
+  </div>
+  <div id="closure">
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.rest.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/tracker.js"></script>
+    {# Final closing code JavaScript loading and HTML used in JavaScript. #}
+    {% block closure %}
+    {% endblock %}
+  </div>
+</body>
 </html>
+{% endspaceless %}
