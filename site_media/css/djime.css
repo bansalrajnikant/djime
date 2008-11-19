@@ -1,0 +1,117 @@
+/* @override http://localhost:8000/site_media/css/djime.css */
+
+/**
+ * Main CSS file for the Djime project.
+ *
+ * Please note that we're using CSSEdit's @group comment syntax.
+ */
+
+html, body {
+  background-color: #E7E7E8;
+}
+
+/* @group Page header */
+#header {
+  background-color: #A5B17F;
+  color: #434635;
+  height: 1.5em;
+}
+
+#header div.login {
+  float: right;
+  margin-right: 1em;
+  background-color: #526D51;
+  color: #E7E7E8;
+  padding: 0.7em;
+}
+
+#header div.login a {
+  color: #E7E7E8;
+}
+
+#header h1#site-header {
+  font-weight: bold;
+  padding: 0.2em;
+  padding-left: 0.5em;
+}
+
+/* @group Main menu */
+
+#hd #main-menu-bar {
+  background-color: #A9BD44;
+  color: #434635;
+}
+
+#main-menu-bar ul.menu li {
+
+}
+
+#main-menu-bar ul.menu li a {
+  color: #434635;
+  background-color: #A9BD44;
+  display: block;
+  text-decoration: none;
+  padding: 0.5em;  
+  float: left;
+}  
+
+#main-menu-bar ul.menu li a:hover {
+  background-color: #526D51;
+  color: #E7E7E8;
+} 
+
+/* @end */
+/* @end */
+
+/* @group Main content */
+
+#bd {
+  background-color: white;
+  padding: 0.5em 0 0.5em 0;
+}
+
+#bd #content {
+  padding: 0 0.5em 0 0.5em;
+}
+
+/* @end */
+
+/* @group Footer */
+
+#ft {
+  text-align: center;
+  margin-top: 1em;
+  color: #526D51;
+}
+
+/* @end */
+
+/* @group Misc. browser hacks */
+/*
+** Markup free clearing
+** Details: http://www.positioniseverything.net/easyclearing.html
+*/
+.clear-block:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+.clear-block {
+  display: inline-block;
+}
+
+/* Hides from IE-mac \*/
+* html .clear-block {
+  height: 1%;
+}
+.clear-block {
+  display: block;
+}
+  /* End hide from IE-mac */
+
+/* @end */
+
+
