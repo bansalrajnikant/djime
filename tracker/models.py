@@ -38,7 +38,7 @@ class Slip(models.Model):
         ordering = ["-created"]
 
 class TimeSlice(models.Model):
-    begin = models.DateTimeField(auto_now_add=True)
+    begin = models.DateTimeField(default=datetime.datetime.now)
     end = models.DateTimeField(null=True, blank=True)
     slip = models.ForeignKey(Slip)
     user = models.ForeignKey(User, related_name="timeslices", blank=True, null=True)

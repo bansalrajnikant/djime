@@ -173,7 +173,7 @@ class SlipRESTActionsTestCase(unittest.TestCase):
         # Send the request to start a new timeslip
         # first we'll create a time to send, that we can use to compare later
         timeSetBegin = datetime.now()
-        response = self.client.put('/tracker/slip/%i/start/' % self.fish.pk,
+        response = self.client.post('/tracker/slip/%i/start/' % self.fish.pk,
                                    {'begin': timeSetBegin})
         self.failUnlessEqual(response.status_code, 200)
 
@@ -196,19 +196,19 @@ class SlipRESTActionsTestCase(unittest.TestCase):
         # Send the request to start a new timeslip
         # first we'll create a time to send, that we can use to compare later
         timeSetBegin = datetime.now()
-        response = self.client.put('/tracker/slip/%i/start/' % self.fish.pk,
+        response = self.client.post('/tracker/slip/%i/start/' % self.fish.pk,
                                    {'begin': timeSetBegin})
 
         # Now stopping the timeslip with a new timeSet
         timeSetEnd = datetime.now()
-        response = self.client.put('/tracker/slip/%i/stop/' % self.fish.pk,
+        response = self.client.post('/tracker/slip/%i/stop/' % self.fish.pk,
                                    {'end': timeSetEnd})
         self.failUnlessEqual(response.status_code, 200)
 
         # Lets see if we have a created timeslice with the correct end time
         # we do that, by try, exepting that is does not exist.
         try:
-            timeSlice = TimeSlice.objects.get(end = timeSetBegin)
+            timeSlice = TimeSlice.objects.get(end = timeSetEnd)
 
         except TimeSlice.DoesNotExist:
             self.fail('Failed to get TimeSlice, TimeSlice has not been stopped with correct end time')

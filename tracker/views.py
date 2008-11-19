@@ -37,7 +37,23 @@ def slip(request, slip_id):
 
 @login_required()
 def slip_action(request, slip_id, action):
-    return HttpResponseNotAllowed(('PUT',))
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(('POST',))
+
+    if action == 'start':
+        startTime = request.POST['begin']
+        newTimeSlice = TimeSlice.objects.create(user = request.user, begin = startTime, slip_id = slip_id )
+        newTimeSlice.save()
+        return HttpResponse('Your timeslice begin time %s has been created' % startTime)
+
+    elif action == 'stop':
+        getTimeSlice = TimeSlice.objects.get(user = request.user, slip = slip_id, end = None)
+        getTimeSlice.end = request.POST['end']
+        getTimeSlice.save()
+        return HttpResponse('Your timeslice for slip "%s", begintime %s has been stopped at %s' % (getTimeSlice.slip.name, getTimeSlice.begin, getTimeSlice.end))
+    else:
+        #Make a return for only action allowed is start/stop
+        pass
 
 @login_required()
 def slip_create(request):
