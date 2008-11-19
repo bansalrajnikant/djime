@@ -150,16 +150,13 @@ class SlipRESTActionsTestCase(unittest.TestCase):
         response = self.client.get('/tracker/slip/%i/' % self.fish.pk)
 
         # Now let's change the slip name
-        response = self.client.put('/tracker/slip/%i/' % self.fish.pk,
+        response = self.client.post('/tracker/slip/%i/' % self.fish.pk,
                                    {'name': 'Polishing horses'})
         self.failUnlessEqual(response.status_code, 200)
 
-        # Lets reload the object from the db
-        response = self.client.get('/tracker/slip/%i/' % self.fish.pk)
-        self.failUnlessEqual(response.status_code, 200)
-
         # Last, we're going to check the new name of the slip
-        self.failUnlessEqual(self.fish.name, 'Polishing horses')
+        slip_new_name = Slip.objects.get(pk=self.fish.pk)
+        self.failUnlessEqual(slip_new_name.name, 'Polishing horses')
 
 
     def testStartTimeSlice(self):
@@ -195,23 +192,25 @@ class SlipRESTActionsTestCase(unittest.TestCase):
 
         # Send the request to start a new timeslip
         # first we'll create a time to send, that we can use to compare later
-        timeSetBegin = datetime.now()
+        time_set_begin = datetime.now()
         response = self.client.post('/tracker/slip/%i/start/' % self.fish.pk,
-                                   {'begin': timeSetBegin})
+                                   {'begin': time_set_begin})
 
         # Now stopping the timeslip with a new timeSet
-        timeSetEnd = datetime.now()
+        time_set_end = datetime.now()
         response = self.client.post('/tracker/slip/%i/stop/' % self.fish.pk,
-                                   {'end': timeSetEnd})
+                                   {'end': time_set_end})
         self.failUnlessEqual(response.status_code, 200)
 
         # Lets see if we have a created timeslice with the correct end time
         # we do that, by try, exepting that is does not exist.
         try:
-            timeSlice = TimeSlice.objects.get(end = timeSetEnd)
+            time_slice = TimeSlice.objects.get(end = time_set_end)
 
         except TimeSlice.DoesNotExist:
             self.fail('Failed to get TimeSlice, TimeSlice has not been stopped with correct end time')
+
+        self.failUnlessEqual(time_set_begin, time_slice.begin)
 
     def testCreateSlip(self):
          # Login

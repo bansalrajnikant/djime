@@ -12,10 +12,10 @@ def index(request):
 
 @login_required()
 def slip(request, slip_id):
-    valid_methods = ('GET', 'PUT', 'DELETE')
+    valid_methods = ('GET', 'POST', 'DELETE')
 
     if request.method not in valid_methods:
-        return HttpResponseNotAllowed(('GET', 'PUT', 'DELETE'))
+        return HttpResponseNotAllowed(('GET', 'POST', 'DELETE'))
     else:
         slip = get_object_or_404(Slip, pk=slip_id)
         if request.user != slip.user:
@@ -30,9 +30,12 @@ def slip(request, slip_id):
             # TODO: Send a message to the user that deltion succeeded.
             return HttpResponse('Successfully deleted slip %s' % slip.name)
 
-        elif request.method == 'PUT':
-            # TODO: Update the slip with the data from put.
-            return HttpResponse('We did nothing with slip %s' % slip.name)
+        elif request.method == 'POST':
+            slip = Slip.objects.get(id = slip_id)
+            old_name = slip.name
+            slip.name = request.POST['name']
+            slip.save()
+            return HttpResponse("We changed the slip's name from '%s' to '%s'" % (old_name, slip.name))
 
 
 @login_required()
@@ -41,16 +44,16 @@ def slip_action(request, slip_id, action):
         return HttpResponseNotAllowed(('POST',))
 
     if action == 'start':
-        startTime = request.POST['begin']
-        newTimeSlice = TimeSlice.objects.create(user = request.user, begin = startTime, slip_id = slip_id )
-        newTimeSlice.save()
-        return HttpResponse('Your timeslice begin time %s has been created' % startTime)
+        start_time = request.POST['begin']
+        new_time_slice = TimeSlice.objects.create(user = request.user, begin = start_time, slip_id = slip_id )
+        new_time_slice.save()
+        return HttpResponse('Your timeslice begin time %s has been created' % start_time)
 
     elif action == 'stop':
-        getTimeSlice = TimeSlice.objects.get(user = request.user, slip = slip_id, end = None)
-        getTimeSlice.end = request.POST['end']
-        getTimeSlice.save()
-        return HttpResponse('Your timeslice for slip "%s", begintime %s has been stopped at %s' % (getTimeSlice.slip.name, getTimeSlice.begin, getTimeSlice.end))
+        time_slice = TimeSlice.objects.get(user = request.user, slip = slip_id, end = None)
+        time_slice.end = request.POST['end']
+        time_slice.save()
+        return HttpResponse('Your timeslice for slip "%s", begintime %s has been stopped at %s' % (time_slice.slip.name, time_slice.begin, time_slice.end))
     else:
         #Make a return for only action allowed is start/stop
         pass
@@ -60,6 +63,6 @@ def slip_create(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(('POST',))
     name = request.POST['name']
-    newSlip = Slip.objects.create(user = request.user, name = name)
-    newSlip.save()
+    new_slip = Slip.objects.create(user = request.user, name = name)
+    new_slip.save()
     return HttpResponse('Your slip "%s" has been created' % name)
