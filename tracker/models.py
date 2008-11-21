@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 import datetime
 from math import floor
 
+
 class Slip(models.Model):
     name = models.CharField(max_length=128)
     user = models.ForeignKey(User, related_name="slips", blank=True, null=True)
@@ -34,8 +35,15 @@ class Slip(models.Model):
                                         duration['minutes'],duration['seconds'])
 
 
+    def is_active(self):
+        slice = self.timeslice_set.filter(end = None)
+        return bool(slice)
+
+
     class Meta:
         ordering = ["-created"]
+
+
 
 class TimeSlice(models.Model):
     begin = models.DateTimeField(default=datetime.datetime.now)

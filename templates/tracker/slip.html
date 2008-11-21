@@ -9,8 +9,12 @@
         If you delete this slip, you will lose all the time records associated with it. This is irrevocable.
     </div>
     <h2>{{ slip.name }}</h2>
-    <p>Total time: {{ slip.display_time }}</p>
+    <p>Total time: <input type="button" id="timer" value="LEET" /> </p>
 
+{% endblock %}
+
+{% block sidebar %}
+    <input type="button" name="start-stop-button" id="start-stop-button" value="" />
     <input type="button" name="delete-slip" id="delete-slip-button" value="Delete this slip" />
 {% endblock %}
 

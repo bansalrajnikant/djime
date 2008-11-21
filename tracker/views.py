@@ -4,6 +4,7 @@ from djime.tracker.models import Slip, TimeSlice
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.contrib.auth.models import User
+from datetime import datetime
 
 
 def index(request):
@@ -40,20 +41,41 @@ def slip(request, slip_id):
 
 @login_required()
 def slip_action(request, slip_id, action):
-    if request.method != 'POST':
-        return HttpResponseNotAllowed(('POST',))
+    if request.method not in ('GET', 'POST'):
+        return HttpResponseNotAllowed(('POST', 'GET'))
 
     if action == 'start':
-        start_time = request.POST['begin']
+        if request.POST.has_key('begin'):
+            start_time = request.POST['begin']
+        else:
+            start_time = datetime.now()
+
         new_time_slice = TimeSlice.objects.create(user = request.user, begin = start_time, slip_id = slip_id )
         new_time_slice.save()
         return HttpResponse('Your timeslice begin time %s has been created' % start_time)
 
     elif action == 'stop':
-        time_slice = TimeSlice.objects.get(user = request.user, slip = slip_id, end = None)
-        time_slice.end = request.POST['end']
-        time_slice.save()
-        return HttpResponse('Your timeslice for slip "%s", begintime %s has been stopped at %s' % (time_slice.slip.name, time_slice.begin, time_slice.end))
+        slice = TimeSlice.objects.get(user = request.user, slip = slip_id, end = None)
+
+        if request.POST.has_key('end'):
+            slice.end = request.POST['end']
+        else:
+            slice.end = datetime.now()
+
+        slice.update_duration()
+        slice.save()
+
+        return HttpResponse('Your timeslice for slip "%s", begintime %s has been stopped at %s' % (slice.slip.name, slice.begin, slice.end))
+
+    elif action == 'get_json':
+        slip = Slip.objects.get(id = slip_id)
+        if slip.is_active() == False:
+            return HttpResponse("{'active' : true, 'slip_time' : '%s' }" % slip.display_time())
+        else:
+           return HttpResponse("{'active' : false, 'slip_time' : '%s' }" % slip.display_time())
+
+
+
     else:
         #Make a return for only action allowed is start/stop
         pass

@@ -21,4 +21,36 @@ $(document).ready(function () {
       }
     });
   });
+
+  $.getJSON(document.URL + 'get_json/', function(data, textStatus) {
+    $("#timer").val(data.slip_time);
+    if (data.active == true) {
+      $("#start-stop-button").val('Start');
+    }
+    else {
+      $("#start-stop-button").val('Stop');
+    }
+
+  });
+
+  $("#start-stop-button").click(function () {
+    if ((this).value == 'Start') {
+      (this).value = 'Stop'
+      $.post(document.URL + 'start/', function(data) {
+      });
+    }
+    else if ((this).value == 'Stop') {
+      (this).value = 'Start'
+      $.post(document.URL + 'stop/', function(data) {
+      });
+      $.getJSON(document.URL + 'get_json/', function(data) {
+        $("#timer").val(data.slip_time);
+      });
+
+    }
+    else {
+      alert('something is wrong')
+    };
+
+  });
 });
