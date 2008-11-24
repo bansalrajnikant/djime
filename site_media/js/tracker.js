@@ -60,4 +60,10 @@ $(document).ready(function () {
       });
     });
   });
+  $('.edit').editable(document.URL, {
+    loadurl : document.URL + 'get_name/',
+    indicator : 'Saving...',
+    tooltip   : 'Click to edit...',
+    name: 'name'
+  });
 });

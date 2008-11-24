@@ -36,7 +36,7 @@ def slip(request, slip_id):
             old_name = slip.name
             slip.name = request.POST['name']
             slip.save()
-            return HttpResponse("We changed the slip's name from '%s' to '%s'" % (old_name, slip.name))
+            return HttpResponse("%s" % slip.name)
 
 
 @login_required()
@@ -74,6 +74,9 @@ def slip_action(request, slip_id, action):
         else:
            return HttpResponse("{'active' : false, 'slip_time' : '%s' }" % slip.display_time())
 
+    elif action == 'get_name':
+        slip = Slip.objects.get(id = slip_id)
+        return HttpResponse("%s" % slip.name)
 
 
     else:

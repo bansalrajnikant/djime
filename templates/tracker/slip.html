@@ -8,7 +8,11 @@
     <div id="delete-dialog-box" class="ui-dialog" title="Delete this slip?">
         If you delete this slip, you will lose all the time records associated with it. This is irrevocable.
     </div>
-    <h2>{{ slip.name }}</h2>
+    <h2>
+        <div class="edit" id="div-1">
+            {{ slip.name }}
+        </div>
+    </h2>
     <p>Total time: <input type="button" id="timer" value="LEET" /> </p>
 
 {% endblock %}
@@ -20,4 +24,5 @@
 
 {% block closure %}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.ui.all.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.jeditable.js"></script>
 {% endblock %}
