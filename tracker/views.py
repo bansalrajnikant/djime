@@ -82,9 +82,14 @@ def slip_action(request, slip_id, action):
 
 @login_required()
 def slip_create(request):
-    if request.method != 'POST':
-        return HttpResponseNotAllowed(('POST',))
-    name = request.POST['name']
-    new_slip = Slip.objects.create(user = request.user, name = name)
-    new_slip.save()
-    return HttpResponse('Your slip "%s" has been created' % name)
+    if request.method not in ('GET', 'POST'):
+        return HttpResponseNotAllowed(('POST', 'GET'))
+    if request.method == 'POST':
+        name = request.POST['name']
+        new_slip = Slip.objects.create(user = request.user, name = name)
+        new_slip.save()
+        return HttpResponse("")
+
+    if request.method == 'GET':
+        latest_id = request.user.slips.order_by()[len(request.user.slips.order_by())-1].id
+        return HttpResponse("{'slip': '%s'}" % latest_id)

@@ -53,4 +53,11 @@ $(document).ready(function () {
     };
 
   });
+  $("#create-slip").click(function () {
+    $.post(document.URL + 'slip/add/', {name: $("#slip-name").val()}, function(data) {
+      $.getJSON(document.URL + 'slip/add/', function(data) {
+        document.location.href = '/tracker/slip/' + data.slip
+      });
+    });
+  });
 });
