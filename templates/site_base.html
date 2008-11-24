@@ -5,9 +5,9 @@
     {% if user.is_authenticated %}
         Hello, <em>{{ user }}</em>! |
         {% if user.is_staff %}<a href="/admin/">{% trans "Admin" %}</a> | {% endif %}
-        <a href="/accounts/logout/">{% trans "Logout" %}</a>
+        <a href="{% url acct_logout %}">{% trans "Logout" %}</a>
     {% else %}
-        <a href="accounts/login/">{% trans "Login" %}</a> {% trans "or" %} <a href="{% url acct_signup %}"><b>{% trans "Sign up" %}</b></a>
+        <a href="{% url acct_login %}">{% trans "Login" %}</a> {% trans "or" %} <a href="{% url acct_signup %}"><b>{% trans "Sign up" %}</b></a>
     {% endif %}
 {% endblock %}
 
