@@ -13,7 +13,6 @@ $(document).ready(function () {
             }
           });
           $(this).dialog("close");
-
         },
         "Cancel": function() {
           $(this).dialog("close");
@@ -30,7 +29,6 @@ $(document).ready(function () {
     else {
       $("#start-stop-button").val('Stop');
     }
-
   });
 
   $("#start-stop-button").click(function () {
@@ -46,12 +44,10 @@ $(document).ready(function () {
       $.getJSON(document.URL + 'get_json/', function(data) {
         $("#timer").val(data.slip_time);
       });
-
     }
     else {
       alert('something is wrong')
     };
-
   });
 
   $("#create-slip").click(function () {
