@@ -74,11 +74,6 @@ def slip_action(request, slip_id, action):
         else:
            return HttpResponse("{'active' : false, 'slip_time' : '%s' }" % slip.display_time())
 
-    elif action == 'get_name':
-        slip = Slip.objects.get(id = slip_id)
-        return HttpResponse("%s" % slip.name)
-
-
     else:
         #Make a return for only action allowed is start/stop
         pass

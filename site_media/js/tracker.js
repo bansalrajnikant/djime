@@ -53,6 +53,7 @@ $(document).ready(function () {
     };
 
   });
+
   $("#create-slip").click(function () {
     $.post(document.URL + 'slip/add/', {name: $("#slip-name").val()}, function(data) {
       $.getJSON(document.URL + 'slip/add/', function(data) {
@@ -60,8 +61,8 @@ $(document).ready(function () {
       });
     });
   });
+
   $('.edit').editable(document.URL, {
-    loadurl : document.URL + 'get_name/',
     indicator : 'Saving...',
     tooltip   : 'Click to edit...',
     name: 'name'
