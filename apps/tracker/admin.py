@@ -1,5 +1,5 @@
 from django.contrib import admin
-from djime.tracker.models import Slip, TimeSlice
+from tracker.models import Slip, TimeSlice
 
 
 class InlineTimeSlice(admin.TabularInline):

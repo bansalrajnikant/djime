@@ -3,7 +3,7 @@ import urllib
 from django.test.client import *
 from django.contrib.auth.models import User
 from django.utils.http import urlencode
-from djime.tracker.models import Slip, TimeSlice
+from tracker.models import Slip, TimeSlice
 from datetime import datetime
 
 

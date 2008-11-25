@@ -71,7 +71,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django_evolution',
-    'djime.tracker',
+    'tracker',
     'account',
 )
 

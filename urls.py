@@ -5,7 +5,7 @@ import os.path
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^tracker/', include('djime.tracker.urls')),
+    (r'^tracker/', include('tracker.urls')),
     (r'^accounts/', include('account.urls')),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
