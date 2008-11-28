@@ -19,6 +19,7 @@
 </head>
 
 <body>
+  {% block body %}
   <div id="doc" class="yui-t4">
     <div id="hd">
       <div id="header">
@@ -69,6 +70,7 @@
     {% block closure %}
     {% endblock %}
   </div>
+  {% endblock %}
 </body>
 </html>
 {% endspaceless %}
