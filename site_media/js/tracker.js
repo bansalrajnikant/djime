@@ -3,7 +3,8 @@ $(document).ready(function () {
   $("div.ui-dialog").hide();
 
   $("#delete-slip-button").click(function () {
-    $("#delete-dialog-box").dialog({
+    var dialog_box = $("#dialog-box");
+    dialog_box.dialog({
       buttons: {
         "Delete this slip": function() {
           $.delete_(document.URL, {}, function (data, textStatus){
@@ -18,8 +19,14 @@ $(document).ready(function () {
         "Cancel": function() {
           $(this).dialog("close");
         }
-      }
+      },
+      draggable: false,
+      modal: false,
+      resizable: false,
+      show: 'size',
+      title: djime.messages.slip_delete_title
     });
+    dialog_box.text(djime.messages.slip_delete_body);
   });
 
   $.getJSON(document.URL + 'get_json/', function(data, textStatus) {
