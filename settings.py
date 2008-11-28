@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     'django_evolution',
     'tracker',
     'account',
+    'statistics',
 )
 
 # If there is one, load the local overrides file.
