@@ -58,7 +58,11 @@
     <div id="ft">{% block footer %}{% endblock %}</div>
   </div>
   <div id="closure">
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("jquery", "1.2.6");
+      google.load("swfobject", "2.1");
+    </script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.rest.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/tracker.js"></script>
     {# Final closing code JavaScript loading and HTML used in JavaScript. #}
