@@ -29,29 +29,16 @@ $(document).ready(function () {
     dialog_box.text(djime.messages.slip_delete_body);
   });
 
-  $.getJSON(document.URL + 'get_json/', function(data, textStatus) {
-    $("#timer").val(data.slip_time);
-    if (data.active == true) {
-      $("#start-stop-button").val('Start');
-    }
-    else {
-      $("#start-stop-button").val('Stop');
-    }
-
-  });
-
   $("#start-stop-button").click(function () {
     if ((this).value == 'Start') {
       (this).value = 'Stop'
-      $.post(document.URL + 'start/', function(data) {
-      });
+      $.post(document.URL + 'start/');
     }
     else if ((this).value == 'Stop') {
       (this).value = 'Start'
-      $.post(document.URL + 'stop/', function(data) {
-      });
+      $.post(document.URL + 'stop/');
       $.getJSON(document.URL + 'get_json/', function(data) {
-        $("#timer").val(data.slip_time);
+        $("#slip-total-time").text(data.slip_time);
       });
 
     }
