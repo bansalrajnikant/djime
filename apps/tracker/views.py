@@ -61,9 +61,14 @@ def slip_action(request, slip_id, action):
             slice.end = request.POST['end']
         else:
             slice.end = datetime.now()
-
-        slice.update_duration()
         slice.save()
+        # we get the object before updating the duration, because when
+        # we get the time, from request.POST['end']it is of the type
+        # 'unicode' and needs to be saved to the db and getted to be
+        # converted to datetime.
+        slice = TimeSlice.objects.get(pk=slice.id)
+        slice.update_duration()
+
 
         return HttpResponse('Your timeslice for slip "%s", begintime %s has been stopped at %s' % (slice.slip.name, slice.begin, slice.end))
 

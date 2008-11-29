@@ -14,7 +14,6 @@ $(document).ready(function () {
             }
           });
           $(this).dialog("close");
-
         },
         "Cancel": function() {
           $(this).dialog("close");
@@ -40,12 +39,10 @@ $(document).ready(function () {
       $.getJSON(document.URL + 'get_json/', function(data) {
         $("#slip-total-time").text(data.slip_time);
       });
-
     }
     else {
       alert('something is wrong')
     };
-
   });
 
   $("#create-slip").click(function () {
