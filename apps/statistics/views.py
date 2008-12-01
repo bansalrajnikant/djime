@@ -62,112 +62,70 @@ def get_data(request, action, data, year, user_id):
          return HttpResponseNotAllowed('GET')
 
     if action == 'week':
-        week = data
+        week = int(data)
+        year = int(year)
         slice_set = TimeSlice.objects.filter(week_number=week, year = year, user = user_id)
-        monday = []
-        tuesday = []
-        wednesday = []
-        thursday = []
-        friday = []
-        saturday = []
-        sunday =  []
-        names = []
-        times = []
-        monday_date = tuesday_date = wednesday_date = thursday_date = friday_date = saturday_date = sunday_date = ''
+        start_date = datetime.date(year, 1, 1) + datetime.timedelta(days = (week-2)*7)
+        while start_date.isocalendar()[1] != week:
+            start_date += datetime.timedelta(days=1)
+        end_date = start_date + datetime.timedelta(days=6)
+        w_date = start_date
+        dates = {}
+        while w_date != end_date:
+            dates[w_date]=[]
+            w_date += datetime.timedelta(days=1)
+        dates[end_date] = []
 
         for slice in slice_set:
-            if slice.begin.weekday() == 0:
-                if slice.slip not in monday:
-                    monday.append(slice.slip)
-                    monday_date = slice.create_date
-            elif slice.begin.weekday() == 1:
-                if slice.slip not in tuesday:
-                    tuesday.append(slice.slip)
-                    tuesday_date = slice.create_date
-            elif slice.begin.weekday() == 2:
-                if slice.slip not in wednesday:
-                    wednesday.append(slice.slip)
-                    wednesday_date = slice.create_date
-            elif slice.begin.weekday() == 3:
-                if slice.slip not in thursday:
-                    thursday.append(slice.slip)
-                    thursday_date = slice.create_date
-            elif slice.begin.weekday() == 4:
-                if slice.slip not in friday:
-                    friday.append(slice.slip)
-                    friday_date = slice.create_date
-            elif slice.begin.weekday() == 5:
-                if slice.slip not in saturday:
-                    saturday.append(slice.slip)
-                    saturday_date = slice.create_date
-            else:
-                if slice.slip not in sunday:
-                    sunday.append(slice.slip)
-                    sunday_date = slice.create_date
+            if slice.slip not in dates[slice.create_date]:
+                dates[slice.create_date].append(slice.slip)
 
-
-        week_days = [ monday, tuesday, wednesday, thursday, friday, saturday, sunday]
-        j = 0
-        date = monday_date
-        for day in week_days:
+        max_list = [0.01]
+        for date in dates.keys():
             i=0
             temp = ''
             temp_max = 0.0
-            while i < len(day):
+            while i < len(dates[date]):
                 if not temp:
                     temp += '['
-                temp += '{ "val" :' + day[i].display_days_time(date) + ', "tip": "' + day[i].name + '<br>day: #x_label#<br>time: #val# total: #total#"}'
-                temp_max += float(day[i].display_days_time(date))
-                if i != len(day)-1:
+                temp += '{ "val" :' + dates[date][i].display_days_time(date) + ', "tip": "' + dates[date][i].name + '<br> time: #val# total: #total#"}'
+                temp_max += float(dates[date][i].display_days_time(date))
+                if i != len(dates[date])-1:
                     temp += ','
-                if i == len(day)-1:
+                if i == len(dates[date])-1:
                     temp += ']'
                 i += 1
             if not temp:
                 temp = '[0]'
-            if j == 0:
-                monday_val = temp
-                mon_max = temp_max
-                date = tuesday_date
-            elif j == 1:
-                tuesday_val = temp
-                tue_max = temp_max
-                date = wednesday_date
-            elif j == 2:
-                date = thursday_date
-                wednesday_val = temp
-                wed_max = temp_max
-            elif j == 3:
-                date = friday_date
-                thursday_val = temp
-                thur_max = temp_max
-            elif j == 4:
-                date = saturday_date
-                friday_val = temp
-                fri_max = temp_max
-            elif j == 5:
-                date = sunday_date
-                saturday_val = temp
-                sat_max = temp_max
-            else:
-                sunday_val = temp
-                sun_max = temp_max
-            j +=1
+            dates[date] = temp
+            max_list.append(temp_max)
 
+        max_val = max(max_list)
+        step = max_val*0.1
 
+        label_list = []
 
+        for key in dates.keys():
+            label_list.append(key)
 
-        max_val = max(mon_max, tue_max, wed_max, thur_max, fri_max, sat_max, sun_max)
-        step = max_val/10
+        label_list.sort()
 
+        val_all = ''
+        for sorted_date in label_list:
+            val_all += dates[sorted_date] + ','
+
+        label = ''
+        for labl in label_list:
+            label += '"' + labl.strftime('%A') +'",'
 
         return HttpResponse('{ "elements": [ { "type": "bar_stack",'
-                            '"colours": [ "#F00000", "#FFFF00", "#300030", "#000000", "#D54C78", "#D54C78" ],'
-                            '"values": ['+ monday_val + ',' + tuesday_val + ',' + wednesday_val + ',' + thursday_val + ',' + friday_val + ',' + saturday_val + ',' + sunday_val +']} ],'
-                            '"title": { "text": "Year '+str(year)+' Week ' + str(week) + '" , "style": "{font-size: 20px; color: #F24062; text-align: center;}" },'
-                            '"bg_colour": "#FEFEFE",'
-                            '"x_axis": { "labels": { "labels": [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" ] } },'
-                            '"y_axis": {    "min": 0, "max": '+str(max_val)+', "steps": '+str(step)+' }, "tooltip": { "mouse": 2 } }')
+                            '"colours": [ "#F00000", "#FF0000", "#FFF000", "#FFFF00", "#FFFFF0", "#FFFFFF" ],'
+                            '"values": ['+ val_all[:-1] +'],'
+                            '"tip": "#y_label# X label [#x_label#], Value [#val#] Total [#total#]" } ],'
+                            '"title": { "text": "Week ' + str(week) + '" , "style": "{font-size: 20px; color: #F24062; text-align: center;}" },'
+                            '"x_axis": { "labels": { "labels": [ ' + label[:-1] + '] } },'
+                            '"y_axis": {  "min": 0, "max": '+str(max_val)+', "steps": '+str(step)+' }, "tooltip": { "mouse": 2 } }')
+
 
     if action == 'month':
         month = int(data)
@@ -230,9 +188,10 @@ def get_data(request, action, data, year, user_id):
                                 '"colours": [ "#F00000", "#FF0000", "#FFF000", "#FFFF00", "#FFFFF0", "#FFFFFF" ],'
                                 '"values": ['+ val_all[:-1] +'],'
                                 '"tip": "#y_label# X label [#x_label#], Value [#val#] Total [#total#]" } ],'
-                                '"title": { "text": "From ' + str(start_date)+ ' to ' + str(end_date) + '" , "style": "{font-size: 20px; color: #F24062; text-align: center;}" },'
+                                '"title": { "text": "' + start_date.strftime('%B') + '" , "style": "{font-size: 20px; color: #F24062; text-align: center;}" },'
                                 '"x_axis": { "labels": { "labels": [ ' + label[:-1] + '] } },'
                                 '"y_axis": {  "min": 0, "max": '+str(max_val)+', "steps": '+str(step)+' }, "tooltip": { "mouse": 2 } }')
+
 
 
 def get_date_data(request, user_id, start_date, end_date):
