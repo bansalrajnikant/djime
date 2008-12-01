@@ -3,7 +3,8 @@ $(document).ready(function () {
   $("div.ui-dialog").hide();
 
   $("#delete-slip-button").click(function () {
-    $("#delete-dialog-box").dialog({
+    var dialog_box = $("#dialog-box");
+    dialog_box.dialog({
       buttons: {
         "Delete this slip": function() {
           $.delete_(document.URL, {}, function (data, textStatus){
@@ -17,32 +18,26 @@ $(document).ready(function () {
         "Cancel": function() {
           $(this).dialog("close");
         }
-      }
+      },
+      draggable: false,
+      modal: false,
+      resizable: false,
+      show: 'size',
+      title: djime.messages.slip_delete_title
     });
-  });
-
-  $.getJSON(document.URL + 'get_json/', function(data, textStatus) {
-    $("#timer").val(data.slip_time);
-    if (data.active == true) {
-      $("#start-stop-button").val('Start');
-    }
-    else {
-      $("#start-stop-button").val('Stop');
-    }
+    dialog_box.text(djime.messages.slip_delete_body);
   });
 
   $("#start-stop-button").click(function () {
     if ((this).value == 'Start') {
       (this).value = 'Stop'
-      $.post(document.URL + 'start/', function(data) {
-      });
+      $.post(document.URL + 'start/');
     }
     else if ((this).value == 'Stop') {
       (this).value = 'Start'
-      $.post(document.URL + 'stop/', function(data) {
-      });
+      $.post(document.URL + 'stop/');
       $.getJSON(document.URL + 'get_json/', function(data) {
-        $("#timer").val(data.slip_time);
+        $("#slip-total-time").text(data.slip_time);
       });
     }
     else {
@@ -62,5 +57,31 @@ $(document).ready(function () {
     indicator : 'Saving...',
     tooltip   : 'Click to edit...',
     name: 'name'
+  });
+
+  $('#slip-timer-button').click(function () {
+    if ($(this).hasClass('running')) {
+      // Stop the timer
+      $(this).removeClass('running');
+      $(this).addClass('working');
+      $.post(document.URL + 'stop/', {}, function () {
+        $('#slip-timer-button').removeClass('working');
+        // After stopping the timer, update the total time.
+        $.getJSON(document.URL + 'get_json/', function(data) {
+          $("#slip-total-time").text(data.slip_time);
+        });
+      });
+    }
+    else if ($(this).hasClass('working')) {
+      // Do nothing
+    }
+    else {
+      // If neither working or running is set, start the timer.
+      $(this).addClass('working');
+      $.post(document.URL + 'start/', {}, function () {
+        $('#slip-timer-button').removeClass('working');
+        $('#slip-timer-button').addClass('running');
+      });
+    }
   });
 });

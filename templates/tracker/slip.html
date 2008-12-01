@@ -4,23 +4,34 @@
 
 {% block head_title %}{% trans "Slip" %}: {{ slip.id }}{% endblock %}
 
+{% block extra_head %}
+  <link type="text/css" rel="stylesheet" media="all" href="{{ MEDIA_URL }}jquery.ui/themes/default/ui.all.css" />
+{% endblock %}
+
 {% block content %}
-  <div id="delete-dialog-box" class="ui-dialog" title="Delete this slip?">
-    If you delete this slip, you will lose all the time records associated with it. This is irrevocable.
-  </div>
+  <div id="dialog-box" class="ui-dialog" title="Delete this slip?"></div>
   <h2>
     <div class="edit" id="div-1">{{ slip.name }}</div>
   </h2>
-  <p>Total time: <input type="button" id="timer" value="LEET" /> </p>
+  <p>Total time: <span id="slip-total-time">{{ slip.display_time }}</span></p>
+  <div id="slip-timer-button">0:00</div>
 
 {% endblock %}
 
 {% block sidebar %}
-    <input type="button" name="start-stop-button" id="start-stop-button" value="" />
-    <input type="button" name="delete-slip" id="delete-slip-button" value="Delete this slip" />
+  {% if slip.is_active %}
+    <input type="button" name="start-stop-button" id="start-stop-button" value="Stop" />
+  {% else %}
+    <input type="button" name="start-stop-button" id="start-stop-button" value="Start" />
+  {% endif %}
+  <input type="button" name="delete-slip" id="delete-slip-button" value="Delete this slip" />
 {% endblock %}
 
 {% block closure %}
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.ui.all.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.jeditable.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}jquery.ui/ui/jquery.ui.all.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.jeditable.js"></script>
+  <script type="text/javascript">
+    djime.messages['slip_delete_title'] = '{% trans "Delete this slip?" %}';
+    djime.messages['slip_delete_body'] = '{% trans "If you delete this slip, you will lose all the time records associated with it. This is irrevocable." %}';
+  </script>
 {% endblock %}

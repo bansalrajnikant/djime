@@ -19,6 +19,7 @@
 </head>
 
 <body>
+  {% block body %}
   <div id="doc" class="yui-t4">
     <div id="hd">
       <div id="header">
@@ -58,13 +59,22 @@
     <div id="ft">{% block footer %}{% endblock %}</div>
   </div>
   <div id="closure">
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      {# Define a djime object in JavaScript that other templates can put attributes into #}
+      var djime = {
+        'messages': {}
+      }
+      google.load("jquery", "1.2.6");
+      google.load("swfobject", "2.1");
+    </script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.rest.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/tracker.js"></script>
     {# Final closing code JavaScript loading and HTML used in JavaScript. #}
     {% block closure %}
     {% endblock %}
   </div>
+  {% endblock %}
 </body>
 </html>
 {% endspaceless %}
