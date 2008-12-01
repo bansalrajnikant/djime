@@ -5,9 +5,9 @@
   {% load i18n %}
   {% spaceless %}
   <title>Djime | {% block head_title %}Time tracker{% endblock %}</title>
-  <link type="text/css" rel="stylesheet" media="all" href="{{ MEDIA_URL }}css/reset-fonts-grids.css" />
-  <link type="text/css" rel="stylesheet" media="all" href="{{ MEDIA_URL }}css/djime.css" />
-  <link type="text/css" rel="stylesheet" media="all" href="{{ MEDIA_URL }}css/tracker.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}css/reset-fonts-grids.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}css/djime.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}css/tracker.css" />
   <!--[if IE]><style>
     div {
       zoom: 1; /* trigger hasLayout */
@@ -68,8 +68,8 @@
       google.load("jquery", "1.2.6");
       google.load("swfobject", "2.1");
     </script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.rest.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/tracker.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.rest.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/tracker.js"></script>
     {# Final closing code JavaScript loading and HTML used in JavaScript. #}
     {% block closure %}
     {% endblock %}

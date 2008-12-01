@@ -5,15 +5,18 @@ import os.path
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^tracker/', include('tracker.urls')),
     (r'^accounts/', include('account.urls')),
+    (r'^import/', include('data_import.urls')),
+    (r'^tracker/', include('tracker.urls')),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
 )
 
 # If in debug mode, serve site_media through Django.
 if settings.DEBUG:
-    urlpatterns += patterns('',
-        (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
-            {'document_root': os.path.join(os.path.dirname(__file__), "site_media")}),
+    urlpatterns += patterns('django.views.static',
+        (r'^%s(?P<path>.*)' % settings.STATIC_URL[1:], 'serve',
+         {'document_root': settings.STATIC_ROOT}),
+        (r'^%s(?P<path>.*)' % settings.MEDIA_URL[1:], 'serve',
+         {'document_root': settings.MEDIA_ROOT}),
     )

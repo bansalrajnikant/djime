@@ -36,6 +36,22 @@ MEDIA_ROOT = os.path.join(os.path.dirname(__file__), "site_media")
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/site_media/'
 
+# Keep static files apart from site media
+STATIC_ROOT = os.path.join(os.path.dirname(__file__), "static")
+STATIC_URL = '/static/'
+
+# HACK: TEMPLATE_CONTEXT_PROCESSORS has to be callable, so make a small function
+get_static_url = lambda x: {'STATIC_URL': STATIC_URL}
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.core.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    'djime.settings.get_static_url'
+)
+
+
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
