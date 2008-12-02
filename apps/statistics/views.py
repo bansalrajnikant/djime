@@ -193,7 +193,6 @@ def get_data(request, action, data, year, user_id):
                                 '"y_axis": {  "min": 0, "max": '+str(max_val)+', "steps": '+str(step)+' }, "tooltip": { "mouse": 2 } }')
 
 
-
 def get_date_data(request, user_id, start_date, end_date):
     # we want start and end date to be lists: [yyyy, mm, dd]:
 
