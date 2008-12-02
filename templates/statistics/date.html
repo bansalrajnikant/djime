@@ -4,7 +4,12 @@
 
 {% block head_title %}{% trans "hest" %}{% endblock %}
 
+{% block extra_head %}
+  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}jquery.ui/themes/default/ui.all.css" />
+{% endblock %}
+
 {% block content %}
+    Date selection: <input type="text" id="from-to-date" style="width:160px;"/>
     <div id="flash-chart">
     </div>
 {% endblock %}
