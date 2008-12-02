@@ -5,7 +5,7 @@
 {% block head_title %}{% trans "Slip" %}: {{ slip.id }}{% endblock %}
 
 {% block extra_head %}
-  <link type="text/css" rel="stylesheet" media="all" href="{{ MEDIA_URL }}jquery.ui/themes/default/ui.all.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}jquery.ui/themes/default/ui.all.css" />
 {% endblock %}
 
 {% block content %}
@@ -28,8 +28,9 @@
 {% endblock %}
 
 {% block closure %}
-  <script type="text/javascript" src="{{ MEDIA_URL }}jquery.ui/ui/jquery.ui.all.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.jeditable.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.ui/ui/jquery.ui.all.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.jeditable.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.countdown.js"></script>
   <script type="text/javascript">
     djime.messages['slip_delete_title'] = '{% trans "Delete this slip?" %}';
     djime.messages['slip_delete_body'] = '{% trans "If you delete this slip, you will lose all the time records associated with it. This is irrevocable." %}';

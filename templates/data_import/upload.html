@@ -1,0 +1,19 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Import data" %}{% endblock %}
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+    <fieldset>
+      <legend>{% trans "Import data" %}</legend>
+      <ol>
+        {{ form.as_ul }}
+        <li class="submit">
+          <input type="submit" name="submit" value="{% trans "Import" %}" />
+        </li>
+      </ol>
+    </fieldset>
+  </form>
+{% endblock %}
