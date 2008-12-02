@@ -89,6 +89,7 @@ INSTALLED_APPS = (
     'account',
     'project',
     'tracker',
+    'statistics',
 )
 
 # If there is one, load the local overrides file.
