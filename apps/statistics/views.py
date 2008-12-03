@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from statistics.forms import DateSelectionForm
 
 @login_required()
 def todays_week(request, user_id):
@@ -53,9 +54,44 @@ def date(request, user_id):
     if int(request.user.id) != int(user_id):
         return HttpResponseForbidden('Access denied')
 
-    return render_to_response('statistics/date.html', {'user_id': user_id},
+    form = DateSelectionForm()
+    return render_to_response('statistics/date.html', {'user_id': user_id, 'form': form},
                                       context_instance=RequestContext(request))
 
+@login_required()
+def date_selection_form(request, user_id):
+    if request.method not in ('POST', 'GET'):
+        return HttpResponseNotAllowed('POST', 'GET')
+
+    if request.method == 'GET':
+        form = DateSelectionForm()
+        return render_to_response('statistics/date_selection.html', {'user_id': user_id, 'form': form},
+                                      context_instance=RequestContext(request))
+
+    if request.method == 'POST':
+        form = DateSelectionForm(request.POST)
+        if form.is_valid():
+            start = form.cleaned_data['start']
+            end = form.cleaned_data['end']
+            return HttpResponseRedirect('/statistics/user/%s/date/%s/%s/' % (user_id, start, end))
+        else:
+                return render_to_response('statistics/date_selection.html', {'user_id': user_id, 'form': form},
+                                      context_instance=RequestContext(request))
+
+@login_required()
+def date_selection_display(request, user_id, start_date, end_date):
+    if int(request.user.id) != int(user_id):
+        return HttpResponseForbidden('Access denied')
+
+
+    s_date = start_date.split('-')
+    e_date = end_date.split('-')
+    date_diff = int(e_date[0])*365+int(e_date[1])*30+int(e_date[2])-(int(s_date[0])*365+int(s_date[1])*30+int(s_date[2]))
+    if date_diff < 60 and date_diff > 0:
+        return render_to_response('statistics/date_display.html', {'user_id': user_id, 'start_date': start_date, 'end_date': end_date},
+                                      context_instance=RequestContext(request))
+    else:
+        return HttpResponse('Invalid date, max 60 days')
 
 def get_data(request, action, data, year, user_id):
     if request.method != 'GET':
@@ -194,10 +230,12 @@ def get_data(request, action, data, year, user_id):
 
 
 def get_date_data(request, user_id, start_date, end_date):
-    # we want start and end date to be lists: [yyyy, mm, dd]:
+    # we want start and end date to have the format: u'yyyy-mm-dd'
+    s_date_list = start_date.split('-')
+    e_date_list = end_date.split('-')
 
-    s_date = datetime.date(start_date[0], start_date[1], start_date[2])
-    e_date = datetime.date(end_date[0], end_date[1], end_date[2])
+    s_date = datetime.date(int(s_date_list[0]), int(s_date_list[1]), int(s_date_list[2]))
+    e_date = datetime.date(int(e_date_list[0]), int(e_date_list[1]), int(e_date_list[2]))
     w_date = s_date
     dates = {}
     while w_date != e_date:

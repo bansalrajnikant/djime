@@ -7,7 +7,6 @@
 {% block content %}
     <div id="flash-chart">
     </div>
-
 {% endblock %}
 
 {% block closure %}
@@ -18,6 +17,7 @@
         var flashvars = {};
         var params = {};
         var attributes = {};
-        swfobject.embedSWF("{{ STATIC_URL }}swf/open-flash-chart.swf", "flash-chart", "740", "400", "9.0.0", "{{ STATIC_URL }}swf/expressInstall.swf", {"data-file":"/statistics/data/user/{{ user_id }}/month/{{ month }}/year/{{ year }}/"});
+        swfobject.embedSWF("{{ STATIC_URL }}swf/open-flash-chart.swf", "flash-chart", "740", "400", "9.0.0", "{{ STATIC_URL }}swf/expressInstall.swf",
+                           {"data-file":"/statistics/data/user/{{ user_id }}/month/{{ month }}/year/{{ year }}/"});
     </script>
 {% endblock %}

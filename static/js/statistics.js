@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  $('#from-to-date').datepicker({
+  $('#id_date').datepicker({
     dateFormat: 'yy-mm-dd',
     rangeSelect: true,
     firstDay: 1,
