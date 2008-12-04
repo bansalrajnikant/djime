@@ -2,12 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 import datetime
 from math import floor
+from project.models import Project
 
 
 class Slip(models.Model):
     name = models.CharField(max_length=128)
     user = models.ForeignKey(User, related_name="slips", blank=True, null=True)
-    #project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project)
     #client = models.ForeignKey(Client)
     #type = models.CharField(max_length=32)
     due = models.DateField(null=True, blank=True)
