@@ -100,7 +100,7 @@ def get_data(request, action, data, year, user_id):
     if action == 'week':
         week = int(data)
         year = int(year)
-        slice_set = TimeSlice.objects.filter(week_number=week, year = year, user = user_id)
+        slice_set = TimeSlice.objects.filter(week_number=week, create_date__year= year, user = user_id)
         start_date = datetime.date(year, 1, 1) + datetime.timedelta(days = (week-2)*7)
         while start_date.isocalendar()[1] != week:
             start_date += datetime.timedelta(days=1)
@@ -155,7 +155,7 @@ def get_data(request, action, data, year, user_id):
             label += '"' + labl.strftime('%A') +'",'
 
         return HttpResponse('{ "elements": [ { "type": "bar_stack",'
-                            '"colours": [ "#F00000", "#FF0000", "#FFF000", "#FFFF00", "#FFFFF0", "#FFFFFF" ],'
+                            '"colours": [ "#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF" ],'
                             '"values": ['+ val_all[:-1] +'],'
                             '"tip": "#y_label# X label [#x_label#], Value [#val#] Total [#total#]" } ],'
                             '"title": { "text": "Week ' + str(week) + '" , "style": "{font-size: 20px; color: #F24062; text-align: center;}" },'
@@ -178,7 +178,7 @@ def get_data(request, action, data, year, user_id):
             w_date += datetime.timedelta(days=1)
         dates[end_date] = []
 
-        slice_set = TimeSlice.objects.filter(user = user_id, create_date__gte=start_date, create_date__lte=end_date)
+        slice_set = TimeSlice.objects.filter(user = user_id, create_date__range=(start_date, end_date))
         for slice in slice_set:
             if slice.slip not in dates[slice.create_date]:
                 dates[slice.create_date].append(slice.slip)
@@ -221,7 +221,7 @@ def get_data(request, action, data, year, user_id):
             label += '"' + str(labl.day) +'",'
 
         return HttpResponse('{ "elements": [ { "type": "bar_stack",'
-                                '"colours": [ "#F00000", "#FF0000", "#FFF000", "#FFFF00", "#FFFFF0", "#FFFFFF" ],'
+                                '"colours": [ "#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF" ],'
                                 '"values": ['+ val_all[:-1] +'],'
                                 '"tip": "#y_label# X label [#x_label#], Value [#val#] Total [#total#]" } ],'
                                 '"title": { "text": "' + start_date.strftime('%B') + '" , "style": "{font-size: 20px; color: #F24062; text-align: center;}" },'
@@ -243,7 +243,7 @@ def get_date_data(request, user_id, start_date, end_date):
         w_date += datetime.timedelta(days=1)
     dates[e_date] = []
 
-    slice_set = TimeSlice.objects.filter(user = user_id, create_date__gte=s_date, create_date__lte=e_date)
+    slice_set = TimeSlice.objects.filter(user = user_id, create_date__range=(s_date, e_date))
     for slice in slice_set:
         if slice.slip not in dates[slice.create_date]:
             dates[slice.create_date].append(slice.slip)
@@ -287,7 +287,7 @@ def get_date_data(request, user_id, start_date, end_date):
         label += '"' + str(labl.day) +'",'
 
     return HttpResponse('{ "elements": [ { "type": "bar_stack",'
-                            '"colours": [ "#F00000", "#FF0000", "#FFF000", "#FFFF00", "#FFFFF0", "#FFFFFF" ],'
+                            '"colours": [ "#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF" ],'
                             '"values": ['+ val_all[:-1] +'],'
                             '"tip": "#y_label# X label [#x_label#], Value [#val#] Total [#total#]" } ],'
                             '"title": { "text": "From ' + str(start_date)+ ' to ' + str(end_date) + '" , "style": "{font-size: 20px; color: #F24062; text-align: center;}" },'

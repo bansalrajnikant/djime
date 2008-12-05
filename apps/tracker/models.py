@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, IntegrityError
 from django.contrib.auth.models import User
 import datetime
 from math import floor
@@ -8,7 +8,7 @@ from project.models import Project
 class Slip(models.Model):
     name = models.CharField(max_length=128)
     user = models.ForeignKey(User, related_name="slips", blank=True, null=True)
-    project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project, blank = True, null=True)
     #client = models.ForeignKey(Client)
     #type = models.CharField(max_length=32)
     due = models.DateField(null=True, blank=True)
@@ -66,10 +66,7 @@ class TimeSlice(models.Model):
     slip = models.ForeignKey(Slip)
     user = models.ForeignKey(User, related_name="timeslices", blank=True, null=True)
     duration = models.PositiveIntegerField(editable=False, default=0)
-    day_number =  models.PositiveIntegerField(default=datetime.datetime.now().day)
     week_number = models.PositiveIntegerField(default=datetime.datetime.now().isocalendar()[1])
-    month_number = models.PositiveIntegerField(default=datetime.datetime.now().month)
-    year = models.PositiveIntegerField(default=datetime.datetime.now().year)
     create_date = models.DateField(default=datetime.datetime.now().date())
 
     def __unicode__(self):
@@ -94,13 +91,8 @@ class TimeSlice(models.Model):
             self.save()
 
     def update_date(self):
-        self.day_number = self.begin.day
-        self.week_number = self.begin.isocalendar()[1]
-        self.month_number = self.begin.month
-        self.year = self.begin.year
         self.save()
-
-    def update_create_date(self):
+        self.week_number = self.begin.isocalendar()[1]
         self.create_date = self.begin.date()
         self.save()
 
