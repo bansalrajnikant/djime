@@ -13,13 +13,6 @@ def handle_uploaded_file(file, user_id):
     for line in csv_reader:
         line_data.append(line)
 
-    reference = line_data[0]
-    data_preview = 'Reference (Not to be included):'
-    i = 0
-    while i < 12:
-        data_preview += 'Date: ' + str(value_list[i]['date']) + ', Start: ' + str(value_list[i]['start']) + ', End: ' + str(value_list[i]['end']) + ', Duration: ' + str(value_list[i]['duration']) + ', Project: ' + str(value_list[i]['project']) + ', Slip: ' + str(value_list[i]['slip']) + '<br>'
-        i += 1
-
     total_time = 0
     val = {}
     pickles = {'projects': [], 'slips': [], 'slices': []}
@@ -97,9 +90,7 @@ def handle_uploaded_file(file, user_id):
         else:
             slice_set = TimeSlice.objects.filter(begin = begin, end = end, duration = int(dicts['duration']), slip = slip, user = user_object)
             if slice_set:
-                if len(slice_set) >1:
-                    #send email to admin about double slices error.
-                    # send_mail('Double timeslices', 'User %s has two timeslices in slip id %s', % (user_id, slip.id) 'admin@hosted.com', ['admin@hosted.com'], fail_silently=False)
+                if len(slice_set) > 1:
                     pass
                 slice = slice_set[0]
                 slice_created_bool = False
@@ -116,10 +107,9 @@ def handle_uploaded_file(file, user_id):
 
     total_time = str(int(total_time/3600.0))+'h'
 
-    data_preview += 'Total Time: %s <br>Number of projects: %s <br>Number of Slips: %s <br>Number of TimeSlices: %s <br>' % (total_time, len(val.keys()), len(pickles['slips']),len(pickles['slices']))
     import_data = Import()
     import_data.complete_data = pickle.dumps(pickles)
-    import_data.partial_data = pickle.dumps({'import_data': line_data[1:11], 'preview': data_preview})
+    import_data.partial_data = pickle.dumps({'import_data': line_data[1:11]})
     import_data.user = user_object
     import_data.save()
 
