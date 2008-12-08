@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from data_import.forms import DataImportForm
 from data_import.models import Import
-from data_import.importer import handle_uploaded_file, depickle_preview, depickle_import, delete_pickles
+from data_import.importer import handle_uploaded_file, importer_preview, importer_save, importer_delete
 
 
 @login_required
@@ -27,35 +27,23 @@ def confirm(request, import_id, action):
 
     if request.method == 'GET':
         if action == 'confirm':
-            data = depickle_preview(import_id)
+            data = importer_preview(import_id)
             return render_to_response('data_import/confirm.html', {'import_data': data['import_data'], 'import_id': import_id},
-                                            context_instance=RequestContext(request))
+                                      context_instance=RequestContext(request))
 
     if request.method == 'POST':
         if action == 'save':
-            result = depickle_import(import_id, request.user.id)
-            action = 'save'
-
+            result = importer_save(import_id, request.user.id)
+            message = 'Your data have not been saved'
         elif action == 'cancel':
-            result = delete_pickles(import_id, request.user.id)
-            action = 'cancel'
-
+            result = importer_delete(import_id, request.user.id)
+            message = 'Your data have not been saved'
         else:
-            return HttpResponse('Invalid post action')
+            return HttpResponseForbidden('Invalid post action')
 
         if result == 'succes':
-            return HttpResponseRedirect(reverse('data_import_results', args=(import_id, action)))
+            return render_to_response('data_import/results.html',
+                                      {'result': message},
+                                      context_instance=RequestContext(request))
         else:
             return HttpResponse(result)
-
-
-    else:
-        return HttpResponse('Access Denied.')
-
-def results(request, import_id, action):
-    if action == 'save':
-        result = 'Your data have been saved'
-    elif action == 'cancel':
-        result = 'Your data have not been saved'
-    return render_to_response('data_import/results.html', {'result': result},
-                              context_instance=RequestContext(request))
