@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime
 from project.models import Project
 from tracker.models import Slip, TimeSlice
 from django.contrib.auth.models import User
@@ -24,13 +25,18 @@ def handle_uploaded_file(file, user_id):
     val = {}
     pickles = {'projects': [], 'slips': [], 'slices': []}
     for dicts in value_list[1:]:
+        date_list = dicts['date'].split('-')
+        begin_list = dicts['start'].split(':')
+        end_list = dicts['end'].split(':')
+        begin = datetime(int(date_list[0]), int(date_list[1]), int(date_list[2]), int(begin_list[0]), int(begin_list[1]))
+        end = datetime(int(date_list[0]), int(date_list[1]), int(date_list[2]), int(end_list[0]), int(end_list[1]))
         total_time += int(dicts['duration'])
         if not val.has_key(dicts['project']):
             project_set = Project.objects.filter(name=dicts['project'], members = user_id)
             if  project_set:
                 if len(project_set) >1:
                     project = Project()
-                    project.name = dict['project']
+                    project.name = dicts['project']
                     project_created_msg = 'Found more than one project, you are on, with same name. New project will be created.'
                     project_created_bool = True
                 else:
@@ -38,11 +44,11 @@ def handle_uploaded_file(file, user_id):
                     project_created_msg = "Found project, and will add slips and timeslices to the existing project."
                     project_created_bool = False
             else:
-                project_set = Project.filter(name=dicts['project'])
+                project_set = Project.objects.filter(name=dicts['project'])
                 if project_set:
                     if len(project_set) >1:
                         project = Project()
-                        project.name = dict['project']
+                        project.name = dicts['project']
                         project_created_msg = 'Found more than one project, with same name. New project will be created.'
                         project_created_bool = True
                     else:
@@ -51,7 +57,7 @@ def handle_uploaded_file(file, user_id):
                         project_created_bool = False
                 else:
                     project = Project()
-                    project.name = dict['project']
+                    project.name = dicts['project']
                     project_created_msg = 'No project of that name. New project will be created'
                     project_created_bool = True
             val[dicts['project']] = {'created': project_created_bool, 'message': project_created_msg, 'project_object': project, 'slips': {}}
@@ -83,14 +89,14 @@ def handle_uploaded_file(file, user_id):
 
         if val[dicts['project']]['slips'][dicts['slip']]['created']:
             slice = TimeSlice()
-            begin = dicts['date'] +' '+ (dicts['start'])
-            end = dicts['date'] +' '+ (dicts['end'])
-            (dicts['end']), duration = int(dicts['duration'])
-            slip = val[dicts['project']]['slips'][dicts['slip']]['slip_object']
-            user = user_object
+            slice.begin = begin
+            slice.end = end
+            slice.duration = int(dicts['duration'])
+            slice.slip = val[dicts['project']]['slips'][dicts['slip']]['slip_object']
+            slice.user = user_object
             slice_created_bool = True
         else:
-            slice_set = TimeSlice.objects.filter(begin = dicts['date'] +' '+ (dicts['start']), end = dicts['date'] +' '+ (dicts['end']), duration = int(dicts['duration']), slip = slip, user = user_object)
+            slice_set = TimeSlice.objects.filter(begin = begin, end = end, duration = int(dicts['duration']), slip = slip, user = user_object)
             if slice_set:
                 if len(slice_set) >1:
                     #send email to admin about double slices error.
@@ -100,8 +106,8 @@ def handle_uploaded_file(file, user_id):
                 slice_created_bool = False
             else:
                 slice = TimeSlice()
-                slice.begin = dicts['date'] +' '+ (dicts['start'])
-                slice.end = dicts['date'] +' '+ (dicts['end'])
+                slice.begin = begin
+                slice.end = end
                 slice.duration = int(dicts['duration'])
                 slice.slip = val[dicts['project']]['slips'][dicts['slip']]['slip_object']
                 slice.user = user_object
@@ -110,8 +116,8 @@ def handle_uploaded_file(file, user_id):
         pickles['slices'].append(slice)
 
     total_time = str(int(total_time/3600.0))+'h'
-    data_preview += 'Total Time: %s <br>Number of projects: %s <br>Number of Slips: %s <br>Number of TimeSlices: %s <br>' % (total_time, len(val.keys()), len(pickles['slips']),len(pickles['slices']))
 
+    data_preview += 'Total Time: %s <br>Number of projects: %s <br>Number of Slips: %s <br>Number of TimeSlices: %s <br>' % (total_time, len(val.keys()), len(pickles['slips']),len(pickles['slices']))
     pickling = Import()
     pickling.complete_data = cPickle.dumps(pickles)
     pickling.partial_data = cPickle.dumps({'import_data': value_list[1:11], 'preview': data_preview})
@@ -125,17 +131,25 @@ def depickle_preview(import_id):
     dict = cPickle.loads(str(pickle.partial_data))
     return dict
 
-def depickle_import(import_id):
+def depickle_import(import_id, user_id):
+    if user_id != Import.objects.get(pk=import_id).user_id:
+        return 'Invalid user'
     pickle = Import.objects.get(pk=import_id)
     dict = cPickle.loads(str(pickle.complete_data))
     for project in dict['projects']:
         project.save()
     for slip in dict['slips']:
+        slip.project = slip.project
         slip.save()
     for slice in dict['slices']:
-        slice.save()
+        slice.slip = slice.slip
+        slice.update_date()
     pickle.delete()
+    return 'succes'
 
-def delete_pickeles(import_id):
-     pickle = Import.objects.get(pk=import_id)
-     pickle.delete()
+def delete_pickles(import_id, user_id):
+    if user_id != Import.objects.get(pk=import_id).user_id:
+        return 'Invalid user'
+    pickle = Import.objects.get(pk=import_id)
+    pickle.delete()
+    return 'succes'
