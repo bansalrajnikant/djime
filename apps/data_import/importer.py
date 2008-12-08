@@ -5,7 +5,6 @@ from tracker.models import Slip, TimeSlice
 from django.contrib.auth.models import User
 from data_import.models import Import
 import cPickle as pickle
-# from django.core.mail import send_mail
 
 def handle_uploaded_file(file, user_id):
     user_object = User.objects.get(pk = user_id)
@@ -118,11 +117,11 @@ def handle_uploaded_file(file, user_id):
     total_time = str(int(total_time/3600.0))+'h'
 
     data_preview += 'Total Time: %s <br>Number of projects: %s <br>Number of Slips: %s <br>Number of TimeSlices: %s <br>' % (total_time, len(val.keys()), len(pickles['slips']),len(pickles['slices']))
-    pickling = Import()
-    pickling.complete_data = pickle.dumps(pickles)
-    pickling.partial_data = pickle.dumps({'import_data': value_list[1:11], 'preview': data_preview})
-    pickling.user = user_object
-    pickling.save()
+    import_data = Import()
+    import_data.complete_data = pickle.dumps(pickles)
+    import_data.partial_data = pickle.dumps({'import_data': value_list[1:11], 'preview': data_preview})
+    import_data.user = user_object
+    import_data.save()
 
     return pickling.id
 
@@ -134,7 +133,7 @@ def depickle_preview(import_id):
 def depickle_import(import_id, user_id):
     if user_id != Import.objects.get(pk=import_id).user_id:
         return 'Invalid user'
-    pickle = Import.objects.get(pk=import_id)
+    import_data = Import.objects.get(pk=import_id)
     dict = pickle.loads(str(pickle.complete_data))
     for project in dict['projects']:
         project.save()
@@ -144,12 +143,11 @@ def depickle_import(import_id, user_id):
     for slice in dict['slices']:
         slice.slip = slice.slip
         slice.update_date()
-    pickle.delete()
+    import_data.delete()
     return 'succes'
 
 def delete_pickles(import_id, user_id):
     if user_id != Import.objects.get(pk=import_id).user_id:
         return 'Invalid user'
-    pickle = Import.objects.get(pk=import_id)
-    pickle.delete()
+    Import.objects.get(pk=import_id).delete()
     return 'succes'
