@@ -1,0 +1,34 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Import data" %}{% endblock %}
+
+{% block content %}
+<table>
+  <thead>
+    <tr>
+      <th>Start</th>
+      <th>Stop</th>
+      <th>Date</th>
+      <th>Duration</th>
+      <th>Project</th>
+      <th>Slip</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in import_data %}
+    <tr>
+      <td>{{ item.start }}</td>
+      <td>{{ item.end }}</td>
+      <td>{{ item.date }}</td>
+      <td>{{ item.duration }}</td>
+      <td>{{ item.project }}</td>
+      <td>{{ item.slip }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+{% endblock %}

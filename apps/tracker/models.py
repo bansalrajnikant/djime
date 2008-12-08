@@ -92,6 +92,8 @@ class TimeSlice(models.Model):
 
     def update_date(self):
         self.save()
+        pk = self.pk
+        self = TimeSlice.objects.get(pk=pk)
         self.week_number = self.begin.isocalendar()[1]
         self.create_date = self.begin.date()
         self.save()

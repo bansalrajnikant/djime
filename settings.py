@@ -90,6 +90,8 @@ INSTALLED_APPS = (
     'project',
     'tracker',
     'statistics',
+    'django_evolution',
+    'data_import',
 )
 
 # If there is one, load the local overrides file.
