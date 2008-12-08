@@ -7,13 +7,13 @@ from data_import.models import Import
 import cPickle as pickle
 
 def handle_uploaded_file(file, user_id):
-    user_object = User.objects.get(pk = user_id)
-    dict = csv.DictReader(file, fieldnames=['date','start','end','duration','project','slip'])
-    value_list = []
-    for value in dict:
-        value_list.append(value)
+    user_object = User.objects.get(pk=user_id)
+    csv_reader = csv.DictReader(file, fieldnames=['date','start','end','duration','project','slip'])
+    line_data = []
+    for line in csv_reader:
+        line_data.append(line)
 
-    reference = value_list[0]
+    reference = line_data[0]
     data_preview = 'Reference (Not to be included):'
     i = 0
     while i < 12:
@@ -23,7 +23,7 @@ def handle_uploaded_file(file, user_id):
     total_time = 0
     val = {}
     pickles = {'projects': [], 'slips': [], 'slices': []}
-    for dicts in value_list[1:]:
+    for dicts in line_data[1:]:
         date_list = dicts['date'].split('-')
         begin_list = dicts['start'].split(':')
         end_list = dicts['end'].split(':')
@@ -119,7 +119,7 @@ def handle_uploaded_file(file, user_id):
     data_preview += 'Total Time: %s <br>Number of projects: %s <br>Number of Slips: %s <br>Number of TimeSlices: %s <br>' % (total_time, len(val.keys()), len(pickles['slips']),len(pickles['slices']))
     import_data = Import()
     import_data.complete_data = pickle.dumps(pickles)
-    import_data.partial_data = pickle.dumps({'import_data': value_list[1:11], 'preview': data_preview})
+    import_data.partial_data = pickle.dumps({'import_data': line_data[1:11], 'preview': data_preview})
     import_data.user = user_object
     import_data.save()
 
