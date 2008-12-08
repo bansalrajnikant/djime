@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     (r'^accounts/', include('account.urls')),
     (r'^import/', include('data_import.urls')),
     (r'^tracker/', include('tracker.urls')),
+    (r'^statistics/', include('statistics.urls')),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
 )

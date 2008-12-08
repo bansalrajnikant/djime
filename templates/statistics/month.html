@@ -1,0 +1,23 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "hest" %}{% endblock %}
+
+{% block content %}
+    <div id="flash-chart">
+    </div>
+{% endblock %}
+
+{% block closure %}
+    <script type="text/javascript" src="{{ STATIC_URL }}jquery.ui/ui/jquery.ui.all.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/statistics.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.jeditable.js"></script>
+    <script type="text/javascript">
+        var flashvars = {};
+        var params = {};
+        var attributes = {};
+        swfobject.embedSWF("{{ STATIC_URL }}swf/open-flash-chart.swf", "flash-chart", "740", "400", "9.0.0", "{{ STATIC_URL }}swf/expressInstall.swf",
+                           {"data-file":"/statistics/data/user/{{ user_id }}/month/{{ month }}/year/{{ year }}/"});
+    </script>
+{% endblock %}
