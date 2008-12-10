@@ -499,3 +499,242 @@ def get_date_data(request, search, search_id, start_date, end_date):
                             '"x_axis": { "labels": { "labels": [ ' + label[:-1] + '] } },'
                             '"y_axis": {  "min": 0, "max": '+str(max_val)+', "steps": '+str(step)+' }, "tooltip": { "mouse": 2 } }'
                         )
+def get_team_week_data(request, team_id, week, year):
+    # the method for getting team specific data is gennerally the same as with team/user data.
+    # However as the charta work a bit different using bar and scatter_line, the actual data needed to be generated and the setup is a bit different
+    team_id = int(team_id)
+    week = int(week)
+    year = int(year)
+    team = get_object_or_404(Team, pk=team_id)
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+    slice_set = TimeSlice.objects.filter(week_number=week, create_date__year= year, user__in = members_id)
+
+    start_date = datetime.date(year, 1, 1) + datetime.timedelta(days = (week-2)*7)
+
+    while start_date.isocalendar()[1] != week:
+        start_date += datetime.timedelta(days=1)
+    end_date = start_date + datetime.timedelta(days=6)
+
+    team_list = {}
+    for id in members_id:
+        team_list[id]={}
+
+    date_list = []
+    w_date = start_date
+    while w_date != end_date+datetime.timedelta(days=1):
+        date_list.append(w_date)
+        for id in members_id:
+          team_list[id][w_date]=[]
+        w_date += datetime.timedelta(days=1)
+
+    for slice in slice_set:
+        if slice.slip not in team_list[slice.user_id][slice.create_date]:
+            team_list[slice.user_id][slice.create_date].append(slice.slip)
+
+    max_list = [0.01]
+    return_list = []
+    team_member_count = 1
+    # the idea behind this loop is to get a string for each team member. Each string will hold the needed data for:
+    # Values for the bars "values", team member name for tooltip, and a colour generated from the Colour function.
+    # the loop first loops every member and then sub-loop every date for the time period.
+    for team_member in team_list.keys():
+        values = []
+        member_name = User.objects.get(pk=team_member).username
+        for date in date_list:
+            temp_value = 0.0 # will in the end hold the total time spent on the slips for that day.
+            i=0
+            while i < len(team_list[team_member][date]): # loops every slip for the day: 'date'
+                temp_value += float(team_list[team_member][date][i].display_days_time(date)) # gets the duration of the slip of the date of the user.
+                i += 1
+            max_list.append(temp_value)
+            values.append(temp_value)
+        return_list.append('{"type": "bar", "values": '+str(values)+', "tip": "'+member_name+ '<br>value: #val#", "colour": ' + Colour(team_member_count) + '}')
+        team_member_count += 1
+
+    j=0
+    return_value = ''
+    # this loop sums all of the strings holding the graph data for the team members to a single string with CS (comma seperation)
+    while j < len(return_list):
+        return_value += return_list[j]
+        if j < len(return_list)-1:
+            return_value += ','
+        j += 1
+
+
+    max_val = max(max_list)
+    step = max_val*0.1
+
+    label_list = []
+    # team_member = the id of the last team_member that has been looped over in the above loop.
+    # All that's needed is the dates, which is the same for all team members.
+    for dates in team_list[team_member].keys():
+        label_list.append(dates)
+    label_list.sort()
+    label = ''
+    for labl in label_list:
+        label += '"' + labl.strftime('%A') +'",'
+
+
+
+    return HttpResponse(    '{ "elements": [' + return_value + '],'
+                            '"title": { "text": "' + team.name + ' Week: ' + str(week) + ' Year: ' + str(year) + '" , "style": "{font-size: 20px; color: #F24062; text-align: center;}" },'
+                            '"x_axis": { "labels": { "labels": [' + label[:-1] + '] } },'
+                            '"y_axis": {  "min": 0, "max": '+str(max_val)+', "steps": '+str(step)+' }, "tooltip": { "mouse": 2 } }'
+                        )
+
+
+def get_team_month_data(request, team_id, month, year):
+    # uses same method as above.
+
+    team_id = int(team_id)
+    team = get_object_or_404(Team, pk=team_id)
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+
+    month = int(month)
+    year = int(year)
+    start_date = datetime.date(year, month, 1)
+    end_date = start_date + datetime.timedelta(days=30)
+    while end_date.month != start_date.month:
+        end_date -= datetime.timedelta(days=1)
+
+    slice_set = TimeSlice.objects.filter(create_date__range=(start_date, end_date), user__in=members_id)
+
+    team_list = {}
+    for id in members_id:
+        team_list[id]={}
+
+    date_list = []
+    w_date = start_date
+    while w_date != end_date+datetime.timedelta(days=1):
+        date_list.append(w_date)
+        for id in members_id:
+          team_list[id][w_date]=[]
+        w_date += datetime.timedelta(days=1)
+
+    for slice in slice_set:
+        if slice.slip not in team_list[slice.user_id][slice.create_date]:
+            team_list[slice.user_id][slice.create_date].append(slice.slip)
+
+    max_list = [0.01]
+    return_list = []
+    team_member_count = 1
+    for team_member in team_list.keys():
+        values = ''
+        member_name = User.objects.get(pk=team_member).username
+        for date in date_list:
+            temp_value = 0.0
+            i=0
+            while i < len(team_list[team_member][date]):
+                temp_value += float(team_list[team_member][date][i].display_days_time(date))
+                i += 1
+            max_list.append(temp_value)
+            values += '{"x": %s, "y": %s},' % (date.day, temp_value)
+        return_list.append('{"type": "scatter_line", "colour": ' + Colour(team_member_count) + ',"values": ['+values[:-1]+'], "tip": "'+member_name+ '<br>value: #val#" }')
+        team_member_count += 1
+
+    j=0
+    return_value = ''
+    while j < len(return_list):
+        return_value += return_list[j]
+        if j < len(return_list)-1:
+            return_value += ','
+        j += 1
+
+    max_val = max(max_list)+0.5
+    step = max_val*0.1
+    label_list = []
+    for dates in team_list[team_member].keys():
+        label_list.append(dates)
+    label_list.sort()
+    x_min = start_date.day
+    x_max = end_date.day+1
+
+
+
+    return HttpResponse(    '{ "elements": [' + return_value + '],'
+                            '"title": { "text": "' + team.name + ' ' + start_date.strftime('%B') + ' ' + str(year) + '" },'
+                            '"x_axis": { "min": '+str(x_min)+', "max": '+str(x_max)+' },'
+                            '"y_axis": {  "min": 0, "max": '+str(max_val)+', "steps": '+str(step)+' }, "tooltip": { "mouse": 2 } }'
+                        )
+
+
+
+def get_team_date_data(request, team_id, start_date, end_date):
+    s_date_list = start_date.split('-')
+    e_date_list = end_date.split('-')
+
+    s_date = datetime.date(int(s_date_list[0]), int(s_date_list[1]), int(s_date_list[2]))
+    e_date = datetime.date(int(e_date_list[0]), int(e_date_list[1]), int(e_date_list[2]))
+
+    team_id = int(team_id)
+    team = get_object_or_404(Team, pk=team_id)
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+
+    slice_set = TimeSlice.objects.filter(create_date__range=(s_date, e_date), user__in=members_id)
+
+    team_list = {}
+    for id in members_id:
+        team_list[id]={}
+
+    date_list = []
+    w_date = s_date
+    while w_date != e_date+datetime.timedelta(days=1):
+        date_list.append(w_date)
+        for id in members_id:
+          team_list[id][w_date]=[]
+        w_date += datetime.timedelta(days=1)
+
+    for slice in slice_set:
+        if slice.slip not in team_list[slice.user_id][slice.create_date]:
+            team_list[slice.user_id][slice.create_date].append(slice.slip)
+
+    max_list = [0.01]
+    return_list = []
+    team_member_count = 1
+    for team_member in team_list.keys():
+        values = ''
+        member_name = User.objects.get(pk=team_member).username
+        for date in date_list:
+            temp_value = 0.0
+            i=0
+            while i < len(team_list[team_member][date]):
+                temp_value += float(team_list[team_member][date][i].display_days_time(date))
+                i += 1
+            max_list.append(temp_value)
+            values += '{"x": %s, "y": %s},' % (date.day, temp_value)
+        return_list.append('{"type": "scatter_line", "colour": ' + Colour(team_member_count) + ',"values": ['+values[:-1]+'], "tip": "'+member_name+ '<br>value: #val#" }')
+        team_member_count += 1
+
+    j=0
+    return_value = ''
+    while j < len(return_list):
+        return_value += return_list[j]
+        if j < len(return_list)-1:
+            return_value += ','
+        j += 1
+
+    max_val = max(max_list)+0.5
+    step = max_val*0.1
+    label_list = []
+    for dates in team_list[team_member].keys():
+        label_list.append(dates)
+    label_list.sort()
+    x_min = s_date.day
+    x_max = e_date.day+1
+
+
+
+    return HttpResponse(    '{ "elements": [' + return_value + '],'
+                            '"title": { "text": "' + team.name + s_date.strftime('%B') + ' ' + str(s_date.year) + '" },'
+                            '"x_axis": { "min": '+str(x_min)+', "max": '+str(x_max)+' },'
+                            '"y_axis": {  "min": 0, "max": '+str(max_val)+', "steps": '+str(step)+' }, "tooltip": { "mouse": 2 } }'
+                        )
