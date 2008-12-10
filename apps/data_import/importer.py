@@ -16,19 +16,16 @@ def handle_uploaded_file(file, user_id):
     total_time = 0
     val = {}
     pickles = {'projects': [], 'slips': [], 'slices': []}
-    for dicts in line_data[1:]:
-        date_list = dicts['date'].split('-')
-        begin_list = dicts['start'].split(':')
-        end_list = dicts['end'].split(':')
-        begin = datetime(int(date_list[0]), int(date_list[1]), int(date_list[2]), int(begin_list[0]), int(begin_list[1]))
-        end = datetime(int(date_list[0]), int(date_list[1]), int(date_list[2]), int(end_list[0]), int(end_list[1]))
-        total_time += int(dicts['duration'])
-        if not val.has_key(dicts['project']):
-            project_set = Project.objects.filter(name=dicts['project'], members = user_id)
+    for line in line_data[1:]:
+        begin = datetime.strptime('T'.join(line['date'], line['start']), '%Y-%m-%dT%H:%M')
+        end = datetime.strptime('T'.join(line['date'], line['end']), '%Y-%m-%dT%H:%M')
+        total_time += int(line['duration'])
+        if not val.has_key(line['project']):
+            project_set = Project.objects.filter(name=line['project'], members = user_id)
             if  project_set:
                 if len(project_set) >1:
                     project = Project()
-                    project.name = dicts['project']
+                    project.name = line['project']
                     project_created_msg = 'Found more than one project, you are on, with same name. New project will be created.'
                     project_created_bool = True
                 else:
@@ -36,11 +33,11 @@ def handle_uploaded_file(file, user_id):
                     project_created_msg = "Found project, and will add slips and timeslices to the existing project."
                     project_created_bool = False
             else:
-                project_set = Project.objects.filter(name=dicts['project'])
+                project_set = Project.objects.filter(name=line['project'])
                 if project_set:
                     if len(project_set) >1:
                         project = Project()
-                        project.name = dicts['project']
+                        project.name = line['project']
                         project_created_msg = 'Found more than one project, with same name. New project will be created.'
                         project_created_bool = True
                     else:
@@ -49,46 +46,46 @@ def handle_uploaded_file(file, user_id):
                         project_created_bool = False
                 else:
                     project = Project()
-                    project.name = dicts['project']
+                    project.name = line['project']
                     project_created_msg = 'No project of that name. New project will be created'
                     project_created_bool = True
-            val[dicts['project']] = {'created': project_created_bool, 'message': project_created_msg, 'project_object': project, 'slips': {}}
+            val[line['project']] = {'created': project_created_bool, 'message': project_created_msg, 'project_object': project, 'slips': {}}
             pickles['projects'].append(project)
 
-        if not val[dicts['project']]['slips'].has_key(dicts['slip']):
-            if val[dicts['project']]['created']:
+        if not val[line['project']]['slips'].has_key(line['slip']):
+            if val[line['project']]['created']:
                 slip = Slip()
-                slip.name = dicts['slip']
+                slip.name = line['slip']
                 slip.user = user_object
-                slip.project = val[dicts['project']]['project_object']
-                slip.created = dicts['date']
+                slip.project = val[line['project']]['project_object']
+                slip.created = line['date']
                 slip_created_bool = True
 
             else:
-                slip_set = Slip.objects.filter(name = dicts['slip'], user = user_object , project = project)
+                slip_set = Slip.objects.filter(name = line['slip'], user = user_object , project = project)
                 if not slip_set or len(slip_set) > 1:
                     slip = Slip()
-                    slip.name = dicts['slip']
+                    slip.name = line['slip']
                     slip.user = user_object
-                    slip.project = val[dicts['project']]['project_object']
-                    slip.created = dicts['date']
+                    slip.project = val[line['project']]['project_object']
+                    slip.created = line['date']
                     slip_created_bool = True
                 else:
                     slip = slip_set[0]
                     slip_created_bool = False
-            val[dicts['project']]['slips'][dicts['slip']]={'created': slip_created_bool, 'slip_object': slip, 'slices': []}
+            val[line['project']]['slips'][line['slip']]={'created': slip_created_bool, 'slip_object': slip, 'slices': []}
             pickles['slips'].append(slip)
 
-        if val[dicts['project']]['slips'][dicts['slip']]['created']:
+        if val[line['project']]['slips'][line['slip']]['created']:
             slice = TimeSlice()
             slice.begin = begin
             slice.end = end
-            slice.duration = int(dicts['duration'])
-            slice.slip = val[dicts['project']]['slips'][dicts['slip']]['slip_object']
+            slice.duration = int(line['duration'])
+            slice.slip = val[line['project']]['slips'][line['slip']]['slip_object']
             slice.user = user_object
             slice_created_bool = True
         else:
-            slice_set = TimeSlice.objects.filter(begin = begin, end = end, duration = int(dicts['duration']), slip = slip, user = user_object)
+            slice_set = TimeSlice.objects.filter(begin = begin, end = end, duration = int(line['duration']), slip = slip, user = user_object)
             if slice_set:
                 if len(slice_set) > 1:
                     pass
@@ -98,11 +95,11 @@ def handle_uploaded_file(file, user_id):
                 slice = TimeSlice()
                 slice.begin = begin
                 slice.end = end
-                slice.duration = int(dicts['duration'])
-                slice.slip = val[dicts['project']]['slips'][dicts['slip']]['slip_object']
+                slice.duration = int(line['duration'])
+                slice.slip = val[line['project']]['slips'][line['slip']]['slip_object']
                 slice.user = user_object
                 slice_created_bool = True
-        val[dicts['project']]['slips'][dicts['slip']]['slices'].append(slice)
+        val[line['project']]['slips'][line['slip']]['slices'].append(slice)
         pickles['slices'].append(slice)
 
     total_time = str(int(total_time/3600.0))+'h'
