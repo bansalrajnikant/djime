@@ -17,8 +17,8 @@ def handle_uploaded_file(file, user_id):
     val = {}
     pickles = {'projects': [], 'slips': [], 'slices': []}
     for line in line_data[1:]:
-        begin = datetime.strptime('T'.join(line['date'], line['start']), '%Y-%m-%dT%H:%M')
-        end = datetime.strptime('T'.join(line['date'], line['end']), '%Y-%m-%dT%H:%M')
+        begin = datetime.strptime('T'.join((line['date'], line['start'])), '%Y-%m-%dT%H:%M')
+        end = datetime.strptime('T'.join((line['date'], line['end'])), '%Y-%m-%dT%H:%M')
         total_time += int(line['duration'])
         if not val.has_key(line['project']):
             project_set = Project.objects.filter(name=line['project'], members = user_id)
