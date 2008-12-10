@@ -1,10 +1,14 @@
 import csv
+import hashlib
+import cPickle as pickle
+import time
 from datetime import datetime
 from project.models import Project
 from tracker.models import Slip, TimeSlice
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
 from data_import.models import Import
-import cPickle as pickle
+
 
 def handle_uploaded_file(file, user_id):
     user_object = User.objects.get(pk=user_id)
@@ -104,13 +108,14 @@ def handle_uploaded_file(file, user_id):
 
     total_time = str(int(total_time/3600.0))+'h'
 
-    import_data = Import()
-    import_data.complete_data = pickle.dumps(pickles)
-    import_data.partial_data = pickle.dumps({'import_data': line_data[1:11]})
-    import_data.user = user_object
+    # Okay, now we have processed the data, lets write it to a couple of files.
+    import_data = Import.objects.create(user=user_object)
+    file_name = hashlib.sha1(user_object.username + str(time.time())).hexdigest()
+    import_data.complete_data.save(file_name, ContentFile(pickle.dumps(pickles)))
+    import_data.partial_data.save(file_name, ContentFile(pickle.dumps({'import_data': line_data[1:11]})))
     import_data.save()
 
-    return pickling.id
+    return import_data.id
 
 def importer_preview(import_id):
     pickle = Import.objects.get(pk=import_id)
