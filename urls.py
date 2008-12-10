@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     (r'^statistics/', include('statistics.urls')),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
+    (r'^teams/', include('teams.urls')),
 )
 
 # If in debug mode, serve site_media through Django.
