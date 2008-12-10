@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from data_import.forms import DataImportForm
 from data_import.models import Import
-from data_import.importer import handle_uploaded_file, importer_preview, importer_save, importer_delete
+from data_import.importer import handle_uploaded_file, importer_save, importer_delete
 import cPickle as pickle
 
 
