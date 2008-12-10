@@ -1,0 +1,86 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{{ team.name }}{% endblock %}
+
+{% block content %}
+
+    {% if user.is_authenticated %}
+        <div class="right_panel">
+            <div class="members">
+                <h2>{% trans "Members" %}</h2>
+                <table width="100%">
+                    {% for member in team.members.all %}
+                            {{ member }}<br>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    <div style="width: 550px;">
+
+        <h1>{% trans "Team" %} {{ team.name }}</h1>
+
+        <p>
+            {% trans "Slug:" %} <tt>{{ team.slug }}</tt><br />
+            {% trans "Creator:" %} {{ team.creator }}</a><br />
+            {% trans "Created:" %} {{ team.created|date }}
+            <br />
+        </p>
+
+        <p>{{ team.description }}</p>
+
+        {% ifequal user team.creator %}
+
+            <form id="team_form" method="POST" action="" style="display: none;">
+                <table>
+                    {{ team_form }}
+                    <tr><td></td><td><input type="hidden" name="action" value="update" /><input type="submit" value="{% trans 'update' %}"/></td></tr>
+                </table>
+            </form>
+
+            {% ifequal team.members.all.count 1 %}
+                <form method="post" action="/teams/team/{{team.slug}}/delete/">
+                    <input type="submit" name="submit" value="{% trans 'Delete' %}" />
+            {% else %}
+                <p>You are not the only member of the team so you can't delete the team.</p>
+            {% endifequal %}
+
+        {% endifequal %}
+
+        {% if user.is_authenticated %}
+            <div>
+                <form method="POST" action="">
+                    {% if are_member %}
+                        {% ifequal user team.creator %}
+                            <p>{% trans "You are the creator of this team so can't leave (yet)." %}</p>
+                        {% else %}
+                            <input type="hidden" name="action" value="leave" />
+                            <input type="submit" value="{% trans 'leave' %}"/>
+                        {% endifequal %}
+                    {% else %}
+                        <input type="hidden" name="action" value="join" />
+                        <input type="submit" value="{% trans "join team" %}"/>
+                    {% endif %}
+                </form>
+            </div>
+        {% else %}
+            {% url acct_signup as signup_url %}
+            {% url acct_login as login_url %}
+            <p>{% blocktrans %}<a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">log in </a> to join this team.{% endblocktrans %}</p>
+        {% endif %}
+
+    </div>
+
+{% endblock %}
+
+{% block closure %}
+    <script type="text/javascript" src="/site_media/jquery.js"></script>
+    <script>
+        {% if team_form.errors %}
+            $('#team_form').show();
+        {% endif %}
+    </script>
+{% endblock %}
