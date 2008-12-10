@@ -112,15 +112,10 @@ def handle_uploaded_file(file, user_id):
     import_data = Import.objects.create(user=user_object)
     file_name = hashlib.sha1(user_object.username + str(time.time())).hexdigest()
     import_data.complete_data.save(file_name, ContentFile(pickle.dumps(pickles)))
-    import_data.partial_data.save(file_name, ContentFile(pickle.dumps({'import_data': line_data[1:11]})))
+    import_data.partial_data.save(file_name, ContentFile(pickle.dumps(line_data[1:11])))
     import_data.save()
 
     return import_data.id
-
-def importer_preview(import_id):
-    pickle = Import.objects.get(pk=import_id)
-    dict = pickle.loads(str(pickle.partial_data))
-    return dict
 
 def importer_save(import_id, user_id):
     if user_id != Import.objects.get(pk=import_id).user_id:
