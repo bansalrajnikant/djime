@@ -90,7 +90,6 @@ INSTALLED_APPS = (
     'project',
     'tracker',
     'statistics',
-    'django_evolution',
     'data_import',
     'teams',
 )
