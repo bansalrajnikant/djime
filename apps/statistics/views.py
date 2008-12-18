@@ -390,14 +390,9 @@ def get_data(request, action, data, year, search, search_id):
 
 def get_date_data(request, search, search_id, start_date, end_date):
     # the method is again the same.
-
-
     # we want start and end date to have the format: u'yyyy-mm-dd'
-    s_date_list = start_date.split('-')
-    e_date_list = end_date.split('-')
-
-    s_date = datetime.date(int(s_date_list[0]), int(s_date_list[1]), int(s_date_list[2]))
-    e_date = datetime.date(int(e_date_list[0]), int(e_date_list[1]), int(e_date_list[2]))
+    s_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+    e_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
    
     w_date = s_date
     date_slice_dict = {}
@@ -421,48 +416,46 @@ def get_date_data(request, search, search_id, start_date, end_date):
         if slice.slip not in date_slice_dict[slice.create_date]:
             date_slice_dict[slice.create_date].append(slice.slip)
         
-        value_dictionary = {}
-        value_dictionary['elements'] = [ { "type": "bar_stack", "colours": [ "#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF" ], "values": [], "tip": "#y_label# X label [#x_label#], Value [#var#] Total [#total#]"}]
-        value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
-        value_dictionary['x_axis'] = { "labels": { "labels": []}}
-        value_dictionary['y_axis'] = {  "min": 0, "max": True, "steps": True }
-        value_dictionary['tooltip'] = {"mouse": 2}
+    value_dictionary = {}
+    value_dictionary['elements'] = [ { "type": "bar_stack", "colours": [ "#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF" ], "values": [], "tip": "#y_label# X label [#x_label#], Value [#var#] Total [#total#]"}]
+    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
+    value_dictionary['x_axis'] = { "labels": { "labels": []}}
+    value_dictionary['y_axis'] = {  "min": 0, "max": True, "steps": True }
+    value_dictionary['tooltip'] = {"mouse": 2}
         
-        max_list = [0.01]
-        for date in sorted_date_list:
-            value_dictionary['x_axis']['labels']['labels'].append(str(date.day))
-            i=0
-            temp_max = 0.0
-            value_list = []
-            if len(date_slice_dict[date]) == 0:
-                value_dictionary['elements'][0]['values'].append([0])
-            else:
-                while i < len(date_slice_dict[date]):
-                    while_dictionary = {'val': True, 'tip': True}
-                    while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
-                    while_dictionary['tip'] = '%s<br />Time: #val# Total: #total#' % date_slice_dict[date][i].name
-                    temp_max += date_slice_dict[date][i].display_days_time(date)
-                    value_list.append(while_dictionary)
-                    i += 1
-                max_list.append(temp_max)
-                value_dictionary['elements'][0]['values'].append(value_list)
+    max_list = [0.01]
+    for date in sorted_date_list:
+        value_dictionary['x_axis']['labels']['labels'].append(str(date.day))
+        i=0
+        temp_max = 0.0
+        value_list = []
+        if len(date_slice_dict[date]) == 0:
+            value_dictionary['elements'][0]['values'].append([0])
+        else:
+            while i < len(date_slice_dict[date]):
+                while_dictionary = {'val': True, 'tip': True}
+                while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
+                while_dictionary['tip'] = '%s<br />Time: #val# Total: #total#' % date_slice_dict[date][i].name
+                temp_max += date_slice_dict[date][i].display_days_time(date)
+                value_list.append(while_dictionary)
+                i += 1
+            max_list.append(temp_max)
+            value_dictionary['elements'][0]['values'].append(value_list)
 
-        value_dictionary['y_axis']['max']=max(max_list)
-        value_dictionary['y_axis']['steps']=max(max_list)*0.1
+    value_dictionary['y_axis']['max']=max(max_list)
+    value_dictionary['y_axis']['steps']=max(max_list)*0.1
         
     if search == 'user':
             value_dictionary['title']['text'] = '%s %s to %s' % (request.user.username, start_date, end_date)
     elif search == 'team':
         value_dictionary['title']['text'] = '%s %s to %s' % (Team.objects.get(pk = int(search_id)).name, start_date, end_date)
 
-
-
     return HttpResponse(json.dumps(value_dictionary))
                         
                         
 def get_team_week_data(request, team_id, week, year):
     # the method for getting team specific data is gennerally the same as with team/user data.
-    # However as the charta work a bit different using bar and scatter_line, the actual data needed to be generated and the setup is a bit different
+    # However as the charts work a bit different using bar and scatter_line, the actual data needed to be generated and the setup is a bit different
     team_id = int(team_id)
     week = int(week)
     year = int(year)
