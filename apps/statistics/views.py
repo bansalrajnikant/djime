@@ -10,6 +10,12 @@ from django.contrib.auth.models import User
 from statistics.forms import DateSelectionForm, DateSelectionBetaForm
 from teams.models import Team
 from statistics.colour import Colour
+from exceptions import ImportError
+try:
+    import json
+except ImportError:
+    import simplejson as json
+import decimal
 
 @login_required()
 def todays_week(request, search, search_id):
@@ -253,79 +259,60 @@ def get_data(request, action, data, year, search, search_id):
 
         end_date = start_date + datetime.timedelta(days=6)
         w_date = start_date
-        dates = {}
-
-        # this while loop generates every day every day except the last in the time period
-        # and adds that day in the dates dictionary
-        while w_date != end_date:
-            dates[w_date]=[]
+        date_slice_dict = {}
+        sorted_date_list = []
+        # this while loop generates every day every and adds that day to dictionary and list
+        while w_date != end_date + datetime.timedelta(days=1):
+            date_slice_dict[w_date]=[]
+            sorted_date_list.append(w_date)
             w_date += datetime.timedelta(days=1)
-        dates[end_date] = []
 
         # this loop checks to see if a given slip of a timeslice is added to the list of that day.
         # if it hasn't been added yet it adds it to the list of slips containing timeslices made that day.
         for slice in slice_set:
-            if slice.slip not in dates[slice.create_date]:
-                dates[slice.create_date].append(slice.slip)
+            if slice.slip not in date_slice_dict[slice.create_date]:
+                date_slice_dict[slice.create_date].append(slice.slip)
 
-        max_list = [0.01] # will hold the max duration values needed for scaling the y-axis, lowest is set to 0.01
-        # this loop will run though every day in the dates dictionary.
-        for date in dates.keys():
+        # the value_dictionary, will be the dictionary that needs to be converted to json data. A lot of the data is static strings,
+        # but there are 5 varibles that are different. 2 empty lists where data will be appended (values and labels list) and 3 values set to True.
+        # can add a colour generator later to create colours for the graph instead of static colours.
+        value_dictionary = {}
+        value_dictionary['elements'] = [ { "type": "bar_stack", "colours": [ "#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF" ], "values": [], "tip": "#y_label# X label [#x_label#], Value [#var#] Total [#total#]"}]
+        value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
+        value_dictionary['x_axis'] = { "labels": { "labels": []}}
+        value_dictionary['y_axis'] = {  "min": 0, "max": True, "steps": True }
+        value_dictionary['tooltip'] = {"mouse": 2}
+
+        max_list = [0.01]
+        # this loop has 2 purposes. First is to generate a list with values, each value in the list will be a dictionary - the while_dictionary,
+        # which has 2 keys, val, which will hold the actual value a float, and tip, which will hold the data for the tooltip, a string.
+        # Second purpose is to find the max value for the date period to scale the y_axis.
+        for date in sorted_date_list:
             i=0
-            temp = '' #used to store values to be put into the values list
             temp_max = 0.0
-            #this while loop, will take out.
-            while i < len(dates[date]):
-                if not temp: #if this holds true, temp is empty (= '') and needs to get the starting bracket
-                    temp += '['
-                # below is added '{ "val": [duration of timeslices on slip], "tip": "[slip.name] '<br> time: #val# total: #total#"}'
-                # this generates the value (val) and the tooltip (tip)
-                temp += '{ "val" :' + dates[date][i].display_days_time(date) + ', "tip": "' + dates[date][i].name + '<br> time: #val# total: #total#"}'
-                temp_max += float(dates[date][i].display_days_time(date)) # here every slip's duration is summed up.
-                if i != len(dates[date])-1: # this adds a , between {} but not after the last
-                    temp += ','
-                if i == len(dates[date])-1: #when true, the last value has been added and ending ] is placed.
-                    temp += ']'
+            value_list = []
+            if len(date_slice_dict[date]) == 0:
+                value_dictionary['elements'][0]['values'].append([0])   # if len = 0, there are no items, so the while loop wont activate, and we can simply add [0] 
+            while i < len(date_slice_dict[date]):
+                while_dictionary = {'val': True, 'tip': True}
+                while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
+                while_dictionary['tip'] = '%s<br />Time: #val# Total: #total#' % date_slice_dict[date][i].name
+                temp_max += date_slice_dict[date][i].display_days_time(date)
+                value_list.append(while_dictionary)
                 i += 1
-            if not temp: #if not value has been added to temp, no timeslices was made that day, so temp = [0] equals to no values
-                temp = '[0]'
-            dates[date] = temp #here the value used to generate the temp value is replaces, to now hold the value used to display the graph
             max_list.append(temp_max)
+            value_dictionary['elements'][0]['values'].append(value_list)
 
-        max_val = max(max_list)
-        step = max_val*0.1
-
-        #below is generated a sorted list containing all dates used.
-        label_list = []
-        for key in dates.keys():
-            label_list.append(key)
-        label_list.sort()
-
-        val_all = ''
-        for sorted_date in label_list:
-            val_all += dates[sorted_date] + ','
-
-        #below is generated the labels for the x-axis, as this only a week we will display the day names
-        # using strftime. Only use label[:-1] to avoid the last ',' being added and causing syntax error in the data display format.
-        label = ''
-        for labl in label_list:
-            label += '"' + labl.strftime('%A') +'",'
+        value_dictionary['y_axis']['max']=max(max_list)
+        value_dictionary['y_axis']['steps']=max(max_list)*0.1
 
         if search == 'user':
-            title = request.user.username + ' Week ' + str(week)
+            value_dictionary['title']['text'] = '%s Week %s' % (request.user.username, week)
         elif search == 'team':
-            title = Team.objects.get(pk = int(search_id)).name + ' Week ' + str(week)
-
-
-        return HttpResponse(    '{ "elements": [ { "type": "bar_stack",'
-                                '"colours": [ "#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF" ],'
-                                '"values": ['+ val_all[:-1] +'],'
-                                '"tip": "#y_label# X label [#x_label#], Value [#val#] Total [#total#]" } ],'
-                                '"title": { "text": "'+title + '" , "style": "{font-size: 20px; color: #F24062; text-align: center;}" },'
-                                '"x_axis": { "labels": { "labels": [ ' + label[:-1] + '] } },'
-                                '"y_axis": {  "min": 0, "max": '+str(max_val)+', "steps": '+str(step)+' }, "tooltip": { "mouse": 2 } }'
-                            )
-
+             value_dictionary['title']['text'] = '%s Week %s' % (Team.objects.get(pk = int(search_id)).name, week) 
+            
+        return HttpResponse(json.dumps(value_dictionary))
+    
 
     if action == 'month':
         #this action is basicly the same as week, only start date can be found getting day 1 of the chosen month and year.
