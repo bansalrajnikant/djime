@@ -60,31 +60,6 @@ $(document).ready(function () {
   });
 
   $('#slip-timer-button').click(function () {
-    if ($(this).hasClass('running')) {
-      // Stop the timer
-      $(this).removeClass('running');
-      $(this).addClass('working');
-      $.post(document.URL + 'stop/', {}, function () {
-        $('#slip-timer-button').removeClass('working');
-        // After stopping the timer, update the total time.
-        $.getJSON(document.URL + 'get_json/', function(data) {
-          $("#slip-total-time").text(data.slip_time);
-          $('#slip-timer-button').text('0:00');
-        });
-      });
-    }
-    else if ($(this).hasClass('working')) {
-      // Do nothing
-    }
-    else {
-      // If neither working or running is set, start the timer.
-      $(this).addClass('working');
-      $.post(document.URL + 'start/', {}, function () {
-        $('#slip-timer-button').removeClass('working');
-        $('#slip-timer-button').addClass('running');
-        var now = new Date();
-        $('#slip-timer-button').countdown({since: now, format: 'YOWDHMS'})
-      });
-    }
+    $(this).timeclock();  
   });
 });

@@ -1,0 +1,12 @@
+/**
+ * @file tracker.css
+ * CSS styles specifically for the tracker interface.
+ */
+
+/* Hide the seconds separator every other tick */
+.hasTimeClock.tock .sep-hours {
+    color: white;
+}
+
+#slip-timer-button {
+    font-size: 182%
