@@ -288,6 +288,7 @@ def get_data(request, action, data, year, search, search_id):
         # which has 2 keys, val, which will hold the actual value a float, and tip, which will hold the data for the tooltip, a string.
         # Second purpose is to find the max value for the date period to scale the y_axis.
         for date in sorted_date_list:
+            value_dictionary['x_axis']['labels']['labels'].append(date.strftime('%A'))
             i=0
             temp_max = 0.0
             value_list = []
@@ -305,6 +306,7 @@ def get_data(request, action, data, year, search, search_id):
 
         value_dictionary['y_axis']['max']=max(max_list)
         value_dictionary['y_axis']['steps']=max(max_list)*0.1
+        
 
         if search == 'user':
             value_dictionary['title']['text'] = '%s Week %s' % (request.user.username, week)
