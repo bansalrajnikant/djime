@@ -274,10 +274,10 @@ def get_data(request, action, data, year, search, search_id):
                 date_slice_dict[slice.create_date].append(slice.slip)
 
         # the value_dictionary, will be the dictionary that needs to be converted to json data. A lot of the data is static strings,
-        # but there are 5 varibles that are different. 2 empty lists where data will be appended (values and labels list) and 3 values set to True.
+        # but there are 6 varibles that are different. 2 empty lists where data will be appended (values and labels list) and 4 values set to True.
         # can add a colour generator later to create colours for the graph instead of static colours.
         value_dictionary = {}
-        value_dictionary['elements'] = [ { "type": "bar_stack", "colours": [ "#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF" ], "values": [], "tip": "#y_label# X label [#x_label#], Value [#var#] Total [#total#]"}]
+        value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": [], "tip": True}]
         value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
         value_dictionary['x_axis'] = { "labels": { "labels": []}}
         value_dictionary['y_axis'] = {  "min": 0, "max": True, "steps": True }
@@ -298,7 +298,7 @@ def get_data(request, action, data, year, search, search_id):
                 while i < len(date_slice_dict[date]):
                     while_dictionary = {'val': True, 'tip': True}
                     while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
-                    while_dictionary['tip'] = '%s<br />Time: #val# Total: #total#' % date_slice_dict[date][i].name
+                    while_dictionary['tip'] = '%s<br>Time: #val# Total: #total#' % date_slice_dict[date][i].name
                     temp_max += date_slice_dict[date][i].display_days_time(date)
                     value_list.append(while_dictionary)
                     i += 1
@@ -352,10 +352,10 @@ def get_data(request, action, data, year, search, search_id):
                 date_slice_dict[slice.create_date].append(slice.slip)
 
         value_dictionary = {}
-        value_dictionary['elements'] = [ { "type": "bar_stack", "colours": [ "#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF" ], "values": [], "tip": "#y_label# X label [#x_label#], Value [#var#] Total [#total#]"}]
+        value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": [], "tip": True}]
         value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
-        value_dictionary['x_axis'] = { "labels": { "labels": []}}
-        value_dictionary['y_axis'] = {  "min": 0, "max": True, "steps": True }
+        value_dictionary['x_axis'] = {"labels": { "labels": []}}
+        value_dictionary['y_axis'] = {"min": 0, "max": True, "steps": True}
         value_dictionary['tooltip'] = {"mouse": 2}
         
         max_list = [0.01]
@@ -370,7 +370,7 @@ def get_data(request, action, data, year, search, search_id):
                 while i < len(date_slice_dict[date]):
                     while_dictionary = {'val': True, 'tip': True}
                     while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
-                    while_dictionary['tip'] = '%s<br />Time: #val# Total: #total#' % date_slice_dict[date][i].name
+                    while_dictionary['tip'] = '%s<br>Time: #val# Total: #total#' % date_slice_dict[date][i].name
                     temp_max += date_slice_dict[date][i].display_days_time(date)
                     value_list.append(while_dictionary)
                     i += 1
@@ -417,10 +417,10 @@ def get_date_data(request, search, search_id, start_date, end_date):
             date_slice_dict[slice.create_date].append(slice.slip)
         
     value_dictionary = {}
-    value_dictionary['elements'] = [ { "type": "bar_stack", "colours": [ "#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF" ], "values": [], "tip": "#y_label# X label [#x_label#], Value [#var#] Total [#total#]"}]
+    value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": [], "tip": True}]
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
-    value_dictionary['x_axis'] = { "labels": { "labels": []}}
-    value_dictionary['y_axis'] = {  "min": 0, "max": True, "steps": True }
+    value_dictionary['x_axis'] = {"labels": { "labels": []}}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "steps": True}
     value_dictionary['tooltip'] = {"mouse": 2}
         
     max_list = [0.01]
@@ -435,7 +435,7 @@ def get_date_data(request, search, search_id, start_date, end_date):
             while i < len(date_slice_dict[date]):
                 while_dictionary = {'val': True, 'tip': True}
                 while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
-                while_dictionary['tip'] = '%s<br />Time: #val# Total: #total#' % date_slice_dict[date][i].name
+                while_dictionary['tip'] = '%s<br>Time: #val# Total: #total#' % date_slice_dict[date][i].name
                 temp_max += date_slice_dict[date][i].display_days_time(date)
                 value_list.append(while_dictionary)
                 i += 1
