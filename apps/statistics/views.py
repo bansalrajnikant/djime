@@ -294,15 +294,16 @@ def get_data(request, action, data, year, search, search_id):
             value_list = []
             if len(date_slice_dict[date]) == 0:
                 value_dictionary['elements'][0]['values'].append([0])   # if len = 0, there are no items, so the while loop wont activate, and we can simply add [0] 
-            while i < len(date_slice_dict[date]):
-                while_dictionary = {'val': True, 'tip': True}
-                while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
-                while_dictionary['tip'] = '%s<br />Time: #val# Total: #total#' % date_slice_dict[date][i].name
-                temp_max += date_slice_dict[date][i].display_days_time(date)
-                value_list.append(while_dictionary)
-                i += 1
-            max_list.append(temp_max)
-            value_dictionary['elements'][0]['values'].append(value_list)
+            else:
+                while i < len(date_slice_dict[date]):
+                    while_dictionary = {'val': True, 'tip': True}
+                    while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
+                    while_dictionary['tip'] = '%s<br />Time: #val# Total: #total#' % date_slice_dict[date][i].name
+                    temp_max += date_slice_dict[date][i].display_days_time(date)
+                    value_list.append(while_dictionary)
+                    i += 1
+                max_list.append(temp_max)
+                value_dictionary['elements'][0]['values'].append(value_list)
 
         value_dictionary['y_axis']['max']=max(max_list)
         value_dictionary['y_axis']['steps']=max(max_list)*0.1
@@ -314,7 +315,7 @@ def get_data(request, action, data, year, search, search_id):
              value_dictionary['title']['text'] = '%s Week %s' % (Team.objects.get(pk = int(search_id)).name, week) 
             
         return HttpResponse(json.dumps(value_dictionary))
-    
+
 
     if action == 'month':
         #this action is basicly the same as week, only start date can be found getting day 1 of the chosen month and year.
@@ -329,11 +330,12 @@ def get_data(request, action, data, year, search, search_id):
             end_date -= datetime.timedelta(days=1)
 
         w_date = start_date
-        dates = {}
-        while w_date != end_date:
-            dates[w_date]=[]
+        date_slice_dict = {}
+        sorted_date_list = []
+        while w_date != end_date + datetime.timedelta(days=1):
+            date_slice_dict[w_date]=[]
+            sorted_date_list.append(w_date)
             w_date += datetime.timedelta(days=1)
-        dates[end_date] = []
 
         if search == 'user':
             slice_set = TimeSlice.objects.filter(user = int(search_id), create_date__range=(start_date, end_date))
@@ -346,60 +348,44 @@ def get_data(request, action, data, year, search, search_id):
             slice_set = TimeSlice.objects.filter(user__in = members_id, create_date__range=(start_date, end_date))
 
         for slice in slice_set:
-            if slice.slip not in dates[slice.create_date]:
-                dates[slice.create_date].append(slice.slip)
+            if slice.slip not in date_slice_dict[slice.create_date]:
+                date_slice_dict[slice.create_date].append(slice.slip)
 
+        value_dictionary = {}
+        value_dictionary['elements'] = [ { "type": "bar_stack", "colours": [ "#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF" ], "values": [], "tip": "#y_label# X label [#x_label#], Value [#var#] Total [#total#]"}]
+        value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
+        value_dictionary['x_axis'] = { "labels": { "labels": []}}
+        value_dictionary['y_axis'] = {  "min": 0, "max": True, "steps": True }
+        value_dictionary['tooltip'] = {"mouse": 2}
+        
         max_list = [0.01]
-        for date in dates.keys():
+        for date in sorted_date_list:
+            value_dictionary['x_axis']['labels']['labels'].append(str(date.day))
             i=0
-            temp = ''
             temp_max = 0.0
-            while i < len(dates[date]):
-                if not temp:
-                    temp += '['
-                temp += '{ "val" :' + dates[date][i].display_days_time(date) + ', "tip": "' + dates[date][i].name + '<br> time: #val# total: #total#"}'
-                temp_max += float(dates[date][i].display_days_time(date))
-                if i != len(dates[date])-1:
-                    temp += ','
-                if i == len(dates[date])-1:
-                    temp += ']'
-                i += 1
-            if not temp:
-                temp = '[0]'
-            dates[date] = temp
-            max_list.append(temp_max)
+            value_list = []
+            if len(date_slice_dict[date]) == 0:
+                value_dictionary['elements'][0]['values'].append([0])
+            else:
+                while i < len(date_slice_dict[date]):
+                    while_dictionary = {'val': True, 'tip': True}
+                    while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
+                    while_dictionary['tip'] = '%s<br />Time: #val# Total: #total#' % date_slice_dict[date][i].name
+                    temp_max += date_slice_dict[date][i].display_days_time(date)
+                    value_list.append(while_dictionary)
+                    i += 1
+                max_list.append(temp_max)
+                value_dictionary['elements'][0]['values'].append(value_list)
 
-        max_val = max(max_list)
-        step = max_val*0.1
-        label_list = []
-
-        for key in dates.keys():
-            label_list.append(key)
-
-        label_list.sort()
-
-        val_all = ''
-        for sorted_date in label_list:
-            val_all += dates[sorted_date] + ','
-
-        label = ''
-        for labl in label_list:
-            label += '"' + str(labl.day) +'",'
+        value_dictionary['y_axis']['max']=max(max_list)
+        value_dictionary['y_axis']['steps']=max(max_list)*0.1
 
         if search == 'user':
-            title = request.user.username + ' ' + start_date.strftime('%B') + ' ' + str(year)
+            value_dictionary['title']['text'] = '%s %s %s' % (request.user.username, start_date.strftime('%B'), year)
         elif search == 'team':
-            title = Team.objects.get(pk = int(search_id)).name + ' ' + start_date.strftime('%B') + ' ' + str(year)
+            value_dictionary['title']['text'] = '%s %s %s' % (Team.objects.get(pk = int(search_id)).name, start_date.strftime('%B'), year)
 
-
-        return HttpResponse(    '{ "elements": [ { "type": "bar_stack",'
-                                '"colours": [ "#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF" ],'
-                                '"values": ['+ val_all[:-1] +'],'
-                                '"tip": "#y_label# X label [#x_label#], Value [#val#] Total [#total#]" } ],'
-                                '"title": { "text": "' + title + '" , "style": "{font-size: 20px; color: #F24062; text-align: center;}" },'
-                                '"x_axis": { "labels": { "labels": [ ' + label[:-1] + '] } },'
-                                '"y_axis": {  "min": 0, "max": '+str(max_val)+', "steps": '+str(step)+' }, "tooltip": { "mouse": 2 } }'
-                            )
+        return HttpResponse(json.dumps(value_dictionary))
 
 
 def get_date_data(request, search, search_id, start_date, end_date):
