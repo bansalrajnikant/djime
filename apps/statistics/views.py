@@ -556,7 +556,72 @@ def get_team_month_data(request, team_id, month, year):
 
     sorted_date_list = []
     w_date = start_date
-    while w_date != end_date+datetime.timedelta(days=1):
+    while w_date != end_date + datetime.timedelta(days=1):
+        sorted_date_list.append(w_date)
+        for mem_id in members_id:
+            team_list_dict[mem_id][w_date]=[]
+        w_date += datetime.timedelta(days=1)
+
+    for slice in slice_set:
+        if slice.slip not in team_list_dict[slice.user_id][slice.create_date]:
+            team_list_dict[slice.user_id][slice.create_date].append(slice.slip)
+
+    value_dictionary = {}
+    value_dictionary['elements'] = []
+    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
+    value_dictionary['x_axis'] = {"min": 0, "max": True}
+    value_dictionary['y_axis'] = {"min": 0, "max": True, "steps": True}
+    value_dictionary['tooltip'] = {"mouse": 2}
+
+    max_list = [0.01]
+    for date in sorted_date_list:
+        for mem_id in members_id:
+            i = 0
+            temp_value = 0.0
+            temp_value_dict = {'x': True, 'y': True} # in this case chords in the form of a dictionary is added as a value, instead of a float.
+            while i < len(team_list_dict[mem_id][date]):
+                temp_value += team_list_dict[mem_id][date][i].display_days_time(date)
+                i += 1
+            temp_value_dict['x'] = date.day
+            temp_value_dict['y'] = temp_value
+            team_list_dict[mem_id]['value']['values'].append(temp_value_dict)
+            max_list.append(temp_value)
+    
+    for mem_id in members_id:
+        value_dictionary['elements'].append(team_list_dict[mem_id]['value'])
+    
+    value_dictionary['y_axis']['max'] = max(max_list) * 1.05
+    value_dictionary['y_axis']['steps'] = max(max_list) * 1.05 * 0.1
+    # x max and min needs to be set as this graph utilizes that instead of labels. Max is set to one day more than the max day for the best result.
+    value_dictionary['x_axis']['min'] = start_date.day
+    value_dictionary['x_axis']['max'] = end_date.day + 1
+    value_dictionary['title']['text'] = '%s, %s %s' % (team.name, start_date.strftime('%B'), year)
+
+    return HttpResponse(json.dumps(value_dictionary))
+
+
+def get_team_date_data(request, team_id, start_date, end_date):
+    s_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+    e_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+    team_id = int(team_id)
+    team = get_object_or_404(Team, pk=team_id)
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+
+    slice_set = TimeSlice.objects.filter(create_date__range=(s_date, e_date), user__in=members_id)
+
+    team_list_dict = {}
+    counter = 0
+    for mem_id in members_id:
+        team_list_dict[mem_id] = {}
+        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Value: #y#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
+        counter += 1
+
+    sorted_date_list = []
+    w_date = s_date
+    while w_date != e_date + datetime.timedelta(days=1):
         sorted_date_list.append(w_date)
         for mem_id in members_id:
             team_list_dict[mem_id][w_date]=[]
@@ -592,83 +657,8 @@ def get_team_month_data(request, team_id, month, year):
     
     value_dictionary['y_axis']['max'] = max(max_list) * 1.05
     value_dictionary['y_axis']['steps'] = max(max_list) * 1.05 * 0.1
-    value_dictionary['x_axis']['min'] = start_date.day
-    value_dictionary['x_axis']['max'] = end_date.day + 1
-    value_dictionary['title']['text'] = '%s, %s %s' % (team.name, start_date.strftime('%B'), year)
+    value_dictionary['x_axis']['min'] = s_date.day
+    value_dictionary['x_axis']['max'] = e_date.day + 1
+    value_dictionary['title']['text'] = 'From %s to %s' % (s_date, e_date)
 
     return HttpResponse(json.dumps(value_dictionary))
-
-
-def get_team_date_data(request, team_id, start_date, end_date):
-    s_date_list = start_date.split('-')
-    e_date_list = end_date.split('-')
-
-    s_date = datetime.date(int(s_date_list[0]), int(s_date_list[1]), int(s_date_list[2]))
-    e_date = datetime.date(int(e_date_list[0]), int(e_date_list[1]), int(e_date_list[2]))
-
-    team_id = int(team_id)
-    team = get_object_or_404(Team, pk=team_id)
-    members = team.members.all()
-    members_id = []
-    for member in members:
-        members_id.append(member.id)
-
-    slice_set = TimeSlice.objects.filter(create_date__range=(s_date, e_date), user__in=members_id)
-
-    team_list = {}
-    for id in members_id:
-        team_list[id]={}
-
-    date_list = []
-    w_date = s_date
-    while w_date != e_date+datetime.timedelta(days=1):
-        date_list.append(w_date)
-        for id in members_id:
-          team_list[id][w_date]=[]
-        w_date += datetime.timedelta(days=1)
-
-    for slice in slice_set:
-        if slice.slip not in team_list[slice.user_id][slice.create_date]:
-            team_list[slice.user_id][slice.create_date].append(slice.slip)
-
-    max_list = [0.01]
-    return_list = []
-    team_member_count = 1
-    for team_member in team_list.keys():
-        values = ''
-        member_name = User.objects.get(pk=team_member).username
-        for date in date_list:
-            temp_value = 0.0
-            i=0
-            while i < len(team_list[team_member][date]):
-                temp_value += float(team_list[team_member][date][i].display_days_time(date))
-                i += 1
-            max_list.append(temp_value)
-            values += '{"x": %s, "y": %s},' % (date.day, temp_value)
-        return_list.append('{"type": "scatter_line", "colour": ' + Colour(team_member_count) + ',"values": ['+values[:-1]+'], "tip": "'+member_name+ '<br>value: #val#" }')
-        team_member_count += 1
-
-    j=0
-    return_value = ''
-    while j < len(return_list):
-        return_value += return_list[j]
-        if j < len(return_list)-1:
-            return_value += ','
-        j += 1
-
-    max_val = max(max_list)+0.5
-    step = max_val*0.1
-    label_list = []
-    for dates in team_list[team_member].keys():
-        label_list.append(dates)
-    label_list.sort()
-    x_min = s_date.day
-    x_max = e_date.day+1
-
-
-
-    return HttpResponse(    '{ "elements": [' + return_value + '],'
-                            '"title": { "text": "' + team.name + s_date.strftime('%B') + ' ' + str(s_date.year) + '" },'
-                            '"x_axis": { "min": '+str(x_min)+', "max": '+str(x_max)+' },'
-                            '"y_axis": {  "min": 0, "max": '+str(max_val)+', "steps": '+str(step)+' }, "tooltip": { "mouse": 2 } }'
-                        )
