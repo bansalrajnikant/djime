@@ -43,10 +43,11 @@ class Slip(models.Model):
 
         duration = {
             'hours': floor(delta.seconds / 3600),
-            'minutes': floor((delta.seconds % 3600) / 60),
+            'minutes': (floor((delta.seconds % 3600) / 60))/60.0*100,
         }
 
-        return '%02i.%02i' % (duration['hours'], duration['minutes'])
+        
+        return float('%02i.%02i' % (duration['hours'], duration['minutes']))
 
 
 
