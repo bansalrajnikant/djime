@@ -15,7 +15,7 @@ try:
     import json
 except ImportError:
     import simplejson as json
-import decimal
+import time
 
 @login_required()
 def todays_week(request, search, search_id):
@@ -293,7 +293,7 @@ def get_data(request, action, data, year, search, search_id):
             temp_max = 0.0
             value_list = []
             if len(date_slice_dict[date]) == 0:
-                value_dictionary['elements'][0]['values'].append([0])   # if len = 0, there are no items, so the while loop wont activate, and we can simply add [0] 
+                value_dictionary['elements'][0]['values'].append([0])   # if len = 0, there are no items, so the while loop wont activate, and we can simply add [0]
             else:
                 while i < len(date_slice_dict[date]):
                     while_dictionary = {'val': True, 'tip': True}
@@ -307,13 +307,13 @@ def get_data(request, action, data, year, search, search_id):
 
         value_dictionary['y_axis']['max']=max(max_list)
         value_dictionary['y_axis']['steps']=max(max_list) * 0.1
-        
+
 
         if search == 'user':
             value_dictionary['title']['text'] = '%s Week %s' % (request.user.username, week)
         elif search == 'team':
-             value_dictionary['title']['text'] = '%s Week %s' % (Team.objects.get(pk = int(search_id)).name, week) 
-            
+             value_dictionary['title']['text'] = '%s Week %s' % (Team.objects.get(pk = int(search_id)).name, week)
+
         return HttpResponse(json.dumps(value_dictionary))
 
 
@@ -357,7 +357,7 @@ def get_data(request, action, data, year, search, search_id):
         value_dictionary['x_axis'] = {"labels": { "labels": []}}
         value_dictionary['y_axis'] = {"min": 0, "max": True, "steps": True}
         value_dictionary['tooltip'] = {"mouse": 2}
-        
+
         max_list = [0.01]
         for date in sorted_date_list:
             value_dictionary['x_axis']['labels']['labels'].append(str(date.day))
@@ -393,7 +393,7 @@ def get_date_data(request, search, search_id, start_date, end_date):
     # we want start and end date to have the format: u'yyyy-mm-dd'
     s_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
     e_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
-   
+
     w_date = s_date
     date_slice_dict = {}
     sorted_date_list = []
@@ -415,14 +415,14 @@ def get_date_data(request, search, search_id, start_date, end_date):
     for slice in slice_set:
         if slice.slip not in date_slice_dict[slice.create_date]:
             date_slice_dict[slice.create_date].append(slice.slip)
-        
+
     value_dictionary = {}
     value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": [], "tip": True}]
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": { "labels": []}}
     value_dictionary['y_axis'] = { "min": 0, "max": True, "steps": True}
     value_dictionary['tooltip'] = {"mouse": 2}
-        
+
     max_list = [0.01]
     for date in sorted_date_list:
         value_dictionary['x_axis']['labels']['labels'].append(str(date.day))
@@ -444,15 +444,15 @@ def get_date_data(request, search, search_id, start_date, end_date):
 
     value_dictionary['y_axis']['max']=max(max_list)
     value_dictionary['y_axis']['steps']=max(max_list) * 0.1
-        
+
     if search == 'user':
             value_dictionary['title']['text'] = '%s %s to %s' % (request.user.username, start_date, end_date)
     elif search == 'team':
         value_dictionary['title']['text'] = '%s %s to %s' % (Team.objects.get(pk = int(search_id)).name, start_date, end_date)
 
     return HttpResponse(json.dumps(value_dictionary))
-                        
-                        
+
+
 def get_team_week_data(request, team_id, week, year):
     # the method for getting team specific data is gennerally the same as with team/user data.
     # However as the charts work a bit different using bar and scatter_line, the actual data needed to be generated and the setup is a bit different
@@ -472,15 +472,15 @@ def get_team_week_data(request, team_id, week, year):
         start_date += datetime.timedelta(days=1)
     end_date = start_date + datetime.timedelta(days=6)
 
-    
-    
+
+
     team_list_dict = {}
     counter = 0
     for mem_id in members_id:
         team_list_dict[mem_id] = {}
         team_list_dict[mem_id]['value'] = {"type": "bar", "values": [], "tip": "%s<br>Value: #val#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
         counter += 1
-    
+
     sorted_date_list = []
     w_date = start_date
     while w_date != end_date+datetime.timedelta(days=1):
@@ -516,14 +516,14 @@ def get_team_week_data(request, team_id, week, year):
                 i += 1
             team_list_dict[mem_id]['value']['values'].append(temp_value)
             max_list.append(temp_value)
-    
+
     for mem_id in members_id:
         value_dictionary['elements'].append(team_list_dict[mem_id]['value'])
-    
+
     value_dictionary['y_axis']['max'] = max(max_list)
     value_dictionary['y_axis']['steps'] = max(max_list) * 0.1
     value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (team.name, week, year)
-    
+
     return HttpResponse(json.dumps(value_dictionary))
 
 
@@ -552,7 +552,7 @@ def get_team_month_data(request, team_id, month, year):
         team_list_dict[mem_id] = {}
         team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Value: #y#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
         counter += 1
-    
+
 
     sorted_date_list = []
     w_date = start_date
@@ -586,10 +586,10 @@ def get_team_month_data(request, team_id, month, year):
             temp_value_dict['y'] = temp_value
             team_list_dict[mem_id]['value']['values'].append(temp_value_dict)
             max_list.append(temp_value)
-    
+
     for mem_id in members_id:
         value_dictionary['elements'].append(team_list_dict[mem_id]['value'])
-    
+
     value_dictionary['y_axis']['max'] = max(max_list) * 1.05
     value_dictionary['y_axis']['steps'] = max(max_list) * 1.05 * 0.1
     # x max and min needs to be set as this graph utilizes that instead of labels. Max is set to one day more than the max day for the best result.
@@ -631,12 +631,16 @@ def get_team_date_data(request, team_id, start_date, end_date):
         if slice.slip not in team_list_dict[slice.user_id][slice.create_date]:
             team_list_dict[slice.user_id][slice.create_date].append(slice.slip)
 
+    # in this graph we will use unix timestamps as x-values, so steps are set to 86400 (seconds) which is equal to one day.
+    # we utilize the special "text":"#date:m-d#" command for labels which generates a date in format mm-dd, from the unix timestamps.
     value_dictionary = {}
     value_dictionary['elements'] = []
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
-    value_dictionary['x_axis'] = {"min": 0, "max": True}
+    value_dictionary['x_axis'] = {"min": 0, "max": True, "steps": 86400, "labels": {"rotate":"vertical","steps":86400,"visible-steps":2, "text":"#date:m-d#"}}
     value_dictionary['y_axis'] = {"min": 0, "max": True, "steps": True}
     value_dictionary['tooltip'] = {"mouse": 2}
+
+
 
     max_list = [0.01]
     for date in sorted_date_list:
@@ -647,18 +651,18 @@ def get_team_date_data(request, team_id, start_date, end_date):
             while i < len(team_list_dict[mem_id][date]):
                 temp_value += team_list_dict[mem_id][date][i].display_days_time(date)
                 i += 1
-            temp_value_dict['x'] = date.day
+            temp_value_dict['x'] = time.mktime(date.timetuple())
             temp_value_dict['y'] = temp_value
             team_list_dict[mem_id]['value']['values'].append(temp_value_dict)
             max_list.append(temp_value)
-    
+
     for mem_id in members_id:
         value_dictionary['elements'].append(team_list_dict[mem_id]['value'])
-    
+
     value_dictionary['y_axis']['max'] = max(max_list) * 1.05
     value_dictionary['y_axis']['steps'] = max(max_list) * 1.05 * 0.1
-    value_dictionary['x_axis']['min'] = s_date.day
-    value_dictionary['x_axis']['max'] = e_date.day + 1
+    value_dictionary['x_axis']['min'] = time.mktime(s_date.timetuple()) # a way to make a unix timestamp.
+    value_dictionary['x_axis']['max'] = time.mktime(e_date.timetuple())
     value_dictionary['title']['text'] = 'From %s to %s' % (s_date, e_date)
 
     return HttpResponse(json.dumps(value_dictionary))
