@@ -79,6 +79,11 @@ TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), "templates"),
 )
 
+FIXTURE_DIRS = (
+    os.path.join(os.path.dirname(__file__), "fixtures"),
+)
+
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
