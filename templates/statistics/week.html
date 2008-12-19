@@ -18,6 +18,6 @@
         var params = {};
         var attributes = {};
         swfobject.embedSWF("{{ STATIC_URL }}swf/open-flash-chart.swf", "flash-chart", "740", "400", "9.0.0", "{{ STATIC_URL }}swf/expressInstall.swf",
-                           {"data-file":"/statistics/data/{{ search }}/{{ search_id }}/week/{{ week }}/year/{{ year }}/"});
+                           {"data-file":"/statistics/data/{{ search }}/{{ search_id }}/year/{{ year }}/week/{{ week }}/"});
     </script>
 {% endblock %}
