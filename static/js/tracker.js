@@ -60,6 +60,13 @@ $(document).ready(function () {
   });
 
   $('#slip-timer-button').click(function () {
-    $(this).timeclock();  
+    if ($(this).hasClass($.timeclock.markerClassName)) {
+      var elapsed = $.timeclock._destroyTimeClock(this);
+      $.post(document.URL + 'stop/', {elapsed: elapsed});
+    }
+    else {
+      $.post(document.URL + 'start/');
+      $(this).timeclock();
+    }
   });
 });

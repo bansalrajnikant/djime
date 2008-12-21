@@ -19,11 +19,6 @@
 {% endblock %}
 
 {% block sidebar %}
-  {% if slip.is_active %}
-    <input type="button" name="start-stop-button" id="start-stop-button" value="Stop" />
-  {% else %}
-    <input type="button" name="start-stop-button" id="start-stop-button" value="Start" />
-  {% endif %}
   <input type="button" name="delete-slip" id="delete-slip-button" value="Delete this slip" />
 {% endblock %}
 
