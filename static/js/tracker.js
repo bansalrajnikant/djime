@@ -28,23 +28,6 @@ $(document).ready(function () {
     dialog_box.text(djime.messages.slip_delete_body);
   });
 
-  $("#start-stop-button").click(function () {
-    if ((this).value == 'Start') {
-      (this).value = 'Stop'
-      $.post(document.URL + 'start/');
-    }
-    else if ((this).value == 'Stop') {
-      (this).value = 'Start'
-      $.post(document.URL + 'stop/');
-      $.getJSON(document.URL + 'get_json/', function(data) {
-        $("#slip-total-time").text(data.slip_time);
-      });
-    }
-    else {
-      alert('something is wrong')
-    };
-  });
-
   $("#create-slip").click(function () {
     $.post(document.URL + 'slip/add/', {name: $("#slip-name").val()}, function(data) {
       $.getJSON(document.URL + 'slip/add/', function(data) {
@@ -63,6 +46,9 @@ $(document).ready(function () {
     if ($(this).hasClass($.timeclock.markerClassName)) {
       var elapsed = $.timeclock._destroyTimeClock(this);
       $.post(document.URL + 'stop/', {elapsed: elapsed});
+      $.getJSON(document.URL + 'get_json/', function(data) {
+        $("#slip-total-time").text(data.slip_time);
+      });
     }
     else {
       $.post(document.URL + 'start/');

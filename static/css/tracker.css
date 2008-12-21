@@ -5,9 +5,30 @@
 
 /* Hide the seconds separator every other tick */
 .hasTimeClock.tock .sep-hours {
-    color: white;
+    color: transparent;
 }
 
 #slip-timer-button {
-    font-size: 182%
+    font-size: 461.7%;
+    color: white;
+    height: 100px;
+    width: 300px;
+    background-image: URL(../img/timer-button-start.png);
 }
+
+#slip-timer-button:hover {
+    background-image: URL(../img/timer-button-start-hover.png);
+}
+
+#slip-timer-button.hasTimeClock {
+    background-image: URL(../img/timer-button-stop.png);
+}
+
+#slip-timer-button.hasTimeClock:hover {
+    background-image: URL(../img/timer-button-stop-hover.png);
+}
+
+#slip-timer-button div.timeclock {
+    padding: 14px 0px 0px 110px;
+}
+
