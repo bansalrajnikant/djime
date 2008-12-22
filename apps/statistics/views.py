@@ -278,7 +278,7 @@ def get_data(request, action, data, year, search, search_id):
         # can add a colour generator later to create colours for the graph instead of static colours.
         value_dictionary = {}
         value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
-        value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
+        value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
         value_dictionary['x_axis'] = { "labels": { "labels": []}}
         value_dictionary['y_axis'] = {  "min": 0, "max": True, "steps": True }
         value_dictionary['tooltip'] = {"mouse": 2}
@@ -353,7 +353,7 @@ def get_data(request, action, data, year, search, search_id):
 
         value_dictionary = {}
         value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": [], "tip": True}]
-        value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
+        value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
         value_dictionary['x_axis'] = {"labels": { "labels": []}}
         value_dictionary['y_axis'] = {"min": 0, "max": True, "steps": True}
         value_dictionary['tooltip'] = {"mouse": 2}
@@ -418,7 +418,7 @@ def get_date_data(request, search, search_id, start_date, end_date):
 
     value_dictionary = {}
     value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": [], "tip": True}]
-    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
+    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": { "labels": []}}
     value_dictionary['y_axis'] = { "min": 0, "max": True, "steps": True}
     value_dictionary['tooltip'] = {"mouse": 2}
@@ -498,7 +498,7 @@ def get_team_week_data(request, team_id, week, year):
     # so only a list of numbers/chords are needed.
     value_dictionary = {}
     value_dictionary['elements'] = []
-    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
+    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": { "labels": []}}
     value_dictionary['y_axis'] = {"min": 0, "max": True, "steps": True}
     value_dictionary['tooltip'] = {"mouse": 2}
@@ -568,7 +568,7 @@ def get_team_month_data(request, team_id, month, year):
 
     value_dictionary = {}
     value_dictionary['elements'] = []
-    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
+    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"min": 0, "max": True}
     value_dictionary['y_axis'] = {"min": 0, "max": True, "steps": True}
     value_dictionary['tooltip'] = {"mouse": 2}
@@ -635,10 +635,10 @@ def get_team_date_data(request, team_id, start_date, end_date):
     # we utilize the special "text":"#date:m-d#" command for labels which generates a date in format mm-dd, from the unix timestamps.
     value_dictionary = {}
     value_dictionary['elements'] = []
-    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
+    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"min": 0, "max": True, "steps": 86400, "labels": {"rotate":"vertical","steps":86400,"visible-steps":2, "text":"#date:m-d#"}}
     value_dictionary['y_axis'] = {"min": 0, "max": True, "steps": True}
-    value_dictionary['tooltip'] = {"mouse": 2}
+    value_dictionary['tooltip'] = {"mouse": 1}
 
 
 
