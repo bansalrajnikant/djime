@@ -97,3 +97,60 @@ class StatisticsRESTActionsTestCase(TestCase):
                     
                 # logout when finished testing a user, to create simelar starting points for every user.
                 self.client.get('/accounts/logout/')
+
+
+    def testUserMonthView(self):
+        # This is basicly the same as UserWeelView.
+        for pk in range(2,7):
+            user = User.objects.get(pk=pk)
+            for month in range(1,13):
+                year = 2008
+                response = self.client.get('/statistics/user/%s/year/%s/month/%s/' % (user.id, year, month))
+                self.failUnlessEqual(response.status_code, 302)
+        
+                response = self.client.post('/accounts/login/',
+                                            {'username': user.username, 'password': 'pass'})
+                self.failUnlessEqual(response.status_code, 302)
+        
+                response = self.client.get('/statistics/user/%s/year/%s/month/%s/' % (user.id-1, year, month))
+                self.failUnlessEqual(response.status_code, 403)
+        
+                response = self.client.get('/statistics/data/user/%s/year/%s/month/%s/' % (user.id, year, month))
+        
+                json_content = json.loads(response.content)
+                
+                start_date = datetime.date(year, month, 1)
+                end_date = start_date + datetime.timedelta(days=30)
+                while end_date.month != start_date.month:
+                    end_date -= datetime.timedelta(days=1)        
+                
+                slice_set = user.timeslices.filter(create_date__range=(start_date, end_date))
+                slip_dict = {}
+                for slic in slice_set:
+                    if not slip_dict.has_key(slic.begin.date()):
+                        slip_dict[slic.begin.date()] = [slic.slip]
+                    else:
+                        if slic.slip not in slip_dict[slic.begin.date()]:
+                             slip_dict[slic.begin.date()].append(slic.slip)
+                                
+                # make a list of all the dates for the chosen month:
+                end_date = start_date + datetime.timedelta(days=6)
+                w_date = start_date
+                all_dates_list = []
+                while w_date != end_date + datetime.timedelta(days=1):
+                    all_dates_list.append(w_date)
+                    w_date += datetime.timedelta(days=1)
+        
+                for date in all_dates_list:
+                    if date not in slip_dict.keys():
+                        self.failUnlessEqual(json_content['elements'][0]['values'][date.day-1], [0])
+                    else:
+                        for number in range(len(slip_dict[date])):
+                            self.failUnlessEqual(json_content['elements'][0]['values'][date.day-1][number]['val'], round(slip_dict[date][number].display_days_time(date), 1))
+            
+                for numb in range(1, end_date.day+1):
+                     self.failUnlessEqual(json_content['x_axis']['labels']['labels'][numb-1], str(numb))
+                     
+                self.failUnlessEqual(json_content['title']['text'], '%s %s %s' % (user.username, datetime.datetime.strftime(start_date, '%B'), year))
+            
+                self.client.get('/accounts/logout/')
