@@ -277,7 +277,7 @@ def get_data(request, action, data, year, search, search_id):
         # but there are 6 varibles that are different. 2 empty lists where data will be appended (values and labels list) and 4 values set to True.
         # can add a colour generator later to create colours for the graph instead of static colours.
         value_dictionary = {}
-        value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": [], "tip": True}]
+        value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
         value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #F24062; text-align: center;}"}
         value_dictionary['x_axis'] = { "labels": { "labels": []}}
         value_dictionary['y_axis'] = {  "min": 0, "max": True, "steps": True }
