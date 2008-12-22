@@ -14,6 +14,7 @@ try:
     import json
 except ImportError:
     import simplejson as json
+import random
 
 
 class StatisticsRESTActionsTestCase(TestCase):
@@ -134,7 +135,6 @@ class StatisticsRESTActionsTestCase(TestCase):
                              slip_dict[slic.begin.date()].append(slic.slip)
                                 
                 # make a list of all the dates for the chosen month:
-                end_date = start_date + datetime.timedelta(days=6)
                 w_date = start_date
                 all_dates_list = []
                 while w_date != end_date + datetime.timedelta(days=1):
@@ -152,5 +152,57 @@ class StatisticsRESTActionsTestCase(TestCase):
                      self.failUnlessEqual(json_content['x_axis']['labels']['labels'][numb-1], str(numb))
                      
                 self.failUnlessEqual(json_content['title']['text'], '%s %s %s' % (user.username, datetime.datetime.strftime(start_date, '%B'), year))
+            
+                self.client.get('/accounts/logout/')
+                
+                
+    def testUserDateView(self):
+        for pk in range(2,7):
+            user = User.objects.get(pk=pk)
+            year = 2008
+            for random_generator in range(12):
+                start_date = datetime.date(year, random.randrange(1,13), random.randrange(1,29))
+                end_date = start_date + datetime.timedelta(days=random.randrange(1,61))
+                
+                response = self.client.get('/statistics/user/%s/date/%s/%s/' % (user.id, start_date, end_date))
+                self.failUnlessEqual(response.status_code, 302)
+        
+                response = self.client.post('/accounts/login/',
+                                            {'username': user.username, 'password': 'pass'})
+                self.failUnlessEqual(response.status_code, 302)
+        
+                response = self.client.get('/statistics/user/%s/date/%s/%s/' % (user.id-1, start_date, end_date))
+                self.failUnlessEqual(response.status_code, 403)
+        
+                response = self.client.get('/statistics/data/user/%s/date/%s/%s/' % (user.id, start_date, end_date))
+                json_content = json.loads(response.content)
+                
+                slice_set = user.timeslices.filter(create_date__range=(start_date, end_date))
+                slip_dict = {}
+                for slic in slice_set:
+                    if not slip_dict.has_key(slic.begin.date()):
+                        slip_dict[slic.begin.date()] = [slic.slip]
+                    else:
+                        if slic.slip not in slip_dict[slic.begin.date()]:
+                             slip_dict[slic.begin.date()].append(slic.slip)
+                                
+                # make a list of all the dates for the chosen time period:
+                w_date = start_date
+                all_dates_list = []
+                while w_date != end_date + datetime.timedelta(days=1):
+                    all_dates_list.append(w_date)
+                    w_date += datetime.timedelta(days=1)
+        
+                for date in all_dates_list:
+                    if date not in slip_dict.keys():
+                        self.failUnlessEqual(json_content['elements'][0]['values'][(date-start_date).days], [0])
+                    else:
+                        for number in range(len(slip_dict[date])):
+                            self.failUnlessEqual(json_content['elements'][0]['values'][(date-start_date).days][number]['val'], round(slip_dict[date][number].display_days_time(date), 1))
+            
+                for numb in range((end_date-start_date).days):
+                     self.failUnlessEqual(json_content['x_axis']['labels']['labels'][numb], str(all_dates_list[numb].day))
+                     
+                self.failUnlessEqual(json_content['title']['text'], '%s %s to %s' % (user.username, start_date, end_date))
             
                 self.client.get('/accounts/logout/')
