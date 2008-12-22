@@ -86,13 +86,8 @@ class StatisticsRESTActionsTestCase(TestCase):
         
                 # test to see if the labels on the x-axis is correct
                 # it sould be monday-sunday which dec 1-7 also is.
-                if week == 1:
-                    pass
-                    for numb in range(7-start_date.weekday()):
-                        self.failUnlessEqual(json_content['x_axis']['labels']['labels'][numb], datetime.datetime.strftime(datetime.datetime(2008,12, numb + 1 + start_date.weekday()), '%A'))
-                else:
-                    for numb in range(7):
-                        self.failUnlessEqual(json_content['x_axis']['labels']['labels'][numb], datetime.datetime.strftime(datetime.datetime(2008,12,numb+1), '%A'))
+                for numb in range(7):
+                    self.failUnlessEqual(json_content['x_axis']['labels']['labels'][numb], datetime.datetime.strftime(datetime.datetime(2008,12,numb+1), '%A'))
                 
                 self.failUnlessEqual(json_content['title']['text'], '%s Week %s' % (user.username, week))
                     
@@ -206,3 +201,65 @@ class StatisticsRESTActionsTestCase(TestCase):
                 self.failUnlessEqual(json_content['title']['text'], '%s %s to %s' % (user.username, start_date, end_date))
             
                 self.client.get('/accounts/logout/')
+                
+                
+    def testTeamWeekView(self):
+        for pk in range(2,3):
+            team = Team.objects.get(pk=pk)
+            year = 2008
+            for week in range(1,53):            
+                response = self.client.get('/statistics/team/%s/year/%s/week/%s/' % (team.id, year, week))
+                self.failUnlessEqual(response.status_code, 302)
+        
+                response = self.client.post('/accounts/login/',
+                                            {'username': team.creator.username, 'password': 'pass'})
+                self.failUnlessEqual(response.status_code, 302)
+        
+                response = self.client.get('/statistics/team/%s/year/%s/week/%s/' % (team.id-1, year, week))
+                self.failUnlessEqual(response.status_code, 403)
+        
+                response = self.client.get('/statistics/data/team/%s/year/%s/week/%s/' % (team.id, year, week))
+        
+                json_content = json.loads(response.content)
+                
+                members = team.members.all()
+                members_id = []
+                for member in members:
+                    members_id.append(member.id)
+                slice_set = TimeSlice.objects.filter(week_number=week, create_date__year= year, user__in = members_id)
+                
+                slip_dict = {}
+                for slic in slice_set:
+                    if not slip_dict.has_key(slic.begin.date()):
+                        slip_dict[slic.begin.date()] = [slic.slip]
+                    else:
+                        if slic.slip not in slip_dict[slic.begin.date()]:
+                             slip_dict[slic.begin.date()].append(slic.slip)
+        
+                start_date = datetime.date(year, 1, 1) + datetime.timedelta(days = (week-2)*7)
+                while start_date.isocalendar()[1] != week:
+                    start_date += datetime.timedelta(days=1)
+                                
+                end_date = start_date + datetime.timedelta(days=6)
+                w_date = start_date
+                all_dates_list = []
+                while w_date != end_date + datetime.timedelta(days=1):
+                    all_dates_list.append(w_date)
+                    w_date += datetime.timedelta(days=1)
+        
+                for date in all_dates_list:
+                    if date not in slip_dict.keys():
+                        self.failUnlessEqual(json_content['elements'][0]['values'][date.weekday()], [0])
+                    else:
+                        for number in range(len(slip_dict[date])):
+                            self.failUnlessEqual(json_content['elements'][0]['values'][date.weekday()][number]['val'], round(slip_dict[date][number].display_days_time(date), 1))
+        
+                self.failUnlessEqual(json_content['elements'][0]['type'], 'bar_stack')
+        
+                for numb in range(7):
+                    self.failUnlessEqual(json_content['x_axis']['labels']['labels'][numb], datetime.datetime.strftime(datetime.datetime(2008,12,numb+1), '%A'))
+                
+                self.failUnlessEqual(json_content['title']['text'], '%s Week %s' % (team.name, week))
+                    
+                self.client.get('/accounts/logout/')
+        
