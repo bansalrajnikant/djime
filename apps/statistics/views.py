@@ -279,8 +279,8 @@ def get_data(request, action, data, year, search, search_id):
         value_dictionary = {}
         value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
         value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
-        value_dictionary['x_axis'] = { "labels": { "labels": []}}
-        value_dictionary['y_axis'] = {  "min": 0, "max": True, "steps": True }
+        value_dictionary['x_axis'] = {"labels": { "labels": []}}
+        value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": { "labels": []}}
         value_dictionary['tooltip'] = {"mouse": 2}
 
         max_list = [0.01]
@@ -306,13 +306,16 @@ def get_data(request, action, data, year, search, search_id):
                 value_dictionary['elements'][0]['values'].append(value_list)
 
         value_dictionary['y_axis']['max']=max(max_list)
-        value_dictionary['y_axis']['steps']=max(max_list) * 0.1
-
+        value_dictionary['y_axis']['min']=0
+        step = max(max_list) * 0.1
+        for numb in range(11):
+            y_time = numb*step
+            value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
 
         if search == 'user':
-            value_dictionary['title']['text'] = '%s Week %s' % (request.user.username, week)
+            value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (request.user.username, week, year)
         elif search == 'team':
-             value_dictionary['title']['text'] = '%s Week %s' % (Team.objects.get(pk = int(search_id)).name, week)
+             value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (Team.objects.get(pk = int(search_id)).name, week, year)
 
         return HttpResponse(json.dumps(value_dictionary))
 
@@ -354,8 +357,8 @@ def get_data(request, action, data, year, search, search_id):
         value_dictionary = {}
         value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": [], "tip": True}]
         value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
-        value_dictionary['x_axis'] = {"labels": { "labels": []}}
-        value_dictionary['y_axis'] = {"min": 0, "max": True, "steps": True}
+        value_dictionary['x_axis'] = {"labels": {"labels": []}}
+        value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": { "labels": []}}
         value_dictionary['tooltip'] = {"mouse": 2}
 
         max_list = [0.01]
@@ -377,8 +380,12 @@ def get_data(request, action, data, year, search, search_id):
                 max_list.append(temp_max)
                 value_dictionary['elements'][0]['values'].append(value_list)
 
-        value_dictionary['y_axis']['max']=max(max_list)
-        value_dictionary['y_axis']['steps']=max(max_list) * 0.1
+        value_dictionary['y_axis']['max'] = max(max_list)
+        value_dictionary['y_axis']['min'] = 0
+        step = max(max_list) * 0.1
+        for numb in range(11):
+            y_time = numb*step
+            value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
 
         if search == 'user':
             value_dictionary['title']['text'] = '%s %s %s' % (request.user.username, start_date.strftime('%B'), year)
@@ -420,7 +427,7 @@ def get_date_data(request, search, search_id, start_date, end_date):
     value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": [], "tip": True}]
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": { "labels": []}}
-    value_dictionary['y_axis'] = { "min": 0, "max": True, "steps": True}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"labels": []}}
     value_dictionary['tooltip'] = {"mouse": 2}
 
     max_list = [0.01]
@@ -442,8 +449,11 @@ def get_date_data(request, search, search_id, start_date, end_date):
             max_list.append(temp_max)
             value_dictionary['elements'][0]['values'].append(value_list)
 
-    value_dictionary['y_axis']['max']=max(max_list)
-    value_dictionary['y_axis']['steps']=max(max_list) * 0.1
+    value_dictionary['y_axis']['max'] = max(max_list)
+    step = max(max_list) * 0.1
+    for numb in range(11):
+        y_time = numb*step
+        value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
 
     if search == 'user':
             value_dictionary['title']['text'] = '%s %s to %s' % (request.user.username, start_date, end_date)
@@ -500,7 +510,7 @@ def get_team_week_data(request, team_id, week, year):
     value_dictionary['elements'] = []
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": { "labels": []}}
-    value_dictionary['y_axis'] = {"min": 0, "max": True, "steps": True}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"labels": []}}
     value_dictionary['tooltip'] = {"mouse": 2}
 
     # this loop works pretty much like the others, however, in this one we need to iterate over the member_ids aswell.
@@ -521,7 +531,11 @@ def get_team_week_data(request, team_id, week, year):
         value_dictionary['elements'].append(team_list_dict[mem_id]['value'])
 
     value_dictionary['y_axis']['max'] = max(max_list)
-    value_dictionary['y_axis']['steps'] = max(max_list) * 0.1
+    step = max(max_list) * 0.1
+    for numb in range(11):
+        y_time = numb*step
+        value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
+        
     value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (team.name, week, year)
 
     return HttpResponse(json.dumps(value_dictionary))
@@ -570,8 +584,8 @@ def get_team_month_data(request, team_id, month, year):
     value_dictionary['elements'] = []
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"min": 0, "max": True}
-    value_dictionary['y_axis'] = {"min": 0, "max": True, "steps": True}
-    value_dictionary['tooltip'] = {"mouse": 2}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"labels": []}}
+    value_dictionary['tooltip'] = {"mouse": 1}
 
     max_list = [0.01]
     for date in sorted_date_list:
@@ -591,7 +605,10 @@ def get_team_month_data(request, team_id, month, year):
         value_dictionary['elements'].append(team_list_dict[mem_id]['value'])
 
     value_dictionary['y_axis']['max'] = max(max_list) * 1.05
-    value_dictionary['y_axis']['steps'] = max(max_list) * 1.05 * 0.1
+    step = max(max_list) * 1.05 * 0.1
+    for numb in range(11):
+        y_time = numb*step
+        value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
     # x max and min needs to be set as this graph utilizes that instead of labels. Max is set to one day more than the max day for the best result.
     value_dictionary['x_axis']['min'] = start_date.day
     value_dictionary['x_axis']['max'] = end_date.day + 1
@@ -637,7 +654,7 @@ def get_team_date_data(request, team_id, start_date, end_date):
     value_dictionary['elements'] = []
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"min": 0, "max": True, "steps": 86400, "labels": {"rotate":"vertical","steps":86400,"visible-steps":2, "text":"#date:m-d#"}}
-    value_dictionary['y_axis'] = {"min": 0, "max": True, "steps": True}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"labels": []}}
     value_dictionary['tooltip'] = {"mouse": 1}
 
 
@@ -660,7 +677,10 @@ def get_team_date_data(request, team_id, start_date, end_date):
         value_dictionary['elements'].append(team_list_dict[mem_id]['value'])
 
     value_dictionary['y_axis']['max'] = max(max_list) * 1.05
-    value_dictionary['y_axis']['steps'] = max(max_list) * 1.05 * 0.1
+    step = max(max_list) * 1.05 * 0.1
+    for numb in range(11):
+        y_time = numb*step
+        value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
     value_dictionary['x_axis']['min'] = time.mktime(s_date.timetuple()) # a way to make a unix timestamp.
     value_dictionary['x_axis']['max'] = time.mktime(e_date.timetuple())
     value_dictionary['title']['text'] = 'From %s to %s' % (s_date, e_date)
