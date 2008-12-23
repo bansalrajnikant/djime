@@ -262,4 +262,64 @@ class StatisticsRESTActionsTestCase(TestCase):
                 self.failUnlessEqual(json_content['title']['text'], '%s Week %s' % (team.name, week))
                     
                 self.client.get('/accounts/logout/')
+                
+                
+    def testTeamMonthView(self):
+        for pk in range(2,4):
+            team = Team.objects.get(pk=pk)
+            year = 2008
+            for month in range(1,13):
+                response = self.client.get('/statistics/team/%s/year/%s/month/%s/' % (team.id, year, month))
+                self.failUnlessEqual(response.status_code, 302)
         
+                response = self.client.post('/accounts/login/',
+                                            {'username': team.creator.username, 'password': 'pass'})
+                self.failUnlessEqual(response.status_code, 302)
+        
+                response = self.client.get('/statistics/team/%s/year/%s/month/%s/' % (team.id-1, year, month))
+                self.failUnlessEqual(response.status_code, 403)
+        
+                response = self.client.get('/statistics/data/team/%s/year/%s/month/%s/' % (team.id, year, month))
+        
+                json_content = json.loads(response.content)
+        
+                start_date = datetime.date(year, month, 1)
+                end_date = start_date + datetime.timedelta(days=30)
+                while end_date.month != start_date.month:
+                    end_date -= datetime.timedelta(days=1)
+                members = team.members.all()
+                members_id = []
+                for member in members:
+                    members_id.append(member.id)
+                slice_set = TimeSlice.objects.filter(create_date__range=(start_date, end_date), user__in=members_id)
+                
+                slip_dict = {}
+                for slic in slice_set:
+                    if not slip_dict.has_key(slic.begin.date()):
+                        slip_dict[slic.begin.date()] = [slic.slip]
+                    else:
+                        if slic.slip not in slip_dict[slic.begin.date()]:
+                             slip_dict[slic.begin.date()].append(slic.slip)
+                                
+                # make a list of all the dates for the chosen month:
+                w_date = start_date
+                all_dates_list = []
+                while w_date != end_date + datetime.timedelta(days=1):
+                    all_dates_list.append(w_date)
+                    w_date += datetime.timedelta(days=1)
+        
+                for date in all_dates_list:
+                    if date not in slip_dict.keys():
+                        self.failUnlessEqual(json_content['elements'][0]['values'][date.day-1], [0])
+                    else:
+                        for number in range(len(slip_dict[date])):
+                            self.failUnlessEqual(json_content['elements'][0]['values'][date.day-1][number]['val'], round(slip_dict[date][number].display_days_time(date), 1))
+            
+                for numb in range(1, end_date.day+1):
+                     self.failUnlessEqual(json_content['x_axis']['labels']['labels'][numb-1], str(numb))
+                     
+                self.failUnlessEqual(json_content['title']['text'], '%s %s %s' % (team.name, datetime.datetime.strftime(start_date, '%B'), year))
+            
+                self.client.get('/accounts/logout/')
+
+
