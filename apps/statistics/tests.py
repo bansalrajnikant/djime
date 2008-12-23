@@ -15,7 +15,7 @@ try:
 except ImportError:
     import simplejson as json
 import random
-
+import time
 
 class StatisticsRESTActionsTestCase(TestCase):
     fixtures = ['auth.json','slip.json', 'slice.json', 'team.json']
@@ -23,7 +23,7 @@ class StatisticsRESTActionsTestCase(TestCase):
     def setUp(self):
         self.client = RESTClient()
 
-    # note, this test is set to test an entire year for all 6 test users, so it can take a little while for the test to run.
+    # note, the User/Team tests are very much alike, only difference is the time period - a week, a  month, from/to two dates, and if they display a team with users or a user.
     def testUserWeekView(self):
         for pk in range(2,7):
             user = User.objects.get(pk=pk)
@@ -89,7 +89,7 @@ class StatisticsRESTActionsTestCase(TestCase):
                 for numb in range(7):
                     self.failUnlessEqual(json_content['x_axis']['labels']['labels'][numb], datetime.datetime.strftime(datetime.datetime(2008,12,numb+1), '%A'))
                 
-                self.failUnlessEqual(json_content['title']['text'], '%s Week %s' % (user.username, week))
+                self.failUnlessEqual(json_content['title']['text'], '%s Week: %s Year: %s' % (user.username, week, year))
                     
                 # logout when finished testing a user, to create simelar starting points for every user.
                 self.client.get('/accounts/logout/')
@@ -204,7 +204,7 @@ class StatisticsRESTActionsTestCase(TestCase):
                 
                 
     def testTeamWeekView(self):
-        for pk in range(2,3):
+        for pk in range(2,4):
             team = Team.objects.get(pk=pk)
             year = 2008
             for week in range(1,53):            
@@ -226,7 +226,7 @@ class StatisticsRESTActionsTestCase(TestCase):
                 members_id = []
                 for member in members:
                     members_id.append(member.id)
-                slice_set = TimeSlice.objects.filter(week_number=week, create_date__year= year, user__in = members_id)
+                slice_set = TimeSlice.objects.filter(week_number=week, create_date__year=year, user__in=members_id)
                 
                 slip_dict = {}
                 for slic in slice_set:
@@ -259,7 +259,7 @@ class StatisticsRESTActionsTestCase(TestCase):
                 for numb in range(7):
                     self.failUnlessEqual(json_content['x_axis']['labels']['labels'][numb], datetime.datetime.strftime(datetime.datetime(2008,12,numb+1), '%A'))
                 
-                self.failUnlessEqual(json_content['title']['text'], '%s Week %s' % (team.name, week))
+                self.failUnlessEqual(json_content['title']['text'], '%s Week: %s Year: %s' % (team.name, week, year))
                     
                 self.client.get('/accounts/logout/')
                 
@@ -523,3 +523,67 @@ class StatisticsRESTActionsTestCase(TestCase):
                     
                 self.client.get('/accounts/logout/')
         
+    def testTeamStatDateView(self):
+        for pk in range(2,4):
+            team = Team.objects.get(pk=pk)
+            year = 2008
+            for random_generator in range(20):
+                start_date = datetime.date(year, random.randrange(1,13), random.randrange(1,29))
+                end_date = start_date + datetime.timedelta(days=random.randrange(1,61))
+        
+                response = self.client.get('/statistics/team_stat/%s/date/%s/%s/' % (team.id, start_date, end_date))
+                self.failUnlessEqual(response.status_code, 302)
+        
+                response = self.client.post('/accounts/login/',
+                                            {'username': team.creator.username, 'password': 'pass'})
+                self.failUnlessEqual(response.status_code, 302)
+        
+                response = self.client.get('/statistics/team_stat/%s/date/%s/%s/' % (team.id-1, start_date, end_date))
+                self.failUnlessEqual(response.status_code, 403)
+        
+                response = self.client.get('/statistics/data/team_stat/%s/date/%s/%s/' % (team.id, start_date, end_date))
+                json_content = json.loads(response.content)
+        
+                members = team.members.all()
+                members_id = []
+                for member in members:
+                    members_id.append(member.id)
+        
+                slice_set = TimeSlice.objects.filter(create_date__range=(start_date, end_date), user__in=members_id)
+                                
+                slip_dict = {}
+                for member in members_id:
+                    slip_dict[member] = {}
+                    
+                w_date = start_date
+                all_dates_list = []
+                while w_date != end_date + datetime.timedelta(days=1):
+                    all_dates_list.append(w_date)
+                    for member in members_id:
+                        slip_dict[member][w_date] = {'slip' : [], 'value': 0}
+                    w_date += datetime.timedelta(days=1)
+                
+                for slic in slice_set:
+                    if not slic.slip in slip_dict[slic.user_id][slic.begin.date()]['slip']:
+                        slip_dict[slic.user_id][slic.begin.date()]['slip'].append(slic.slip)
+                        slip_dict[slic.user_id][slic.begin.date()]['value'] += slic.slip.display_days_time(slic.begin.date())
+                
+                counter = -1
+                
+                for member in members_id:
+                    counter += 1
+                    self.failUnlessEqual(json_content['elements'][counter]['type'], 'scatter_line') 
+                    for date in all_dates_list:
+                        if type(json_content['elements'][counter]['values'][(date-start_date).days]) == type(float()):
+                            rounding = 1
+                        else:
+                            rounding = 0
+                        self.failUnlessEqual(json_content['elements'][counter]['values'][(date-start_date).days]['y'], round(slip_dict[member][date]['value'], rounding))
+                        self.failUnlessEqual(json_content['elements'][counter]['values'][(date-start_date).days]['x'], time.mktime(date.timetuple())) #unix time stamp
+                
+                self.failUnlessEqual(json_content['x_axis']['min'], time.mktime(start_date.timetuple()))
+                self.failUnlessEqual(json_content['x_axis']['max'], time.mktime(end_date.timetuple()))
+                self.failUnlessEqual(json_content['x_axis']['steps'], 86400)
+                self.failUnlessEqual(json_content['title']['text'], '%s: From %s to %s' % (team.name, start_date, end_date))
+                    
+                self.client.get('/accounts/logout/')

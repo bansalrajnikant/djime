@@ -611,7 +611,7 @@ def get_team_month_data(request, team_id, month, year):
         value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
     # x max and min needs to be set as this graph utilizes that instead of labels. Max is set to one day more than the max day for the best result.
     value_dictionary['x_axis']['min'] = start_date.day
-    value_dictionary['x_axis']['max'] = end_date.day + 1
+    value_dictionary['x_axis']['max'] = end_date.day
     value_dictionary['title']['text'] = '%s, %s %s' % (team.name, start_date.strftime('%B'), year)
 
     return HttpResponse(json.dumps(value_dictionary))
@@ -683,6 +683,6 @@ def get_team_date_data(request, team_id, start_date, end_date):
         value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
     value_dictionary['x_axis']['min'] = time.mktime(s_date.timetuple()) # a way to make a unix timestamp.
     value_dictionary['x_axis']['max'] = time.mktime(e_date.timetuple())
-    value_dictionary['title']['text'] = 'From %s to %s' % (s_date, e_date)
+    value_dictionary['title']['text'] = '%s: From %s to %s' % (team.name, s_date, e_date)
 
     return HttpResponse(json.dumps(value_dictionary))
