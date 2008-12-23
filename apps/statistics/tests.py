@@ -378,3 +378,79 @@ class StatisticsRESTActionsTestCase(TestCase):
                 self.failUnlessEqual(json_content['title']['text'], '%s %s to %s' % (team.name, start_date, end_date))
             
                 self.client.get('/accounts/logout/')
+                
+                
+    def testTeamStatWeekView(self):
+        for pk in range(2,4):
+            team = Team.objects.get(pk=pk)
+            year = 2008
+            for week in range(1,53):
+                response = self.client.get('/statistics/team_stat/%s/year/%s/week/%s/' % (team.id, year, week))
+                self.failUnlessEqual(response.status_code, 302)
+        
+                response = self.client.post('/accounts/login/',
+                                            {'username': team.creator.username, 'password': 'pass'})
+                self.failUnlessEqual(response.status_code, 302)
+        
+                response = self.client.get('/statistics/team_stat/%s/year/%s/week/%s/' % (team.id-1, year, week))
+                self.failUnlessEqual(response.status_code, 403)
+        
+                response = self.client.get('/statistics/data/team_stat/%s/year/%s/week/%s/' % (team.id, year, week))
+        
+                json_content = json.loads(response.content)
+                
+                members = team.members.all()
+                members_id = []
+                for member in members:
+                    members_id.append(member.id)
+                
+                slice_set = TimeSlice.objects.filter(week_number=week, create_date__year=year, user__in=members_id)
+                
+                # new slip_dict has keys equal to the team members id, and values equal to a new dict.
+                slip_dict = {}
+                for member in members_id:
+                    slip_dict[member] = {}
+                   
+                start_date = datetime.date(year, 1, 1) + datetime.timedelta(days = (week-2)*7)
+                while start_date.isocalendar()[1] != week:
+                    start_date += datetime.timedelta(days=1)
+                end_date = start_date + datetime.timedelta(days=6)
+                    
+                w_date = start_date
+                all_dates_list = []
+                # this loop generates all the dates in a list and keys for all the dates in each members dict in the slip_dict.
+                # each date_key is a new dict with two keys, slip, a list to hold the slips, for checking and 'value' default 0 which is the value for that day for that user.
+                while w_date != end_date + datetime.timedelta(days=1):
+                    all_dates_list.append(w_date)
+                    for member in members_id:
+                        slip_dict[member][w_date] = {'slip' : [], 'value': 0}
+                    w_date += datetime.timedelta(days=1)
+                
+                # this loop checks if the timeslice's slip has been processed, if it hasn't it appends the slip to the slip_key list,
+                # and adds the value to the value_key int/float
+                for slic in slice_set:
+                    if not slic.slip in slip_dict[slic.user_id][slic.begin.date()]['slip']:
+                        slip_dict[slic.user_id][slic.begin.date()]['slip'].append(slic.slip)
+                        slip_dict[slic.user_id][slic.begin.date()]['value'] += slic.slip.display_days_time(slic.begin.date())
+                
+                counter = -1
+                # this loops over members and then loops over the dates in the all_dates_list, a counter is used to keep track of the members
+                # so first member looped, has counter 0, 2nd counter 1 ect. This is used to pick the dictionary in the elements list.
+                for member in members_id:
+                    counter += 1
+                    self.failUnlessEqual(json_content['elements'][counter]['type'], 'bar') 
+                    for date in all_dates_list:
+                        # this statement checks to see if the value is a float or not(= int). When it is a int, rounding isn't nessesary as the value
+                        # will be 0, but to keep it more simple, all numbers will be rounded, floats with 1, and ints with 0
+                        if type(json_content['elements'][counter]['values'][date.weekday()]) == type(float()):
+                            rounding = 1
+                        else:
+                            rounding = 0
+                        self.failUnlessEqual(json_content['elements'][counter]['values'][date.weekday()], round(slip_dict[member][date]['value'], rounding))
+                
+                for numb in range(7):
+                    self.failUnlessEqual(json_content['x_axis']['labels']['labels'][numb], datetime.datetime.strftime(datetime.datetime(2008,12,numb+1), '%A'))
+                
+                self.failUnlessEqual(json_content['title']['text'], '%s Week: %s Year: %s' % (team.name, week, year))
+                    
+                self.client.get('/accounts/logout/')
