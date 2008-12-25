@@ -25,20 +25,16 @@ class Slip(models.Model):
         delta = datetime.timedelta(0, seconds)
 
         duration = {
-            'days': delta.days,
-            'hours': floor(delta.seconds / 3600),
-            'minutes': floor((delta.seconds % 3600) / 60),
-            'seconds': delta.seconds % 60
+            'hours': floor(delta.seconds / 3600) + delta.days * 24,
+            'minutes': floor((delta.seconds % 3600) / 60)
         }
 
-        return '%02i:%02i:%02i:%02i' % (duration['days'],duration['hours'],
-                                        duration['minutes'],duration['seconds'])
+        return '%02i:%02i' % (duration['hours'], duration['minutes'])
 
 
     def is_active(self):
         slice = self.timeslice_set.filter(end = None)
         return bool(slice)
-
 
     class Meta:
         ordering = ["-created"]
