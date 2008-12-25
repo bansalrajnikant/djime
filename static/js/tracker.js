@@ -28,23 +28,6 @@ $(document).ready(function () {
     dialog_box.text(djime.messages.slip_delete_body);
   });
 
-  $("#start-stop-button").click(function () {
-    if ((this).value == 'Start') {
-      (this).value = 'Stop'
-      $.post(document.URL + 'start/');
-    }
-    else if ((this).value == 'Stop') {
-      (this).value = 'Start'
-      $.post(document.URL + 'stop/');
-      $.getJSON(document.URL + 'get_json/', function(data) {
-        $("#slip-total-time").text(data.slip_time);
-      });
-    }
-    else {
-      alert('something is wrong')
-    };
-  });
-
   $("#create-slip").click(function () {
     $.post(document.URL + 'slip/add/', {name: $("#slip-name").val()}, function(data) {
       $.getJSON(document.URL + 'slip/add/', function(data) {
@@ -60,31 +43,16 @@ $(document).ready(function () {
   });
 
   $('#slip-timer-button').click(function () {
-    if ($(this).hasClass('running')) {
-      // Stop the timer
-      $(this).removeClass('running');
-      $(this).addClass('working');
-      $.post(document.URL + 'stop/', {}, function () {
-        $('#slip-timer-button').removeClass('working');
-        // After stopping the timer, update the total time.
-        $.getJSON(document.URL + 'get_json/', function(data) {
-          $("#slip-total-time").text(data.slip_time);
-          $('#slip-timer-button').text('0:00');
-        });
+    if ($(this).hasClass($.timeclock.markerClassName)) {
+      var elapsed = $.timeclock._destroyTimeClock(this);
+      $.post(document.URL + 'stop/', {elapsed: elapsed});
+      $.getJSON(document.URL + 'get_json/', function(data) {
+        $("#slip-total-time").text(data.slip_time);
       });
-    }
-    else if ($(this).hasClass('working')) {
-      // Do nothing
     }
     else {
-      // If neither working or running is set, start the timer.
-      $(this).addClass('working');
-      $.post(document.URL + 'start/', {}, function () {
-        $('#slip-timer-button').removeClass('working');
-        $('#slip-timer-button').addClass('running');
-        var now = new Date();
-        $('#slip-timer-button').countdown({since: now, format: 'YOWDHMS'})
-      });
+      $.post(document.URL + 'start/');
+      $(this).timeclock();
     }
   });
 });

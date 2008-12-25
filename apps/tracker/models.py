@@ -26,29 +26,11 @@ class Slip(models.Model):
         delta = datetime.timedelta(0, seconds)
 
         duration = {
-            'days': delta.days,
-            'hours': floor(delta.seconds / 3600),
-            'minutes': floor((delta.seconds % 3600) / 60),
-            'seconds': delta.seconds % 60
+            'hours': floor(delta.seconds / 3600) + delta.days * 24,
+            'minutes': floor((delta.seconds % 3600) / 60)
         }
 
-        return '%02i:%02i:%02i:%02i' % (duration['days'],duration['hours'],
-                                        duration['minutes'],duration['seconds'])
-    def display_days_time(self, date):
-        seconds = 0
-        for slice in self.timeslice_set.filter(slip = self.id, create_date = date):
-            seconds += slice.duration
-
-        delta = datetime.timedelta(0, seconds)
-
-        duration = {
-            'hours': floor(delta.seconds / 3600),
-            'minutes': (floor((delta.seconds % 3600) / 60))/60.0*100,
-        }
-
-        
-        return float('%02i.%02i' % (duration['hours'], duration['minutes']))
-
+        return '%02i:%02i' % (duration['hours'], duration['minutes'])
 
 
     def is_active(self):

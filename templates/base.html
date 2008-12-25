@@ -58,15 +58,14 @@
     <div id="ft">{% block footer %}{% endblock %}</div>
   </div>
   <div id="closure">
-    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
     <script type="text/javascript">
       {# Define a djime object in JavaScript that other templates can put attributes into #}
       var djime = {
         'messages': {}
       }
-      google.load("jquery", "1.2.6");
-      google.load("swfobject", "2.1");
     </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/swfobject.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.rest.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/tracker.js"></script>
     {# Final closing code JavaScript loading and HTML used in JavaScript. #}

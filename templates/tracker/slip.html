@@ -14,23 +14,18 @@
     <div class="edit" id="div-1">{{ slip.name }}</div>
   </h2>
   <p>Total time: <span id="slip-total-time">{{ slip.display_time }}</span></p>
-  <div id="slip-timer-button">0:00</div>
+  <div id="slip-timer-button"><div class="timeclock">0:00</div></div>
 
 {% endblock %}
 
 {% block sidebar %}
-  {% if slip.is_active %}
-    <input type="button" name="start-stop-button" id="start-stop-button" value="Stop" />
-  {% else %}
-    <input type="button" name="start-stop-button" id="start-stop-button" value="Start" />
-  {% endif %}
   <input type="button" name="delete-slip" id="delete-slip-button" value="Delete this slip" />
 {% endblock %}
 
 {% block closure %}
   <script type="text/javascript" src="{{ STATIC_URL }}jquery.ui/ui/jquery.ui.all.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.jeditable.js"></script>
-  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.countdown.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.timeclock/jquery.timeclock.js"></script>
   <script type="text/javascript">
     djime.messages['slip_delete_title'] = '{% trans "Delete this slip?" %}';
     djime.messages['slip_delete_body'] = '{% trans "If you delete this slip, you will lose all the time records associated with it. This is irrevocable." %}';

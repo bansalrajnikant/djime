@@ -4,32 +4,39 @@
  * Main CSS file for the Djime project.
  *
  * Please note that we're using CSSEdit's @group comment syntax.
+ *
+ * Colour sheme:
+ *   Cerulean:       #007BA7
+ *   Bright blue:    #01B8DE
+ *   Near-white:     #F7F7F8
+ *   Silver grey:    #C2C8D1
+ *   Dark blue:      #001C26
+ *
+ * http://www.colourlovers.com/palette/646252/Cerulean_touch
  */
 
 html, body {
-  background-color: #E7E7E8;
+  background-color: #C2C8D1;
 }
 
 /* @group Page header */
-#header {
-  background-color: #A5B17F;
-  color: #434635;
-  height: 1.5em;
+#hd {
+  background-color: #007BA7;
+  color: #F7F7F8;
 }
 
 #header div.login {
   float: right;
   margin-right: 1em;
-  background-color: #526D51;
-  color: #E7E7E8;
-  padding: 0.7em;
+  padding: 0.5em 1em 0.5em 1em;
+  font-size: 85%;
 }
 
 #header div.login a {
-  color: #E7E7E8;
+  color: #F7F7F8;
 }
 
-#header h1#site-header {
+#header #site-header {
   font-weight: bold;
   padding: 0.2em;
   padding-left: 0.5em;
@@ -38,50 +45,66 @@ html, body {
 /* @group Main menu */
 
 #hd #main-menu-bar {
-  background-color: #A9BD44;
-  color: #434635;
-}
-
-#main-menu-bar ul.menu li {
-
+  padding-left: 0.5em;
 }
 
 #main-menu-bar ul.menu li a {
-  color: #434635;
-  background-color: #A9BD44;
+  background-color: #005573;
+  color: #F7F7F8;
   display: block;
   text-decoration: none;
-  padding: 0.5em;  
+  padding: 0.25em 0.5em 0.25em 0.5em;
+  margin-top: 0.25em;
+  margin-right: 0.5em;
   float: left;
 }  
 
+#main-menu-bar ul.menu.right li a {
+  float: right;
+}
+
 #main-menu-bar ul.menu li a:hover {
-  background-color: #526D51;
-  color: #E7E7E8;
+  background-color: #01B8DE;
 } 
+
+#main-menu-bar ul.menu li a.active {
+  background-color: #F7F7F8;
+  color: #001C26;
+  padding-top: 0.4em;
+  margin-top: 0.1em;
+}
 
 /* @end */
 /* @end */
 
 /* @group Main content */
 
-#bd {
+#bd #yui-main #content {
   background-color: white;
-  padding: 0.5em 0 0.5em 0;
-}
-
-#bd #content {
-  padding: 0 0.5em 0 0.5em;
+  padding: 0.5em;
+  margin-top: 1em;
 }
 
 /* @end */
+
+/* @group Sidebar */
+
+#bd #sidebar.yui-b {
+  margin-top: 1em;
+  padding: 0.5em;
+  background-color: #d5dce6;
+}
+
+/* @end */
+
+
 
 /* @group Footer */
 
 #ft {
   text-align: center;
   margin-top: 1em;
-  color: #526D51;
+  color: #001C26;
 }
 
 /* @end */
