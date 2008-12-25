@@ -45,14 +45,20 @@ def slip_action(request, slip_id, action):
         return HttpResponseNotAllowed(('POST', 'GET'))
 
     if action == 'start':
-        if request.POST.has_key('begin'):
-            start_time = request.POST['begin']
-        else:
-            start_time = datetime.now()
+        # Make sure the user doesn't already have an active time slice
+        # for this Slip
+        if not TimeSlice.objects.filter(user=request.user,
+                                        slip=slip_id, end=None):
+            if request.POST.has_key('begin'):
+                start_time = request.POST['begin']
+            else:
+                start_time = datetime.now()
 
-        new_time_slice = TimeSlice.objects.create(user = request.user, begin = start_time, slip_id = slip_id )
-        new_time_slice.save()
-        return HttpResponse('Your timeslice begin time %s has been created' % start_time)
+            new_time_slice = TimeSlice.objects.create(user = request.user, begin = start_time, slip_id = slip_id )
+            new_time_slice.save()
+            return HttpResponse('Your timeslice begin time %s has been created' % start_time)
+        else:
+            return HttpResponse('You already have an unfinished time slice for this task. A new one has not been created.', status=409)
 
     elif action == 'stop':
         slice = TimeSlice.objects.get(user = request.user, slip = slip_id, end = None)
