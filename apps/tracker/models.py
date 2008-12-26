@@ -33,10 +33,15 @@ class Slip(models.Model):
         return '%02i:%02i' % (duration['hours'], duration['minutes'])
 
 
+    def display_days_time(self, date):
+        seconds = 0
+        for slice in self.timeslice_set.filter(create_date = date):
+            seconds += slice.duration
+        return seconds
+
     def is_active(self):
         slice = self.timeslice_set.filter(end = None)
         return bool(slice)
-
 
     class Meta:
         ordering = ["-created"]
