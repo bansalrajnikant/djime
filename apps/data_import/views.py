@@ -36,17 +36,13 @@ def confirm(request, import_id, action):
 
     if request.method == 'POST':
         if action == 'save':
-            result = importer_save(import_data)
-            message = 'Your data been has successfully imported.'
+            importer_save(import_data)
+            request.user.message_set.create(message='Import successful.')
         elif action == 'cancel':
-            result = import_data.delete()
-            message = 'Import cancelled.'
+            import_data.delete()
+            request.user.message_set.create(message='Import cancelled.')
         else:
             return HttpResponseForbidden('Invalid post action')
 
-        if result == 'succes':
-            return render_to_response('data_import/results.html',
-                                      {'result': message},
-                                      context_instance=RequestContext(request))
-        else:
-            return HttpResponse(result)
+        return HttpResponseRedirect(reverse('tracker.views.index'))
+

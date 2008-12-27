@@ -128,5 +128,4 @@ def importer_save(import_data):
         slice.slip = slice.slip
         slice.update_date()
     import_data.delete()
-    return 'succes'
 
