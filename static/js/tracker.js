@@ -41,10 +41,12 @@ $(document).ready(function () {
     tooltip   : 'Click to edit...',
     name: 'name'
   });
+ 
+  $('#slip-timer-button.timer-running').timeclock({since: djime.current_time});
 
   $('#slip-timer-button').click(function () {
     if ($(this).hasClass($.timeclock.markerClassName)) {
-      var elapsed = $.timeclock._destroyTimeClock(this);
+      var elapsed = $(this).timeclock('destroy');
       $.post(document.URL + 'stop/', {elapsed: elapsed});
       $.getJSON(document.URL + 'get_json/', function(data) {
         $("#slip-total-time").text(data.slip_time);
