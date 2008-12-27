@@ -5,6 +5,7 @@ import os.path
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    (r'^$', 'djimeboard.views.index'),
     (r'^accounts/', include('account.urls')),
     (r'^import/', include('data_import.urls')),
     (r'^tracker/', include('tracker.urls')),
