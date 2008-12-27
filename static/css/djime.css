@@ -94,6 +94,16 @@ html, body {
   padding: 0.3em 0.5em 0.3em 0.5em;
 }
 
+#content #messages li .close {
+  color: #007BA7;
+  float: right;
+  font-size: 120%;
+  font-weight: bold;
+  margin-top: -0.1em;
+  margin-bottom: -0.5em;
+  cursor: pointer;
+}
+
 /* @end */
 /* @end */
 
