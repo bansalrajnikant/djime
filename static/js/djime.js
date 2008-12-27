@@ -4,5 +4,6 @@ $(document).ready(function () {
     $("#content #messages li").click(function () {
         $(this).fadeOut()
     });
+    $("#content #messages li").corner();
 });
 

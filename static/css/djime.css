@@ -1,4 +1,4 @@
-/* @override http://localhost:8000/site_media/css/djime.css */
+/* @override http://localhost:8000/static/css/djime.css */
 
 /**
  * Main CSS file for the Djime project.
@@ -85,6 +85,16 @@ html, body {
   margin-top: 1em;
 }
 
+/* @group Messages */
+
+#content #messages li {
+  background-color: #01B8DE;
+  border: 2px solid #007BA7;
+  margin: 1em 0 2em 0;
+  padding: 0.3em 0.5em 0.3em 0.5em;
+}
+
+/* @end */
 /* @end */
 
 /* @group Sidebar */
