@@ -1,0 +1,19 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+  
+  <h1>Project: {{ project.name }} Total duration: {{ time }}<h1>
+  <h2>{{ user }}'s Tasks in {{ project.name }}</h2>
+    {% for slip in slip_user %}
+      <ul><strong>Task: </strong>{{ slip.name }} <strong>Duration: </strong> {{ slip.display_time }}</ul>
+    {% endfor %}
+    <br />
+  <h2>Other's tasks in {{ project.name }}</h2>
+    {% for slip  in slip_rest %}
+      <ul><strong>Task: </strong>{{ slip.name }} <strong>Duration: </strong> {{ slip.display_time }}</ul>
+    {% endfor %}
+{% endblock %}
