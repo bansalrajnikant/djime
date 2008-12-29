@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from data_import.forms import DataImportForm
 from data_import.models import Import
-from data_import.importer import handle_uploaded_file, importer_save, importer_delete
+from data_import.importer import handle_uploaded_file, importer_save
 import cPickle as pickle
 
 
@@ -36,17 +36,13 @@ def confirm(request, import_id, action):
 
     if request.method == 'POST':
         if action == 'save':
-            result = importer_save(import_id, request.user.id)
-            message = 'Your data have not been saved'
+            importer_save(import_data)
+            request.user.message_set.create(message='Import successful.')
         elif action == 'cancel':
-            result = importer_delete(import_id, request.user.id)
-            message = 'Your data have not been saved'
+            import_data.delete()
+            request.user.message_set.create(message='Import cancelled.')
         else:
             return HttpResponseForbidden('Invalid post action')
 
-        if result == 'succes':
-            return render_to_response('data_import/results.html',
-                                      {'result': message},
-                                      context_instance=RequestContext(request))
-        else:
-            return HttpResponse(result)
+        return HttpResponseRedirect(reverse('tracker.views.index'))
+

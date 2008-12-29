@@ -117,11 +117,8 @@ def handle_uploaded_file(file, user_id):
 
     return import_data.id
 
-def importer_save(import_id, user_id):
-    if user_id != Import.objects.get(pk=import_id).user_id:
-        return 'Invalid user'
-    import_data = Import.objects.get(pk=import_id)
-    dict = pickle.loads(str(pickle.complete_data))
+def importer_save(import_data):
+    dict = pickle.loads(import_data.complete_data.file.read())
     for project in dict['projects']:
         project.save()
     for slip in dict['slips']:
@@ -131,10 +128,4 @@ def importer_save(import_id, user_id):
         slice.slip = slice.slip
         slice.update_date()
     import_data.delete()
-    return 'succes'
 
-def importer_delete(import_id, user_id):
-    if user_id != Import.objects.get(pk=import_id).user_id:
-        return 'Invalid user'
-    Import.objects.get(pk=import_id).delete()
-    return 'succes'

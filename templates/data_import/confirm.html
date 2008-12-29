@@ -30,12 +30,13 @@
   </tbody>
 </table>
 
-<br>
-{% trans "Data Confermation: " %}
-<form method="post" action="/import/confirm/{{import_id}}/save/">
-                    <input type="submit" name="submit" value="{% trans 'Save' %}" />
-</form>
-<form method="post" action="/import/confirm/{{import_id}}/cancel/">
-                    <input type="submit" name="submit" value="{% trans 'Cancel' %}" />
-</form>
+<p>
+{% trans "Confirm import" %}:
+  <form method="post" action="/import/{{import_id}}/save/">
+    <input type="submit" name="save" value="{% trans 'Save' %}" />
+  </form>
+  <form method="post" action="/import/{{import_id}}/cancel/">
+    <input type="submit" name="cancel" value="{% trans 'Cancel' %}" />
+  </form>
+</p>
 {% endblock %}
