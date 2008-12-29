@@ -237,7 +237,7 @@ def get_data(request, action, data, year, search, search_id):
     if action == 'week': #this will give the data for a graph for a week
         week = int(data)
         if week <= 0 or week > 53:
-            return HttpResponseForbidden('Page not found') 
+            return HttpResponseNotFound('Page not found') 
         year = int(year)
 
         # 2 cases either get all timeslices for this week that a user or team has created
@@ -328,7 +328,8 @@ def get_data(request, action, data, year, search, search_id):
         # until a day in the chosen month is gotten which is the last day of that month.
         # also the labels is a bit different showing day numbers instead of weeknames.
         month = int(data)
-            return HttpResponseForbidden('Page not found')
+        if month not in range(1,13):    
+            return HttpResponseNotFound('Page not found')
         year = int(year)
         start_date = datetime.date(year, month, 1)
         end_date = start_date + datetime.timedelta(days=30)
@@ -563,7 +564,7 @@ def get_team_month_data(request, team_id, month, year):
     counter = 0
     for mem_id in members_id:
         team_list_dict[mem_id] = {}
-        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Time: #gmdate:H:i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
+        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Time: #ygmdate:H:i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
         counter += 1
 
 
@@ -652,7 +653,7 @@ def get_team_date_data(request, team_id, start_date, end_date):
     value_dictionary['elements'] = []
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"min": 0, "max": True, "steps": 86400, "labels": {"rotate":"vertical","steps":86400,"visible-steps":2, "text":"#date:m-d#"}}
-    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#ygmdate:H:i#", "labels": []}}
     value_dictionary['tooltip'] = {"mouse": 1}
 
 
