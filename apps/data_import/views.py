@@ -36,7 +36,7 @@ def confirm(request, import_id, action):
 
     if request.method == 'POST':
         if action == 'save':
-            importer_save(import_data)
+            importer_save(import_data, request.user)
             request.user.message_set.create(message='Import successful.')
         elif action == 'cancel':
             import_data.delete()

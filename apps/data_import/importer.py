@@ -117,9 +117,13 @@ def handle_uploaded_file(file, user_id):
 
     return import_data.id
 
-def importer_save(import_data):
+def importer_save(import_data, user):
     dict = pickle.loads(import_data.complete_data.file.read())
     for project in dict['projects']:
+        project.save()
+        # in case project is being created, it needs to be saved before a user can be aplied.
+        # if project allready exist and have the user, nothing will happen doing add(user)
+        project.members.add(user)
         project.save()
     for slip in dict['slips']:
         slip.project = slip.project
