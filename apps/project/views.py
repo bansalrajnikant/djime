@@ -7,9 +7,14 @@ from django.contrib.auth.decorators import login_required
 from tracker.models import Slip
 from django.contrib.auth.models import User
 
+def show_all_projects(request):
+    projects = Project.objects.all()
+    return render_to_response('project/all_projects.html', {'projects': projects},
+                                         context_instance=RequestContext(request))
+
 
 @login_required()
-def show_all_projects(request, user_type, user_id):
+def show_user_projects(request, user_type, user_id):
     user_id = int(user_id)
     if user_type == 'user':
         if request.user.id != int(user_id):
@@ -25,9 +30,11 @@ def show_all_projects(request, user_type, user_id):
     elif user_type == 'client':
         user = client = get_object_or_404(Client, pk=user_id)
         projects = Project.objects.filter(client = client)
-    return render_to_response('project/all_projects.html', {'projects': projects, 'user_model': user, 'user_type': user_type},
+    return render_to_response('project/all_user_projects.html', {'projects': projects, 'user_model': user, 'user_type': user_type},
                                       context_instance=RequestContext(request))
 
+
+@login_required()
 def show_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.user not in project.members.all():
@@ -41,7 +48,7 @@ def show_project(request, project_id):
         for slice in slip.timeslice_set.all():
             seconds += slice.duration
         duration += seconds
-    time ='%02i:%02i' % (duration/3600, duration%3600/60)
+    time_all ='%02i:%02i' % (duration/3600, duration%3600/60)
     duration = 0
     for slip in slip_set_user:
         seconds = 0
