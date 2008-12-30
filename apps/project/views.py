@@ -5,6 +5,8 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from tracker.models import Slip
+from django.contrib.auth.models import User
+
 
 @login_required()
 def show_all_projects(request, user_type, user_id):
@@ -12,16 +14,18 @@ def show_all_projects(request, user_type, user_id):
     if user_type == 'user':
         if request.user.id != int(user_id):
             return HttpResponseForbidden('Access Denied')
+        user = User.objects.get(pk=user_id)
+        user.name = user.username
         projects = Project.objects.filter(members = user_id)
     elif user_type == 'team':
-        team = get_object_or_404(Team, pk=user_id)
+        user = team = get_object_or_404(Team, pk=user_id)
         if request.user not in team.members.all():
             return HttpResponseForbidden('Access Denied')
         projects = Project.objects.filter(team = user_id)
     elif user_type == 'client':
-        projects = Project.objects.filter(client = user_id)
-
-    return render_to_response('project/all_projects.html', {'projects': projects},
+        user = client = get_object_or_404(Client, pk=user_id)
+        projects = Project.objects.filter(client = client)
+    return render_to_response('project/all_projects.html', {'projects': projects, 'user_model': user, 'user_type': user_type},
                                       context_instance=RequestContext(request))
 
 def show_project(request, project_id):
