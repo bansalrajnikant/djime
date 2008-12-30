@@ -2,17 +2,17 @@
 
 {% load i18n %}
 
-{% block head_title %}{{ project.name }}{% endblock %}
+{% block head_title %}{{ client.name }}{% endblock %}
 
 {% block content %}
 
-  <h1>Client: {{ client.name }} Total duration: {{ time }}<h1>
-  <h2>{{ user }}'s Tasks in {{ client.name }}</h2>
+  <h1>Client: {{ client.name }} Total duration: {{ time_all }}<h1>
+  <h2>{{ user }}'s Tasks in {{ client.name }} Total duration: {{ time_user }}</h2>
     {% for slip in slip_user %}
       <ul><strong>Task: </strong>{{ slip.name }} <strong>Duration: </strong> {{ slip.display_time }}</ul>
     {% endfor %}
     <br />
-  <h2>Other's tasks in {{ client.name }}</h2>
+  <h2>Other's tasks in {{ client.name }} Total duration: {{ time_other }}</h2>
     {% for slip  in slip_rest %}
       <ul><strong>Task: </strong>{{ slip.name }} <strong>Duration: </strong> {{ slip.display_time }}</ul>
     {% endfor %}
