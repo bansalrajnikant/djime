@@ -236,6 +236,8 @@ def get_data(request, action, data, year, search, search_id):
 
     if action == 'week': #this will give the data for a graph for a week
         week = int(data)
+        if week <= 0 or week > 53:
+            return HttpResponseNotFound('Page not found') 
         year = int(year)
 
         # 2 cases either get all timeslices for this week that a user or team has created
@@ -277,10 +279,10 @@ def get_data(request, action, data, year, search, search_id):
         # but there are 6 varibles that are different. 2 empty lists where data will be appended (values and labels list) and 4 values set to True.
         # can add a colour generator later to create colours for the graph instead of static colours.
         value_dictionary = {}
-        value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
+        value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
         value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
         value_dictionary['x_axis'] = {"labels": { "labels": []}}
-        value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": { "labels": []}}
+        value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
         value_dictionary['tooltip'] = {"mouse": 2}
 
         max_list = [0.01]
@@ -296,9 +298,9 @@ def get_data(request, action, data, year, search, search_id):
                 value_dictionary['elements'][0]['values'].append([0])   # if len = 0, there are no items, so the while loop wont activate, and we can simply add [0]
             else:
                 while i < len(date_slice_dict[date]):
-                    while_dictionary = {'val': True, 'tip': True}
+                    while_dictionary = {'val': True, 'key': True}
                     while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
-                    while_dictionary['tip'] = '%s<br>Time: #val# Total: #total#' % date_slice_dict[date][i].name
+                    while_dictionary['key'] = '%s' % date_slice_dict[date][i].name
                     temp_max += date_slice_dict[date][i].display_days_time(date)
                     value_list.append(while_dictionary)
                     i += 1
@@ -310,7 +312,7 @@ def get_data(request, action, data, year, search, search_id):
         step = max(max_list) * 0.1
         for numb in range(11):
             y_time = numb*step
-            value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
+            value_dictionary['y_axis']['labels']['labels'].append({'y': y_time})
 
         if search == 'user':
             value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (request.user.username, week, year)
@@ -326,6 +328,8 @@ def get_data(request, action, data, year, search, search_id):
         # until a day in the chosen month is gotten which is the last day of that month.
         # also the labels is a bit different showing day numbers instead of weeknames.
         month = int(data)
+        if month not in range(1,13):    
+            return HttpResponseNotFound('Page not found')
         year = int(year)
         start_date = datetime.date(year, month, 1)
         end_date = start_date + datetime.timedelta(days=30)
@@ -355,10 +359,10 @@ def get_data(request, action, data, year, search, search_id):
                 date_slice_dict[slice.create_date].append(slice.slip)
 
         value_dictionary = {}
-        value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": [], "tip": True}]
+        value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
         value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
         value_dictionary['x_axis'] = {"labels": {"labels": []}}
-        value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": { "labels": []}}
+        value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
         value_dictionary['tooltip'] = {"mouse": 2}
 
         max_list = [0.01]
@@ -371,9 +375,9 @@ def get_data(request, action, data, year, search, search_id):
                 value_dictionary['elements'][0]['values'].append([0])
             else:
                 while i < len(date_slice_dict[date]):
-                    while_dictionary = {'val': True, 'tip': True}
+                    while_dictionary = {'val': True, 'key': True}
                     while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
-                    while_dictionary['tip'] = '%s<br>Time: #val# Total: #total#' % date_slice_dict[date][i].name
+                    while_dictionary['key'] = '%s' % date_slice_dict[date][i].name
                     temp_max += date_slice_dict[date][i].display_days_time(date)
                     value_list.append(while_dictionary)
                     i += 1
@@ -384,8 +388,7 @@ def get_data(request, action, data, year, search, search_id):
         value_dictionary['y_axis']['min'] = 0
         step = max(max_list) * 0.1
         for numb in range(11):
-            y_time = numb*step
-            value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
+            value_dictionary['y_axis']['labels']['labels'].append({'y':  numb*step})
 
         if search == 'user':
             value_dictionary['title']['text'] = '%s %s %s' % (request.user.username, start_date.strftime('%B'), year)
@@ -424,10 +427,10 @@ def get_date_data(request, search, search_id, start_date, end_date):
             date_slice_dict[slice.create_date].append(slice.slip)
 
     value_dictionary = {}
-    value_dictionary['elements'] = [{"type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": [], "tip": True}]
+    value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": { "labels": []}}
-    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"labels": []}}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
     value_dictionary['tooltip'] = {"mouse": 2}
 
     max_list = [0.01]
@@ -440,9 +443,9 @@ def get_date_data(request, search, search_id, start_date, end_date):
             value_dictionary['elements'][0]['values'].append([0])
         else:
             while i < len(date_slice_dict[date]):
-                while_dictionary = {'val': True, 'tip': True}
+                while_dictionary = {'val': True, 'key': True}
                 while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
-                while_dictionary['tip'] = '%s<br>Time: #val# Total: #total#' % date_slice_dict[date][i].name
+                while_dictionary['key'] = '%s' % date_slice_dict[date][i].name
                 temp_max += date_slice_dict[date][i].display_days_time(date)
                 value_list.append(while_dictionary)
                 i += 1
@@ -452,8 +455,7 @@ def get_date_data(request, search, search_id, start_date, end_date):
     value_dictionary['y_axis']['max'] = max(max_list)
     step = max(max_list) * 0.1
     for numb in range(11):
-        y_time = numb*step
-        value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
+        value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
 
     if search == 'user':
             value_dictionary['title']['text'] = '%s %s to %s' % (request.user.username, start_date, end_date)
@@ -483,12 +485,11 @@ def get_team_week_data(request, team_id, week, year):
     end_date = start_date + datetime.timedelta(days=6)
 
 
-
     team_list_dict = {}
     counter = 0
     for mem_id in members_id:
         team_list_dict[mem_id] = {}
-        team_list_dict[mem_id]['value'] = {"type": "bar", "values": [], "tip": "%s<br>Value: #val#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
+        team_list_dict[mem_id]['value'] = {"type": "bar", "values": [], "tip": "%s<br>Time: #gmdate:H.i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
         counter += 1
 
     sorted_date_list = []
@@ -510,7 +511,7 @@ def get_team_week_data(request, team_id, week, year):
     value_dictionary['elements'] = []
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": { "labels": []}}
-    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"labels": []}}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
     value_dictionary['tooltip'] = {"mouse": 2}
 
     # this loop works pretty much like the others, however, in this one we need to iterate over the member_ids aswell.
@@ -533,8 +534,7 @@ def get_team_week_data(request, team_id, week, year):
     value_dictionary['y_axis']['max'] = max(max_list)
     step = max(max_list) * 0.1
     for numb in range(11):
-        y_time = numb*step
-        value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
+        value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
         
     value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (team.name, week, year)
 
@@ -564,7 +564,7 @@ def get_team_month_data(request, team_id, month, year):
     counter = 0
     for mem_id in members_id:
         team_list_dict[mem_id] = {}
-        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Value: #y#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
+        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Time: #ygmdate:H:i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
         counter += 1
 
 
@@ -584,7 +584,7 @@ def get_team_month_data(request, team_id, month, year):
     value_dictionary['elements'] = []
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"min": 0, "max": True}
-    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"labels": []}}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
     value_dictionary['tooltip'] = {"mouse": 1}
 
     max_list = [0.01]
@@ -607,8 +607,7 @@ def get_team_month_data(request, team_id, month, year):
     value_dictionary['y_axis']['max'] = max(max_list) * 1.05
     step = max(max_list) * 1.05 * 0.1
     for numb in range(11):
-        y_time = numb*step
-        value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
+        value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
     # x max and min needs to be set as this graph utilizes that instead of labels. Max is set to one day more than the max day for the best result.
     value_dictionary['x_axis']['min'] = start_date.day
     value_dictionary['x_axis']['max'] = end_date.day
@@ -633,7 +632,7 @@ def get_team_date_data(request, team_id, start_date, end_date):
     counter = 0
     for mem_id in members_id:
         team_list_dict[mem_id] = {}
-        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Value: #y#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
+        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Time: #gmdate:H:i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
         counter += 1
 
     sorted_date_list = []
@@ -654,7 +653,7 @@ def get_team_date_data(request, team_id, start_date, end_date):
     value_dictionary['elements'] = []
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"min": 0, "max": True, "steps": 86400, "labels": {"rotate":"vertical","steps":86400,"visible-steps":2, "text":"#date:m-d#"}}
-    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"labels": []}}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#ygmdate:H:i#", "labels": []}}
     value_dictionary['tooltip'] = {"mouse": 1}
 
 
@@ -679,8 +678,7 @@ def get_team_date_data(request, team_id, start_date, end_date):
     value_dictionary['y_axis']['max'] = max(max_list) * 1.05
     step = max(max_list) * 1.05 * 0.1
     for numb in range(11):
-        y_time = numb*step
-        value_dictionary['y_axis']['labels']['labels'].append({'y': y_time, 'text': '%s:%02i' % (int(y_time), int(y_time%1*60))})
+        value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
     value_dictionary['x_axis']['min'] = time.mktime(s_date.timetuple()) # a way to make a unix timestamp.
     value_dictionary['x_axis']['max'] = time.mktime(e_date.timetuple())
     value_dictionary['title']['text'] = '%s: From %s to %s' % (team.name, s_date, e_date)

@@ -1,0 +1,12 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Projects" %}{% endblock %}
+
+{% block content %}
+  <h2>All Clients for {{ user_type }} {{ user_model.name }}</h2>
+  {% for client in clients %}
+    <ul><a href="/project/{{ client.id }}">{{ client.name }}</a></ul>
+  {% endfor %}
+{% endblock %}

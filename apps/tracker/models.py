@@ -2,14 +2,14 @@ from django.db import models, IntegrityError
 from django.contrib.auth.models import User
 import datetime
 from math import floor
-from project.models import Project
+from project.models import Project, Client
 
 
 class Slip(models.Model):
     name = models.CharField(max_length=128)
     user = models.ForeignKey(User, related_name="slips", blank=True, null=True)
     project = models.ForeignKey(Project, blank = True, null=True)
-    #client = models.ForeignKey(Client)
+    client = models.ForeignKey(Client, blank = True, null=True)
     #type = models.CharField(max_length=32)
     due = models.DateField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
