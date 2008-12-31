@@ -13,8 +13,8 @@ urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
     (r'^teams/', include('teams.urls')),
-    (r'^project/', include('project.p_urls')),
-    (r'^client/', include('project.c_urls')),
+    (r'^project/', include('project.urls')),
+    (r'^client/', include('project.client_urls')),
 )
 
 # If in debug mode, serve site_media through Django.
