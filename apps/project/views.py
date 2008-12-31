@@ -39,32 +39,36 @@ def show_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.user not in project.members.all():
         return HttpResponseForbidden('Access Denied')
-    slip_set_all = Slip.objects.filter(project=project)
-    slip_set_user = slip_set_all.filter(user=request.user)
-    slip_set_exclude_user = slip_set_all.exclude(user=request.user)
+    # Data returned to the template.
+    data = {
+        'project': project,
+    }
+    data['slip_all'] = Slip.objects.filter(project=project)
+    data['slip_user'] = data['slip_all'].filter(user=request.user)
+    data['slip_rest'] = data['slip_all'].exclude(user=request.user)
     duration = 0
-    for slip in slip_set_all:
+    for slip in data['slip_all']:
         seconds = 0
         for slice in slip.timeslice_set.all():
             seconds += slice.duration
         duration += seconds
-    time_all ='%02i:%02i' % (duration/3600, duration%3600/60)
+    data['time_all'] ='%02i:%02i' % (duration/3600, duration%3600/60)
     duration = 0
-    for slip in slip_set_user:
+    for slip in data['slip_user']:
         seconds = 0
         for slice in slip.timeslice_set.all():
             seconds += slice.duration
         duration += seconds
-    time_user ='%02i:%02i' % (duration/3600, duration%3600/60)
+    data['time_user'] ='%02i:%02i' % (duration/3600, duration%3600/60)
     duration = 0
-    for slip in slip_set_user:
+    for slip in data['slip_rest']:
         seconds = 0
         for slice in slip.timeslice_set.all():
             seconds += slice.duration
         duration += seconds
-    time_other ='%02i:%02i' % (duration/3600, duration%3600/60) 
-    return render_to_response('project/project.html', {'project': project, 'slip_user': slip_set_user, 'slip_rest': slip_set_exclude_user, 'slip_all': slip_set_all, 'time_all': time_all, 'time_user': time_user, 'time_other': time_other},
-                                      context_instance=RequestContext(request))
+    data['time_other'] ='%02i:%02i' % (duration/3600, duration%3600/60) 
+    return render_to_response('project/project.html', data,
+                              context_instance=RequestContext(request))
 
 
 @login_required()
