@@ -68,7 +68,7 @@ def show_project(request, project_id):
 
 
 @login_required()
-def show_all_clients(request):
+def client_index(request):
     clients = Client.objects.all()
     return render_to_response('project/all_clients.html', {'clients': clients},
                                         context_instance=RequestContext(request))
