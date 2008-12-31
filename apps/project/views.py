@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from tracker.models import Slip
 from django.contrib.auth.models import User
 
-def show_all_projects(request):
+def index(request):
     projects = Project.objects.all()
     return render_to_response('project/all_projects.html', {'projects': projects},
                                          context_instance=RequestContext(request))
