@@ -6,6 +6,7 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from tracker.models import Slip
 from django.contrib.auth.models import User
+from django.template.loader import render_to_string
 
 def index(request):
     projects = Project.objects.all()
@@ -66,7 +67,16 @@ def show_project(request, project_id):
         for slice in slip.timeslice_set.all():
             seconds += slice.duration
         duration += seconds
-    data['time_other'] ='%02i:%02i' % (duration/3600, duration%3600/60) 
+    data['time_other'] ='%02i:%02i' % (duration/3600, duration%3600/60)
+
+    data['user_list'] = render_to_string('tracker/slip_list.html',
+                              {'slip_list': data['slip_user']},
+                              context_instance=RequestContext(request))
+
+    data['other_list'] = render_to_string('tracker/slip_list.html',
+                              {'slip_list': data['slip_rest']},
+                              context_instance=RequestContext(request))
+
     return render_to_response('project/project.html', data,
                               context_instance=RequestContext(request))
 
