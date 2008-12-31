@@ -12,13 +12,19 @@
 {% endblock %}
 
 {% block main_menu %}
-  <ul class="menu">
-    <li><a href="/">Overview</a></li>
-    <li><a href="/tracker/">Tasks</a></li>
-    <li><a href="/projects/">Projects</a></li>
-    <li><a href="/clients/">Clients</a></li>
-    <li><a href="/statistics/">Statistics</a></li>
+  <ul class="menu right">
+{% comment %}
+  Due to the way the right menu is styled, these links will
+  appear in reverse order.
+{% endcomment %}
     <li><a href="/misc/">Miscellaneous</a></li>
+    <li><a href="{% url statistics_index %}">Statistics</a></li>
+  </ul>
+  <ul class="menu">
+    <li><a href="{% url djime_index %}">Overview</a></li>
+    <li><a href="{% url slip_index %}">Tasks</a></li>
+    <li><a href="{% url project_index %}">Projects</a></li>
+    <li><a href="{% url client_index %}">Clients</a></li>
   </ul>
 {% endblock %}
 
