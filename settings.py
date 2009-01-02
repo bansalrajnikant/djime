@@ -100,7 +100,6 @@ INSTALLED_APPS = (
     'statistics',
     'data_import',
     'teams',
-    'django_evolution',
 )
 
 # If there is one, load the local overrides file.
