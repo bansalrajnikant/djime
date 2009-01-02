@@ -2,7 +2,7 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Slip" %}: {{ slip.id }}{% endblock %}
+{% block head_title %}{{ slip.name }}{% endblock %}
 
 {% block extra_head %}
   <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}jquery.ui/themes/default/ui.all.css" />
