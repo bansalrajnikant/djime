@@ -2,6 +2,8 @@
   This template is included in a lot of pages, so be careful with blocks
   extends and other stuff like that :)
 {% endcomment %}
+{% load pagination_tags %}
+{% autopaginate slip_list %}
 
 <table>
   <thead>
@@ -45,4 +47,6 @@
     {% endfor %}
   </tbody>
 </table>
+
+{% paginate %}
 
