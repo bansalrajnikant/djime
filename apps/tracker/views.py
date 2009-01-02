@@ -1,14 +1,29 @@
+from datetime import datetime
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.http import *
 from django.shortcuts import render_to_response, get_object_or_404
-from tracker.models import Slip, TimeSlice
-from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from django.contrib.auth.models import User
-from datetime import datetime
+from tracker.forms import SlipAddForm
+from tracker.models import Slip, TimeSlice
 
-
+@login_required
 def index(request):
-    return render_to_response('tracker/index.html', {},
+    if request.method == 'POST':
+        form = SlipAddForm(request.POST)
+        if form.is_valid():
+            new_slip = Slip.objects.create(user=request.user,
+                                           name=form.cleaned_data['name'])
+            new_slip.save()
+            return HttpResponseRedirect(reverse('slip_page',
+                                                kwargs={'slip_id': new_slip.id}))
+    else:
+        form = SlipAddForm()
+
+    slip_list = Slip.objects.all()
+    return render_to_response('tracker/index.html',
+                              {'slip_list': slip_list, 'form': form},
                               context_instance=RequestContext(request))
 
 @login_required()

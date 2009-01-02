@@ -5,9 +5,17 @@
 {% block head_title %}{% trans "Welcome to Djime tracker." %}{% endblock %}
 
 {% block content %}
-    <p>{% trans "We bid you welcome to our wonderful time tracker." %}</p>
-    <br>
-    <input type="text" id="slip-name" value="" />
-    <br>
-    <input type="button" id="create-slip" value="Create new slip" />
+    {% include "tracker/slip_list.html" %}
 {% endblock %}
+
+{% block sidebar %}
+
+<form method="post">
+    <ul class="form-items">
+        {{ form.as_ul }}
+    </ul>
+    <input type="submit" value="Add a new task" />
+</form>
+
+{% endblock %}
+
