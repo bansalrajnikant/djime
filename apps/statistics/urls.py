@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('statistics.views',
+    url(r'^$', 'index', name='statistics_index'),
     (r'^(?P<search>(user|team))/(?P<search_id>\d+)/year/(?P<year>\d{4,4})/week/(?P<week>[1-9]|[1-4][0-9]|5[0-3])/$', 'week'),
     (r'^(?P<search>(user|team))/(?P<search_id>\d+)/year/(?P<year>\d{4,4})/month/(?P<month>[1-9]|1[0-2])/$', 'month'),
     (r'^(?P<search>(user|team))/(?P<search_id>\d+)/week/$', 'todays_week'),

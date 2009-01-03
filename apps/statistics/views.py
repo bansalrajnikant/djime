@@ -18,6 +18,11 @@ except ImportError:
 import time
 
 @login_required()
+def index(request):
+    return render_to_response('statistics/index.html', {},
+                              context_instance=RequestContext(request))
+
+@login_required()
 def todays_week(request, search, search_id):
     if search == 'user':
         if int(request.user.id) != int(search_id):
