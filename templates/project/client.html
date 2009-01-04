@@ -8,12 +8,8 @@
 
   <h1>Client: {{ client.name }} Total duration: {{ time_all }}<h1>
   <h2>{{ user }}'s Tasks in {{ client.name }} Total duration: {{ time_user }}</h2>
-    {% for slip in slip_user %}
-      <ul><strong>Task: </strong>{{ slip.name }} <strong>Duration: </strong> {{ slip.display_time }}</ul>
-    {% endfor %}
-    <br />
+    {{ user_list }}
+
   <h2>Other's tasks in {{ client.name }} Total duration: {{ time_other }}</h2>
-    {% for slip  in slip_rest %}
-      <ul><strong>Task: </strong>{{ slip.name }} <strong>Duration: </strong> {{ slip.display_time }}</ul>
-    {% endfor %}
+    {{ other_list }}
 {% endblock %}
