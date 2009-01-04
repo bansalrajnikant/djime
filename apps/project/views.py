@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 
 def index(request):
     projects = Project.objects.all()
-    return render_to_response('project/all_projects.html', {'projects': projects},
+    return render_to_response('project/project_index.html', {'projects': projects},
                                          context_instance=RequestContext(request))
 
 
