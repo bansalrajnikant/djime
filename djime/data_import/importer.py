@@ -6,8 +6,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from project.models import Project
-from djime.models import Slip, TimeSlice
-from djime.data_import.models import Import
+from djime.models import Slip, TimeSlice, DataImport
 
 
 def handle_uploaded_file(file, user_id):
@@ -109,7 +108,7 @@ def handle_uploaded_file(file, user_id):
     total_time = str(int(total_time/3600.0))+'h'
 
     # Okay, now we have processed the data, lets write it to a couple of files.
-    import_data = Import.objects.create(user=user_object)
+    import_data = DataImport.objects.create(user=user_object)
     file_name = hashlib.sha1(user_object.username + str(time.time())).hexdigest()
     import_data.complete_data.save(file_name, ContentFile(pickle.dumps(pickles)))
     import_data.partial_data.save(file_name, ContentFile(pickle.dumps(line_data[1:11])))

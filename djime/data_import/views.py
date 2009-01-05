@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from djime.data_import.forms import DataImportForm
-from djime.data_import.models import Import
+from djime.models import DataImport
 from djime.data_import.importer import handle_uploaded_file, importer_save
 
 
@@ -16,14 +16,14 @@ def import_form(request):
         if form.is_valid():
             import_id = handle_uploaded_file(request.FILES['import_file'], request.user.id)
             action = 'confirm'
-            return HttpResponseRedirect(reverse('data_import_confirm', args=(import_id, action)))
+            return HttpResponseRedirect(reverse('data_import_action', args=(import_id, action)))
     else:
         form = DataImportForm()
     return render_to_response('data_import/upload.html', {'form': form},
                               context_instance=RequestContext(request))
 @login_required
-def confirm(request, import_id, action):
-    import_data = get_object_or_404(Import, pk=import_id, completed=None)
+def action(request, import_id, action):
+    import_data = get_object_or_404(DataImport, pk=import_id, completed=None)
     if request.user.id != import_data.user_id:
         return HttpResponseForbidden('Access denied')
 
@@ -44,5 +44,5 @@ def confirm(request, import_id, action):
         else:
             return HttpResponseForbidden('Invalid post action')
 
-        return HttpResponseRedirect(reverse('tracker.views.index'))
+        return HttpResponseRedirect(reverse('djime_index'))
 

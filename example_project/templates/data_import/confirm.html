@@ -32,10 +32,10 @@
 
 <p>
 {% trans "Confirm import" %}:
-  <form method="post" action="/import/{{import_id}}/save/">
+  <form method="post" action="{% url data_import_action import_id=import_id, action="save" %}">
     <input type="submit" name="save" value="{% trans 'Save' %}" />
   </form>
-  <form method="post" action="/import/{{import_id}}/cancel/">
+  <form method="post" action="{% url data_import_action import_id=import_id, action="cancel" %}">
     <input type="submit" name="cancel" value="{% trans 'Cancel' %}" />
   </form>
 </p>
