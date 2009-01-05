@@ -41,7 +41,9 @@ STATIC_ROOT = os.path.join(os.path.dirname(__file__), "static")
 STATIC_URL = '/static/'
 
 # HACK: TEMPLATE_CONTEXT_PROCESSORS has to be callable, so make a small function
-get_static_url = lambda x: {'STATIC_URL': STATIC_URL}
+#
+get_static_url = lambda x: {'STATIC_URL': STATIC_URL,
+                            'DEMO_STATIC_URL': 'http://d.ooh.dk/djime/'}
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.auth",

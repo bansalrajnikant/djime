@@ -5,7 +5,7 @@
 {% block head_title %}{{ slip.name }}{% endblock %}
 
 {% block extra_head %}
-  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}jquery.ui/themes/default/ui.all.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc4/themes/default/ui.all.css" />
 {% endblock %}
 
 {% block content %}
@@ -22,9 +22,9 @@
 {% endblock %}
 
 {% block closure %}
-  <script type="text/javascript" src="{{ STATIC_URL }}jquery.ui/ui/jquery.ui.all.js"></script>
-  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.jeditable.js"></script>
-  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.timeclock/jquery.timeclock.js"></script>
+  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc4/ui/jquery.ui.all.js"></script>
+  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.jeditable.js"></script>
+  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.timeclock.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/tracker.js"></script>
   <script type="text/javascript">
     djime.messages['slip_delete_title'] = '{% trans "Delete this slip?" %}';
