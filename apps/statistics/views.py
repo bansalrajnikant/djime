@@ -576,7 +576,7 @@ def get_team_stat_date_data(request, team_id, start_date, end_date):
     counter = 0
     for mem_id in members_id:
         team_list_dict[mem_id] = {}
-        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Time: #gmdate:H:i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
+        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Time: #ygmdate:H:i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
         counter += 1
 
     sorted_date_list = []
