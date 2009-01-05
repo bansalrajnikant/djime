@@ -82,27 +82,7 @@ def user_type_date_selection_form(request, user_type, user_id):
 
 
 @login_required()
-def team_stat_date_selection_form(request, team_id):
-    if request.method not in ('POST', 'GET'):
-        return HttpResponseNotAllowed('POST', 'GET')
-
-    if request.method == 'GET':
-        form = DateSelectionForm()
-        return render_to_response('statistics/team_stat_date_selection.html', {'team_id': team_id, 'form': form},
-                                      context_instance=RequestContext(request))
-
-    if request.method == 'POST':
-        form = DateSelectionBetaForm(request.POST)
-        if form.is_valid():
-            start = form.cleaned_data['start']
-            end = form.cleaned_data['end']
-            return HttpResponseRedirect('/statistics/team_stat/%s/date/%s/%s/' % (team_id, start, end))
-        else:
-            return render_to_response('statistics/team_stat_date_selection.html', {'team_id': team_id, 'form': form},
-                                      context_instance=RequestContext(request))
-
-@login_required()
-def user_type_date_selection_display(request, user_type, user_id, start_date, end_date):
+def display_user_type_date_selection(request, user_type, user_id, start_date, end_date):
     if user_type == 'user':
         if int(request.user.id) != int(user_id):
             return HttpResponseForbidden('Access denied')
@@ -126,7 +106,56 @@ def user_type_date_selection_display(request, user_type, user_id, start_date, en
 
 
 @login_required()
-def team_stat_date_selection_display(request, team_id, start_date, end_date):
+def display_team_stat_week(request, team_id, week, year):
+    team = get_object_or_404(Team, pk=int(team_id))
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+    if request.user.id not in members_id:
+        return HttpResponseForbidden('Access denied')
+
+    return render_to_response('statistics/display_team_stat_week.html', {'week': week, 'year': year, 'team_id': team_id},
+                                      context_instance=RequestContext(request))
+
+
+@login_required()
+def display_team_stat_month(request, team_id, month, year):
+    team = get_object_or_404(Team, pk=int(team_id))
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+    if request.user.id not in members_id:
+        return HttpResponseForbidden('Access denied')
+
+    return render_to_response('statistics/display_team_stat_month.html', {'month': month, 'year': year, 'team_id': team_id},
+                                      context_instance=RequestContext(request))
+
+
+@login_required()
+def team_stat_date_selection_form(request, team_id):
+    if request.method not in ('POST', 'GET'):
+        return HttpResponseNotAllowed('POST', 'GET')
+
+    if request.method == 'GET':
+        form = DateSelectionForm()
+        return render_to_response('statistics/team_stat_date_selection.html', {'team_id': team_id, 'form': form},
+                                      context_instance=RequestContext(request))
+
+    if request.method == 'POST':
+        form = DateSelectionBetaForm(request.POST)
+        if form.is_valid():
+            start = form.cleaned_data['start']
+            end = form.cleaned_data['end']
+            return HttpResponseRedirect('/statistics/team_stat/%s/date/%s/%s/' % (team_id, start, end))
+        else:
+            return render_to_response('statistics/team_stat_date_selection.html', {'team_id': team_id, 'form': form},
+                                      context_instance=RequestContext(request))
+
+
+@login_required()
+def display_team_stat_date_selection(request, team_id, start_date, end_date):
     team = get_object_or_404(Team, pk=int(team_id))
     members = team.members.all()
     members_id = []
@@ -143,35 +172,6 @@ def team_stat_date_selection_display(request, team_id, start_date, end_date):
                                       context_instance=RequestContext(request))
     else:
         return HttpResponse('Invalid date, max 60 days')
-
-
-@login_required()
-def show_team_stat_week(request, team_id, week, year):
-    team = get_object_or_404(Team, pk=int(team_id))
-    members = team.members.all()
-    members_id = []
-    for member in members:
-        members_id.append(member.id)
-    if request.user.id not in members_id:
-        return HttpResponseForbidden('Access denied')
-
-
-    return render_to_response('statistics/display_team_stat_week.html', {'week': week, 'year': year, 'team_id': team_id},
-                                      context_instance=RequestContext(request))
-
-
-@login_required()
-def show_team_stat_month(request, team_id, month, year):
-    team = get_object_or_404(Team, pk=int(team_id))
-    members = team.members.all()
-    members_id = []
-    for member in members:
-        members_id.append(member.id)
-    if request.user.id not in members_id:
-        return HttpResponseForbidden('Access denied')
-
-    return render_to_response('statistics/display_team_stat_month.html', {'month': month, 'year': year, 'team_id': team_id},
-                                      context_instance=RequestContext(request))
 
 
 def get_data(request, action, data, year, search, search_id):
