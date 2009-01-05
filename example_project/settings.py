@@ -1,4 +1,4 @@
-# Django settings for djime project.
+# Django settings for djime example project.
 import os.path
 
 DEBUG = True
@@ -49,7 +49,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.core.context_processors.request",
-    'djime.settings.get_static_url'
+    'example_project.settings.get_static_url'
 )
 
 
@@ -75,7 +75,7 @@ MIDDLEWARE_CLASSES = (
     'pagination.middleware.PaginationMiddleware',
 )
 
-ROOT_URLCONF = 'djime.urls'
+ROOT_URLCONF = 'example_project.urls'
 
 TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), "templates"),
@@ -96,10 +96,8 @@ INSTALLED_APPS = (
     'pagination',
     'account',
     'project',
-    'tracker',
-    'statistics',
-    'data_import',
     'teams',
+    'djime',
 )
 
 # If there is one, load the local overrides file.
@@ -107,3 +105,4 @@ try:
     from local_settings import *
 except ImportError:
     pass
+
