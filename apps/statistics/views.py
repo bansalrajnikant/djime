@@ -22,113 +22,31 @@ def index(request):
     return render_to_response('statistics/index.html', {},
                               context_instance=RequestContext(request))
 
-@login_required()
-def todays_week(request, search, search_id):
-    if search == 'user':
-        if int(request.user.id) != int(search_id):
-            return HttpResponseForbidden('Access denied')
-    elif search == 'team':
-        team = get_object_or_404(Team, pk=int(search_id))
-        members = team.members.all()
-        members_id = []
-        for member in members:
-            members_id.append(member.id)
-        if request.user.id not in members_id:
-            return HttpResponseForbidden('Access denied')
-
-    week = datetime.datetime.now().isocalendar()[1]
-    year = datetime.datetime.now().isocalendar()[0]
-    return render_to_response('statistics/week.html', {'week' : week, 'year': year, 'search': search, 'search_id': search_id},
-                                  context_instance=RequestContext(request))
-
 
 @login_required()
-def week(request, search, search_id, year, week):
-    if search == 'user':
-        if int(request.user.id) != int(search_id):
-            return HttpResponseForbidden('Access denied')
-    elif search == 'team':
-        team = get_object_or_404(Team, pk=int(search_id))
-        members = team.members.all()
-        members_id = []
-        for member in members:
-            members_id.append(member.id)
-        if request.user.id not in members_id:
-            return HttpResponseForbidden('Access denied')
-
-
-    return render_to_response('statistics/week.html', {'week': week, 'year': year, 'search': search, 'search_id': search_id},
+def display_user_week(request, user_id, year, week):
+    if int(request.user.id) != int(user_id):
+        return HttpResponseForbidden('Access denied')
+    return render_to_response('statistics/display_user_week.html', {'week': week, 'year': year, 'user_id': user_id},
                                       context_instance=RequestContext(request))
 
 
 @login_required()
-def todays_month(request, search, search_id):
-    if search == 'user':
-        if int(request.user.id) != int(search_id):
-            return HttpResponseForbidden('Access denied')
-    elif search == 'team':
-        team = get_object_or_404(Team, pk=int(search_id))
-        members = team.members.all()
-        members_id = []
-        for member in members:
-            members_id.append(member.id)
-        if request.user.id not in members_id:
-            return HttpResponseForbidden('Access denied')
-
-    month = datetime.datetime.now().month
-    year = datetime.datetime.now().year
-    return render_to_response('statistics/month.html', {'month' : month, 'year': year, 'search': search, 'search_id': search_id},
+def display_user_month(request, user_id, year, month):
+    if int(request.user.id) != int(user_id):
+        return HttpResponseForbidden('Access denied')
+    return render_to_response('statistics/display_user_month.html', {'month' : month, 'year': year, 'user_id': user_id},
                                       context_instance=RequestContext(request))
 
 
 @login_required()
-def month(request, search, search_id, year, month):
-    if search == 'user':
-        if int(request.user.id) != int(search_id):
-            return HttpResponseForbidden('Access denied')
-    elif search == 'team':
-        team = get_object_or_404(Team, pk=int(search_id))
-        members = team.members.all()
-        members_id = []
-        for member in members:
-            members_id.append(member.id)
-        if request.user.id not in members_id:
-            return HttpResponseForbidden('Access denied')
-
-    return render_to_response('statistics/month.html', {'month' : month, 'year': year, 'search': search, 'search_id': search_id},
-                                      context_instance=RequestContext(request))
-
-@login_required()
-def date(request, search, search_id):
-    if search == 'user':
-        if int(request.user.id) != int(search_id):
-            return HttpResponseForbidden('Access denied')
-    elif search == 'team':
-        team = get_object_or_404(Team, pk=int(search_id))
-        members = team.members.all()
-        members_id = []
-        for member in members:
-            members_id.append(member.id)
-        if request.user.id not in members_id:
-            return HttpResponseForbidden('Access denied')
-
-
-    week = datetime.datetime.now().isocalendar()[1]
-    year = datetime.datetime.now().year
-    month = datetime.datetime.now().month
-    form = DateSelectionForm()
-    form_beta = DateSelectionBetaForm()
-    return render_to_response('statistics/date.html', {'search': search, 'search_id': search_id, 'form': form, 'team_id': search_id, 'form_beta': form_beta, 'week': week, 'month': month, 'year': year},
-                                      context_instance=RequestContext(request))
-
-@login_required()
-def date_selection_form(request, search, search_id):
+def user_date_selection_form(request, user_id):
     if request.method not in ('POST', 'GET'):
         return HttpResponseNotAllowed('POST', 'GET')
 
     if request.method == 'GET':
         form = DateSelectionForm()
-        return render_to_response('statistics/date_selection.html', {'search': search, 'search_id': search_id, 'form': form},
+        return render_to_response('statistics/user_date_selection.html', {'user_id': user_id, 'form': form},
                                       context_instance=RequestContext(request))
 
     if request.method == 'POST':
@@ -136,20 +54,131 @@ def date_selection_form(request, search, search_id):
         if form.is_valid():
             start = form.cleaned_data['start']
             end = form.cleaned_data['end']
-            return HttpResponseRedirect('/statistics/%s/%s/date/%s/%s/' % (search, search_id, start, end))
+            return HttpResponseRedirect('/statistics/user/%s/date/%s/%s/' % (user_id, start, end))
         else:
-            return render_to_response('statistics/date_selection.html', {'search': search, 'search_id': search_id, 'form': form},
+            return render_to_response('statistics/user_date_selection.html', {'user_id': user_id, 'form': form},
                                       context_instance=RequestContext(request))
 
 
 @login_required()
-def team_date_selection_form(request, team_id):
+def display_user_date_selection(request, user_id, start_date, end_date):
+    if int(request.user.id) != int(user_id):
+        return HttpResponseForbidden('Access denied')
+    s_date = start_date.split('-')
+    e_date = end_date.split('-')
+    date_diff = int(e_date[0])*365+int(e_date[1])*30+int(e_date[2])-(int(s_date[0])*365+int(s_date[1])*30+int(s_date[2]))
+    if date_diff < 60 and date_diff > 0:
+        return render_to_response('statistics/display_user_date.html', {'user_id': user_id, 'start_date': start_date, 'end_date': end_date},
+                                      context_instance=RequestContext(request))
+    else:
+        return HttpResponse('Invalid date, max 60 days')
+
+
+@login_required()
+def display_team_week(request, team_id, year, week):
+    team = get_object_or_404(Team, pk=int(team_id))
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+    if request.user.id not in members_id:
+        return HttpResponseForbidden('Access denied')
+
+    return render_to_response('statistics/display_team_week.html', {'week': week, 'year': year, 'team_id': team_id},
+                                      context_instance=RequestContext(request))
+
+
+@login_required()
+def display_team_month(request, team_id, year, month):
+    team = get_object_or_404(Team, pk=int(team_id))
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+    if request.user.id not in members_id:
+        return HttpResponseForbidden('Access denied')
+
+    return render_to_response('statistics/display_team_month.html', {'month' : month, 'year': year, 'team_id': team_id},
+                                      context_instance=RequestContext(request))
+
+
+@login_required()
+def team_date_selection_form(request, user_id):
     if request.method not in ('POST', 'GET'):
         return HttpResponseNotAllowed('POST', 'GET')
 
     if request.method == 'GET':
         form = DateSelectionForm()
-        return render_to_response('statistics/team_date_selection.html', {'team_id': team_id, 'form': form},
+        return render_to_response('statistics/user_team_selection.html', {'team_id': team_id, 'form': form},
+                                      context_instance=RequestContext(request))
+
+    if request.method == 'POST':
+        form = DateSelectionForm(request.POST)
+        if form.is_valid():
+            start = form.cleaned_data['start']
+            end = form.cleaned_data['end']
+            return HttpResponseRedirect('/statistics/team/%s/date/%s/%s/' % (user_id, start, end))
+        else:
+            return render_to_response('statistics/user_team_selection.html', {'user_id': user_id, 'form': form},
+                                      context_instance=RequestContext(request))
+
+
+@login_required()
+def display_team_date_selection(request, team_id, start_date, end_date):
+    team = get_object_or_404(Team, pk=int(team_id))
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+    if request.user.id not in members_id:
+        return HttpResponseForbidden('Access denied')
+
+    s_date = start_date.split('-')
+    e_date = end_date.split('-')
+    date_diff = int(e_date[0])*365+int(e_date[1])*30+int(e_date[2])-(int(s_date[0])*365+int(s_date[1])*30+int(s_date[2]))
+    if date_diff < 60 and date_diff > 0:
+        return render_to_response('statistics/display_team_date.html', {'team_id': team_id, 'start_date': start_date, 'end_date': end_date},
+                                      context_instance=RequestContext(request))
+    else:
+        return HttpResponse('Invalid date, max 60 days')
+
+
+@login_required()
+def display_team_stat_week(request, team_id, week, year):
+    team = get_object_or_404(Team, pk=int(team_id))
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+    if request.user.id not in members_id:
+        return HttpResponseForbidden('Access denied')
+
+    return render_to_response('statistics/display_team_stat_week.html', {'week': week, 'year': year, 'team_id': team_id},
+                                      context_instance=RequestContext(request))
+
+
+@login_required()
+def display_team_stat_month(request, team_id, month, year):
+    team = get_object_or_404(Team, pk=int(team_id))
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+    if request.user.id not in members_id:
+        return HttpResponseForbidden('Access denied')
+
+    return render_to_response('statistics/display_team_stat_month.html', {'month': month, 'year': year, 'team_id': team_id},
+                                      context_instance=RequestContext(request))
+
+
+@login_required()
+def team_stat_date_selection_form(request, team_id):
+    if request.method not in ('POST', 'GET'):
+        return HttpResponseNotAllowed('POST', 'GET')
+
+    if request.method == 'GET':
+        form = DateSelectionForm()
+        return render_to_response('statistics/team_stat_date_selection.html', {'team_id': team_id, 'form': form},
                                       context_instance=RequestContext(request))
 
     if request.method == 'POST':
@@ -159,35 +188,12 @@ def team_date_selection_form(request, team_id):
             end = form.cleaned_data['end']
             return HttpResponseRedirect('/statistics/team_stat/%s/date/%s/%s/' % (team_id, start, end))
         else:
-            return render_to_response('statistics/team_date_selection.html', {'team_id': team_id, 'form': form},
+            return render_to_response('statistics/team_stat_date_selection.html', {'team_id': team_id, 'form': form},
                                       context_instance=RequestContext(request))
-
-@login_required()
-def date_selection_display(request, search, search_id, start_date, end_date):
-    if search == 'user':
-        if int(request.user.id) != int(search_id):
-            return HttpResponseForbidden('Access denied')
-    elif search == 'team':
-        team = get_object_or_404(Team, pk=int(search_id))
-        members = team.members.all()
-        members_id = []
-        for member in members:
-            members_id.append(member.id)
-        if request.user.id not in members_id:
-            return HttpResponseForbidden('Access denied')
-
-    s_date = start_date.split('-')
-    e_date = end_date.split('-')
-    date_diff = int(e_date[0])*365+int(e_date[1])*30+int(e_date[2])-(int(s_date[0])*365+int(s_date[1])*30+int(s_date[2]))
-    if date_diff < 60 and date_diff > 0:
-        return render_to_response('statistics/date_display.html', {'search': search, 'search_id': search_id, 'start_date': start_date, 'end_date': end_date},
-                                      context_instance=RequestContext(request))
-    else:
-        return HttpResponse('Invalid date, max 60 days')
 
 
 @login_required()
-def team_date_selection_display(request, team_id, start_date, end_date):
+def display_team_stat_date_selection(request, team_id, start_date, end_date):
     team = get_object_or_404(Team, pk=int(team_id))
     members = team.members.all()
     members_id = []
@@ -200,210 +206,154 @@ def team_date_selection_display(request, team_id, start_date, end_date):
     e_date = end_date.split('-')
     date_diff = int(e_date[0])*365+int(e_date[1])*30+int(e_date[2])-(int(s_date[0])*365+int(s_date[1])*30+int(s_date[2]))
     if date_diff < 60 and date_diff > 0:
-        return render_to_response('statistics/team_date_display.html', {'team_id': team_id, 'start_date': start_date, 'end_date': end_date},
+        return render_to_response('statistics/display_team_stat_date.html', {'team_id': team_id, 'start_date': start_date, 'end_date': end_date},
                                       context_instance=RequestContext(request))
     else:
         return HttpResponse('Invalid date, max 60 days')
 
 
-@login_required()
-def show_team_week(request, team_id, week, year):
-    team = get_object_or_404(Team, pk=int(team_id))
-    members = team.members.all()
-    members_id = []
-    for member in members:
-        members_id.append(member.id)
-    if request.user.id not in members_id:
-        return HttpResponseForbidden('Access denied')
-
-
-    return render_to_response('statistics/team_week.html', {'week': week, 'year': year, 'team_id': team_id},
-                                      context_instance=RequestContext(request))
-
-
-@login_required()
-def show_team_month(request, team_id, month, year):
-    team = get_object_or_404(Team, pk=int(team_id))
-    members = team.members.all()
-    members_id = []
-    for member in members:
-        members_id.append(member.id)
-    if request.user.id not in members_id:
-        return HttpResponseForbidden('Access denied')
-
-    return render_to_response('statistics/team_month.html', {'month': month, 'year': year, 'team_id': team_id},
-                                      context_instance=RequestContext(request))
-
-
-def get_data(request, action, data, year, search, search_id):
+def data_user_week(request, week, year, user_id):
     if request.method != 'GET':
          return HttpResponseNotAllowed('GET')
 
-    if action == 'week': #this will give the data for a graph for a week
-        week = int(data)
-        if week <= 0 or week > 53:
-            return HttpResponseNotFound('Page not found') 
-        year = int(year)
+    week = int(week)
+    year = int(year)
 
-        # 2 cases either get all timeslices for this week that a user or team has created
-        if search == 'user':
-            slice_set = TimeSlice.objects.filter(week_number=week, create_date__year= year, user = search_id)
-        elif search == 'team':
-            # first get a list with user ids for the team, and then use the "user__in = list" filter method
-            team = get_object_or_404(Team, pk=int(search_id))
-            members = team.members.all()
-            members_id = []
-            for member in members:
-                members_id.append(member.id)
-            slice_set = TimeSlice.objects.filter(week_number=week, create_date__year= year, user__in = members_id)
+    slice_set = TimeSlice.objects.filter(week_number=week, create_date__year= year, user = user_id)
+    # start date is set to a day in the week before the week we want to search.
+    start_date = datetime.date(year, 1, 1) + datetime.timedelta(days = (week-2)*7)
+    # this while loop will keep adding a day to the start date, until first day of the week is reached
+    # thus start_date with be the first day of the week
+    while start_date.isocalendar()[1] != week:
+        start_date += datetime.timedelta(days=1)
 
-        # start date is set to a day in the week before the week we want to search.
-        start_date = datetime.date(year, 1, 1) + datetime.timedelta(days = (week-2)*7)
-        # this while loop will keep adding a day to the start date, until first day of the week is reached
-        # thus start_date with be the first day of the week
-        while start_date.isocalendar()[1] != week:
-            start_date += datetime.timedelta(days=1)
+    end_date = start_date + datetime.timedelta(days=6)
+    w_date = start_date
+    date_slice_dict = {}
+    sorted_date_list = []
+    # this while loop generates every day every and adds that day to dictionary and list
+    while w_date != end_date + datetime.timedelta(days=1):
+        date_slice_dict[w_date]=[]
+        sorted_date_list.append(w_date)
+        w_date += datetime.timedelta(days=1)
 
-        end_date = start_date + datetime.timedelta(days=6)
-        w_date = start_date
-        date_slice_dict = {}
-        sorted_date_list = []
-        # this while loop generates every day every and adds that day to dictionary and list
-        while w_date != end_date + datetime.timedelta(days=1):
-            date_slice_dict[w_date]=[]
-            sorted_date_list.append(w_date)
-            w_date += datetime.timedelta(days=1)
+    # this loop checks to see if a given slip of a timeslice is added to the list of that day.
+    # if it hasn't been added yet it adds it to the list of slips containing timeslices made that day.
+    for slice in slice_set:
+        if slice.slip not in date_slice_dict[slice.create_date]:
+            date_slice_dict[slice.create_date].append(slice.slip)
 
-        # this loop checks to see if a given slip of a timeslice is added to the list of that day.
-        # if it hasn't been added yet it adds it to the list of slips containing timeslices made that day.
-        for slice in slice_set:
-            if slice.slip not in date_slice_dict[slice.create_date]:
-                date_slice_dict[slice.create_date].append(slice.slip)
+    # the value_dictionary, will be the dictionary that needs to be converted to json data. A lot of the data is static strings,
+    # but there are 6 varibles that are different. 2 empty lists where data will be appended (values and labels list) and 4 values set to True.
+    # can add a colour generator later to create colours for the graph instead of static colours.
+    value_dictionary = {}
+    value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
+    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
+    value_dictionary['x_axis'] = {"labels": { "labels": []}}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
+    value_dictionary['tooltip'] = {"mouse": 2}
 
-        # the value_dictionary, will be the dictionary that needs to be converted to json data. A lot of the data is static strings,
-        # but there are 6 varibles that are different. 2 empty lists where data will be appended (values and labels list) and 4 values set to True.
-        # can add a colour generator later to create colours for the graph instead of static colours.
-        value_dictionary = {}
-        value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
-        value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
-        value_dictionary['x_axis'] = {"labels": { "labels": []}}
-        value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
-        value_dictionary['tooltip'] = {"mouse": 2}
+    max_list = [0.01]
+    # this loop has 2 purposes. First is to generate a list with values, each value in the list will be a dictionary - the while_dictionary,
+    # which has 2 keys, val, which will hold the actual value a float, and tip, which will hold the data for the tooltip, a string.
+    # Second purpose is to find the max value for the date period to scale the y_axis.
+    for date in sorted_date_list:
+        value_dictionary['x_axis']['labels']['labels'].append(date.strftime('%A'))
+        i=0
+        temp_max = 0.0
+        value_list = []
+        if len(date_slice_dict[date]) == 0:
+            value_dictionary['elements'][0]['values'].append([0])   # if len = 0, there are no items, so the while loop wont activate, and we can simply add [0]
+        else:
+            while i < len(date_slice_dict[date]):
+                while_dictionary = {'val': True, 'key': True}
+                while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
+                while_dictionary['key'] = '%s' % date_slice_dict[date][i].name
+                temp_max += date_slice_dict[date][i].display_days_time(date)
+                value_list.append(while_dictionary)
+                i += 1
+            max_list.append(temp_max)
+            value_dictionary['elements'][0]['values'].append(value_list)
 
-        max_list = [0.01]
-        # this loop has 2 purposes. First is to generate a list with values, each value in the list will be a dictionary - the while_dictionary,
-        # which has 2 keys, val, which will hold the actual value a float, and tip, which will hold the data for the tooltip, a string.
-        # Second purpose is to find the max value for the date period to scale the y_axis.
-        for date in sorted_date_list:
-            value_dictionary['x_axis']['labels']['labels'].append(date.strftime('%A'))
-            i=0
-            temp_max = 0.0
-            value_list = []
-            if len(date_slice_dict[date]) == 0:
-                value_dictionary['elements'][0]['values'].append([0])   # if len = 0, there are no items, so the while loop wont activate, and we can simply add [0]
-            else:
-                while i < len(date_slice_dict[date]):
-                    while_dictionary = {'val': True, 'key': True}
-                    while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
-                    while_dictionary['key'] = '%s' % date_slice_dict[date][i].name
-                    temp_max += date_slice_dict[date][i].display_days_time(date)
-                    value_list.append(while_dictionary)
-                    i += 1
-                max_list.append(temp_max)
-                value_dictionary['elements'][0]['values'].append(value_list)
+    value_dictionary['y_axis']['max']=max(max_list)
+    value_dictionary['y_axis']['min']=0
+    step = max(max_list) * 0.1
+    for numb in range(11):
+        y_time = numb*step
+        value_dictionary['y_axis']['labels']['labels'].append({'y': y_time})
 
-        value_dictionary['y_axis']['max']=max(max_list)
-        value_dictionary['y_axis']['min']=0
-        step = max(max_list) * 0.1
-        for numb in range(11):
-            y_time = numb*step
-            value_dictionary['y_axis']['labels']['labels'].append({'y': y_time})
+    value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (request.user.username, week, year)
 
-        if search == 'user':
-            value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (request.user.username, week, year)
-        elif search == 'team':
-             value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (Team.objects.get(pk = int(search_id)).name, week, year)
-
-        return HttpResponse(json.dumps(value_dictionary))
+    return HttpResponse(json.dumps(value_dictionary))
 
 
-    if action == 'month':
-        #this action is basicly the same as week, only start date can be found getting day 1 of the chosen month and year.
-        # the end day is gotten by either getting it in the long month by adding 30 days or in the short months subtracking days in a while loop
-        # until a day in the chosen month is gotten which is the last day of that month.
-        # also the labels is a bit different showing day numbers instead of weeknames.
-        month = int(data)
-        if month not in range(1,13):    
-            return HttpResponseNotFound('Page not found')
-        year = int(year)
-        start_date = datetime.date(year, month, 1)
-        end_date = start_date + datetime.timedelta(days=30)
-        while end_date.month != start_date.month:
-            end_date -= datetime.timedelta(days=1)
+def data_user_month(request, month, year, user_id):
+    if request.method != 'GET':
+         return HttpResponseNotAllowed('GET')
 
-        w_date = start_date
-        date_slice_dict = {}
-        sorted_date_list = []
-        while w_date != end_date + datetime.timedelta(days=1):
-            date_slice_dict[w_date]=[]
-            sorted_date_list.append(w_date)
-            w_date += datetime.timedelta(days=1)
+    #this view is basicly the same as week, only start date can be found getting day 1 of the chosen month and year.
+    # the end day is gotten by either getting it in the long month by adding 30 days or in the short months subtracking days in a while loop
+    # until a day in the chosen month is gotten which is the last day of that month.
+    # also the labels is a bit different showing day numbers instead of weekday names.
+    month = int(month)
+    year = int(year)
+    start_date = datetime.date(year, month, 1)
+    end_date = start_date + datetime.timedelta(days=30)
 
-        if search == 'user':
-            slice_set = TimeSlice.objects.filter(user = int(search_id), create_date__range=(start_date, end_date))
-        elif search == 'team':
-            team = get_object_or_404(Team, pk=int(search_id))
-            members = team.members.all()
-            members_id = []
-            for member in members:
-                members_id.append(member.id)
-            slice_set = TimeSlice.objects.filter(user__in = members_id, create_date__range=(start_date, end_date))
+    while end_date.month != start_date.month:
+        end_date -= datetime.timedelta(days=1)
 
-        for slice in slice_set:
-            if slice.slip not in date_slice_dict[slice.create_date]:
-                date_slice_dict[slice.create_date].append(slice.slip)
+    w_date = start_date
+    date_slice_dict = {}
+    sorted_date_list = []
+    while w_date != end_date + datetime.timedelta(days=1):
+        date_slice_dict[w_date]=[]
+        sorted_date_list.append(w_date)
+        w_date += datetime.timedelta(days=1)
 
-        value_dictionary = {}
-        value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
-        value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
-        value_dictionary['x_axis'] = {"labels": {"labels": []}}
-        value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
-        value_dictionary['tooltip'] = {"mouse": 2}
+    slice_set = TimeSlice.objects.filter(user = int(user_id), create_date__range=(start_date, end_date))
+    for slice in slice_set:
+        if slice.slip not in date_slice_dict[slice.create_date]:
+            date_slice_dict[slice.create_date].append(slice.slip)
 
-        max_list = [0.01]
-        for date in sorted_date_list:
-            value_dictionary['x_axis']['labels']['labels'].append(str(date.day))
-            i=0
-            temp_max = 0.0
-            value_list = []
-            if len(date_slice_dict[date]) == 0:
-                value_dictionary['elements'][0]['values'].append([0])
-            else:
-                while i < len(date_slice_dict[date]):
-                    while_dictionary = {'val': True, 'key': True}
-                    while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
-                    while_dictionary['key'] = '%s' % date_slice_dict[date][i].name
-                    temp_max += date_slice_dict[date][i].display_days_time(date)
-                    value_list.append(while_dictionary)
-                    i += 1
-                max_list.append(temp_max)
-                value_dictionary['elements'][0]['values'].append(value_list)
+    value_dictionary = {}
+    value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
+    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
+    value_dictionary['x_axis'] = {"labels": {"labels": []}}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
+    value_dictionary['tooltip'] = {"mouse": 2}
 
-        value_dictionary['y_axis']['max'] = max(max_list)
-        value_dictionary['y_axis']['min'] = 0
-        step = max(max_list) * 0.1
-        for numb in range(11):
-            value_dictionary['y_axis']['labels']['labels'].append({'y':  numb*step})
+    max_list = [0.01]
+    for date in sorted_date_list:
+        value_dictionary['x_axis']['labels']['labels'].append(str(date.day))
+        i=0
+        temp_max = 0.0
+        value_list = []
+        if len(date_slice_dict[date]) == 0:
+            value_dictionary['elements'][0]['values'].append([0])
+        else:
+            while i < len(date_slice_dict[date]):
+                while_dictionary = {'val': True, 'key': True}
+                while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
+                while_dictionary['key'] = '%s' % date_slice_dict[date][i].name
+                temp_max += date_slice_dict[date][i].display_days_time(date)
+                value_list.append(while_dictionary)
+                i += 1
+            max_list.append(temp_max)
+            value_dictionary['elements'][0]['values'].append(value_list)
 
-        if search == 'user':
-            value_dictionary['title']['text'] = '%s %s %s' % (request.user.username, start_date.strftime('%B'), year)
-        elif search == 'team':
-            value_dictionary['title']['text'] = '%s %s %s' % (Team.objects.get(pk = int(search_id)).name, start_date.strftime('%B'), year)
+    value_dictionary['y_axis']['max'] = max(max_list)
+    value_dictionary['y_axis']['min'] = 0
+    step = max(max_list) * 0.1
+    for numb in range(11):
+        value_dictionary['y_axis']['labels']['labels'].append({'y':  numb*step})
 
-        return HttpResponse(json.dumps(value_dictionary))
+        value_dictionary['title']['text'] = '%s %s %s' % (request.user.username, start_date.strftime('%B'), year)
+
+    return HttpResponse(json.dumps(value_dictionary))
 
 
-def get_date_data(request, search, search_id, start_date, end_date):
+def data_user_date(request, user_id, start_date, end_date):
     # the method is again the same.
     # we want start and end date to have the format: u'yyyy-mm-dd'
     s_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
@@ -417,15 +367,206 @@ def get_date_data(request, search, search_id, start_date, end_date):
         sorted_date_list.append(w_date)
         w_date += datetime.timedelta(days=1)
 
-    if search == 'user':
-        slice_set = TimeSlice.objects.filter(user = search_id, create_date__range=(s_date, e_date))
-    elif search == 'team':
-        team = get_object_or_404(Team, pk=int(search_id))
-        members = team.members.all()
-        members_id = []
-        for member in members:
-            members_id.append(member.id)
-        slice_set = TimeSlice.objects.filter(user__in = members_id, create_date__range=(s_date, e_date))
+    slice_set = TimeSlice.objects.filter(user = user_id, create_date__range=(s_date, e_date))
+    for slice in slice_set:
+        if slice.slip not in date_slice_dict[slice.create_date]:
+            date_slice_dict[slice.create_date].append(slice.slip)
+
+    value_dictionary = {}
+    value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
+    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
+    value_dictionary['x_axis'] = {"labels": { "labels": []}}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
+    value_dictionary['tooltip'] = {"mouse": 2}
+
+    max_list = [0.01]
+    for date in sorted_date_list:
+        value_dictionary['x_axis']['labels']['labels'].append(str(date.day))
+        i=0
+        temp_max = 0.0
+        value_list = []
+        if len(date_slice_dict[date]) == 0:
+            value_dictionary['elements'][0]['values'].append([0])
+        else:
+            while i < len(date_slice_dict[date]):
+                while_dictionary = {'val': True, 'key': True}
+                while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
+                while_dictionary['key'] = '%s' % date_slice_dict[date][i].name
+                temp_max += date_slice_dict[date][i].display_days_time(date)
+                value_list.append(while_dictionary)
+                i += 1
+            max_list.append(temp_max)
+            value_dictionary['elements'][0]['values'].append(value_list)
+
+    value_dictionary['y_axis']['max'] = max(max_list)
+    step = max(max_list) * 0.1
+    for numb in range(11):
+        value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
+
+        value_dictionary['title']['text'] = '%s %s to %s' % (request.user.username, start_date, end_date)
+
+    return HttpResponse(json.dumps(value_dictionary))
+
+
+def data_team_week(request, week, year, team_id):
+    # this method is the same as user.
+    if request.method != 'GET':
+         return HttpResponseNotAllowed('GET')
+
+    week = int(week)
+    year = int(year)
+
+    # first get a list with user ids for the team, and then use the "user__in = list" filter method
+    team = get_object_or_404(Team, pk=int(team_id))
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+    slice_set = TimeSlice.objects.filter(week_number=week, create_date__year= year, user__in = members_id)
+
+    start_date = datetime.date(year, 1, 1) + datetime.timedelta(days = (week-2)*7)
+    while start_date.isocalendar()[1] != week:
+        start_date += datetime.timedelta(days=1)
+
+    end_date = start_date + datetime.timedelta(days=6)
+    w_date = start_date
+    date_slice_dict = {}
+    sorted_date_list = []
+    while w_date != end_date + datetime.timedelta(days=1):
+        date_slice_dict[w_date]=[]
+        sorted_date_list.append(w_date)
+        w_date += datetime.timedelta(days=1)
+
+    for slice in slice_set:
+        if slice.slip not in date_slice_dict[slice.create_date]:
+            date_slice_dict[slice.create_date].append(slice.slip)
+
+    value_dictionary = {}
+    value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
+    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
+    value_dictionary['x_axis'] = {"labels": { "labels": []}}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
+    value_dictionary['tooltip'] = {"mouse": 2}
+
+    max_list = [0.01]
+    for date in sorted_date_list:
+        value_dictionary['x_axis']['labels']['labels'].append(date.strftime('%A'))
+        i=0
+        temp_max = 0.0
+        value_list = []
+        if len(date_slice_dict[date]) == 0:
+            value_dictionary['elements'][0]['values'].append([0])   # if len = 0, there are no items, so the while loop wont activate, and we can simply add [0]
+        else:
+            while i < len(date_slice_dict[date]):
+                while_dictionary = {'val': True, 'key': True}
+                while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
+                while_dictionary['key'] = '%s' % date_slice_dict[date][i].name
+                temp_max += date_slice_dict[date][i].display_days_time(date)
+                value_list.append(while_dictionary)
+                i += 1
+            max_list.append(temp_max)
+            value_dictionary['elements'][0]['values'].append(value_list)
+
+    value_dictionary['y_axis']['max']=max(max_list)
+    value_dictionary['y_axis']['min']=0
+    step = max(max_list) * 0.1
+    for numb in range(11):
+        y_time = numb*step
+        value_dictionary['y_axis']['labels']['labels'].append({'y': y_time})
+
+    value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (Team.objects.get(pk = int(team_id)).name, week, year)
+
+    return HttpResponse(json.dumps(value_dictionary))
+
+
+def data_team_month(request, month, year, team_id):
+    if request.method != 'GET':
+         return HttpResponseNotAllowed('GET')
+
+    month = int(month)
+    year = int(year)
+    start_date = datetime.date(year, month, 1)
+    end_date = start_date + datetime.timedelta(days=30)
+
+    while end_date.month != start_date.month:
+        end_date -= datetime.timedelta(days=1)
+
+    w_date = start_date
+    date_slice_dict = {}
+    sorted_date_list = []
+    while w_date != end_date + datetime.timedelta(days=1):
+        date_slice_dict[w_date]=[]
+        sorted_date_list.append(w_date)
+        w_date += datetime.timedelta(days=1)
+
+    team = get_object_or_404(Team, pk=int(team_id))
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+    slice_set = TimeSlice.objects.filter(user__in = members_id, create_date__range=(start_date, end_date))
+
+    for slice in slice_set:
+        if slice.slip not in date_slice_dict[slice.create_date]:
+            date_slice_dict[slice.create_date].append(slice.slip)
+
+    value_dictionary = {}
+    value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
+    value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
+    value_dictionary['x_axis'] = {"labels": {"labels": []}}
+    value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
+    value_dictionary['tooltip'] = {"mouse": 2}
+
+    max_list = [0.01]
+    for date in sorted_date_list:
+        value_dictionary['x_axis']['labels']['labels'].append(str(date.day))
+        i=0
+        temp_max = 0.0
+        value_list = []
+        if len(date_slice_dict[date]) == 0:
+            value_dictionary['elements'][0]['values'].append([0])
+        else:
+            while i < len(date_slice_dict[date]):
+                while_dictionary = {'val': True, 'key': True}
+                while_dictionary['val'] = date_slice_dict[date][i].display_days_time(date)
+                while_dictionary['key'] = '%s' % date_slice_dict[date][i].name
+                temp_max += date_slice_dict[date][i].display_days_time(date)
+                value_list.append(while_dictionary)
+                i += 1
+            max_list.append(temp_max)
+            value_dictionary['elements'][0]['values'].append(value_list)
+
+    value_dictionary['y_axis']['max'] = max(max_list)
+    value_dictionary['y_axis']['min'] = 0
+    step = max(max_list) * 0.1
+    for numb in range(11):
+        value_dictionary['y_axis']['labels']['labels'].append({'y':  numb*step})
+
+    value_dictionary['title']['text'] = '%s %s %s' % (Team.objects.get(pk = int(team_id)).name, start_date.strftime('%B'), year)
+
+    return HttpResponse(json.dumps(value_dictionary))
+
+
+def data_team_date(request, team_id, start_date, end_date):
+    # the method is the same as user.
+    # we want start and end date to have the format: u'yyyy-mm-dd'
+    s_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+    e_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+
+    w_date = s_date
+    date_slice_dict = {}
+    sorted_date_list = []
+    while w_date != e_date + datetime.timedelta(days=1):
+        date_slice_dict[w_date]=[]
+        sorted_date_list.append(w_date)
+        w_date += datetime.timedelta(days=1)
+
+    team = get_object_or_404(Team, pk=int(team_id))
+    members = team.members.all()
+    members_id = []
+    for member in members:
+        members_id.append(member.id)
+    slice_set = TimeSlice.objects.filter(user__in = members_id, create_date__range=(s_date, e_date))
 
     for slice in slice_set:
         if slice.slip not in date_slice_dict[slice.create_date]:
@@ -462,15 +603,12 @@ def get_date_data(request, search, search_id, start_date, end_date):
     for numb in range(11):
         value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
 
-    if search == 'user':
-            value_dictionary['title']['text'] = '%s %s to %s' % (request.user.username, start_date, end_date)
-    elif search == 'team':
-        value_dictionary['title']['text'] = '%s %s to %s' % (Team.objects.get(pk = int(search_id)).name, start_date, end_date)
+    value_dictionary['title']['text'] = '%s %s to %s' % (Team.objects.get(pk = int(team_id)).name, start_date, end_date)
 
     return HttpResponse(json.dumps(value_dictionary))
 
 
-def get_team_week_data(request, team_id, week, year):
+def data_team_stat_week(request, team_id, week, year):
     # the method for getting team specific data is gennerally the same as with team/user data.
     # However as the charts work a bit different using bar and scatter_line, the actual data needed to be generated and the setup is a bit different
     team_id = int(team_id)
@@ -488,7 +626,6 @@ def get_team_week_data(request, team_id, week, year):
     while start_date.isocalendar()[1] != week:
         start_date += datetime.timedelta(days=1)
     end_date = start_date + datetime.timedelta(days=6)
-
 
     team_list_dict = {}
     counter = 0
@@ -540,13 +677,13 @@ def get_team_week_data(request, team_id, week, year):
     step = max(max_list) * 0.1
     for numb in range(11):
         value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
-        
+
     value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (team.name, week, year)
 
     return HttpResponse(json.dumps(value_dictionary))
 
 
-def get_team_month_data(request, team_id, month, year):
+def data_team_stat_month(request, team_id, month, year):
     # uses same method as above.
 
     team_id = int(team_id)
@@ -571,7 +708,6 @@ def get_team_month_data(request, team_id, month, year):
         team_list_dict[mem_id] = {}
         team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Time: #ygmdate:H:i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
         counter += 1
-
 
     sorted_date_list = []
     w_date = start_date
@@ -621,7 +757,7 @@ def get_team_month_data(request, team_id, month, year):
     return HttpResponse(json.dumps(value_dictionary))
 
 
-def get_team_date_data(request, team_id, start_date, end_date):
+def data_team_stat_date(request, team_id, start_date, end_date):
     s_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
     e_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
     team_id = int(team_id)
@@ -637,7 +773,7 @@ def get_team_date_data(request, team_id, start_date, end_date):
     counter = 0
     for mem_id in members_id:
         team_list_dict[mem_id] = {}
-        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Time: #gmdate:H:i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
+        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Time: #ygmdate:H:i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
         counter += 1
 
     sorted_date_list = []
@@ -660,8 +796,6 @@ def get_team_date_data(request, team_id, start_date, end_date):
     value_dictionary['x_axis'] = {"min": 0, "max": True, "steps": 86400, "labels": {"rotate":"vertical","steps":86400,"visible-steps":2, "text":"#date:m-d#"}}
     value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#ygmdate:H:i#", "labels": []}}
     value_dictionary['tooltip'] = {"mouse": 1}
-
-
 
     max_list = [0.01]
     for date in sorted_date_list:
