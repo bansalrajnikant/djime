@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 
 def index(request):
     projects = Project.objects.all()
-    return render_to_response('project/all_projects.html', {'projects': projects},
+    return render_to_response('project/project_index.html', {'projects': projects},
                                          context_instance=RequestContext(request))
 
 
@@ -95,32 +95,50 @@ def client_index(request):
 @login_required()
 def show_client(request, client_id):
     client = get_object_or_404(Client, pk=client_id)
+    data = {
+        'client': client,
+    }
     projects = Project.objects.filter(client=client, members=request.user)
-    slip_set_all = Slip.objects.filter(project__in=projects)
-    slip_set_user = slip_set_all.filter(user=request.user)
-    slip_set_exclude_user = slip_set_all.exclude(user=request.user)
+    data['slip_all'] = Slip.objects.filter(project__in=projects)
+    data['slip_user'] = data['slip_all'].filter(user=request.user)
+    data['slip_rest'] = data['slip_all'].exclude(user=request.user)
     duration = 0
-    for slip in slip_set_all:
+    for slip in data['slip_all']:
         seconds = 0
         for slice in slip.timeslice_set.all():
             seconds += slice.duration
         duration += seconds
-    time_all ='%02i:%02i' % (duration/3600, duration%3600/60)
+    data['time_all'] ='%02i:%02i' % (duration/3600, duration%3600/60)
     duration = 0
-    for slip in slip_set_user:
+    for slip in data['slip_user']:
         seconds = 0
         for slice in slip.timeslice_set.all():
             seconds += slice.duration
         duration += seconds
-    time_user ='%02i:%02i' % (duration/3600, duration%3600/60)
+    data['time_user'] ='%02i:%02i' % (duration/3600, duration%3600/60)
     duration = 0
-    for slip in slip_set_user:
+    for slip in data['slip_user']:
         seconds = 0
         for slice in slip.timeslice_set.all():
             seconds += slice.duration
         duration += seconds
-    time_other ='%02i:%02i' % (duration/3600, duration%3600/60)
-    return render_to_response('project/client.html', {'client': client, 'slip_user': slip_set_user, 'slip_rest': slip_set_exclude_user, 'slip_all': slip_set_all, 'time_all': time_all, 'time_user': time_user, 'time_other': time_other},
+    data['time_other'] ='%02i:%02i' % (duration/3600, duration%3600/60)
+    
+    data['user_list'] = render_to_string('tracker/slip_list.html',
+                              {'slip_list': data['slip_user'],
+                              'list_exclude_client': True
+                              },
+                              context_instance=RequestContext(request))
+
+    data['other_list'] = render_to_string('tracker/slip_list.html',
+                              {'slip_list': data['slip_rest'],
+                              'list_exclude_client': True
+                              },
+                              context_instance=RequestContext(request))
+    
+    
+    
+    return render_to_response('project/client.html', data,
                                       context_instance=RequestContext(request))
 
 
