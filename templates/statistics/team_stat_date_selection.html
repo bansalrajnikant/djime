@@ -26,10 +26,4 @@
     <script type="text/javascript" src="{{ STATIC_URL }}jquery.ui/ui/jquery.ui.all.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/statistics.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.jeditable.js"></script>
-    <script type="text/javascript">
-        var flashvars = {};
-        var params = {};
-        var attributes = {};
-        swfobject.embedSWF("{{ STATIC_URL }}swf/open-flash-chart-patch2.swf", "flash-chart", "740", "400", "9.0.0", "{{ STATIC_URL }}swf/expressInstall.swf", {"data-file":"/statistics/data/{{ search }}/{{ search_id }}/date/"});
-    </script>
 {% endblock %}
