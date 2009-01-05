@@ -7,6 +7,17 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from tracker.forms import SlipAddForm
 from tracker.models import Slip, TimeSlice
+from project.models import Client, Project
+
+@login_required()
+def dashboard(request):
+    display_data = {
+        'slip_list': Slip.objects.filter(user=request.user)[:10],
+        'project_list': Project.objects.all()[:10],
+    }
+    return render_to_response('djimeboard/index.html', display_data,
+                              context_instance=RequestContext(request))
+
 
 @login_required
 def index(request):
