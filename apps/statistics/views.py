@@ -88,7 +88,7 @@ def team_stat_date_selection_form(request, team_id):
 
     if request.method == 'GET':
         form = DateSelectionForm()
-        return render_to_response('statistics/team_date_selection.html', {'team_id': team_id, 'form': form},
+        return render_to_response('statistics/team_stat_date_selection.html', {'team_id': team_id, 'form': form},
                                       context_instance=RequestContext(request))
 
     if request.method == 'POST':
@@ -98,7 +98,7 @@ def team_stat_date_selection_form(request, team_id):
             end = form.cleaned_data['end']
             return HttpResponseRedirect('/statistics/team_stat/%s/date/%s/%s/' % (team_id, start, end))
         else:
-            return render_to_response('statistics/team_date_selection.html', {'team_id': team_id, 'form': form},
+            return render_to_response('statistics/team_stat_date_selection.html', {'team_id': team_id, 'form': form},
                                       context_instance=RequestContext(request))
 
 @login_required()
@@ -139,7 +139,7 @@ def team_stat_date_selection_display(request, team_id, start_date, end_date):
     e_date = end_date.split('-')
     date_diff = int(e_date[0])*365+int(e_date[1])*30+int(e_date[2])-(int(s_date[0])*365+int(s_date[1])*30+int(s_date[2]))
     if date_diff < 60 and date_diff > 0:
-        return render_to_response('statistics/team_date_display.html', {'team_id': team_id, 'start_date': start_date, 'end_date': end_date},
+        return render_to_response('statistics/team_stat_date_display.html', {'team_id': team_id, 'start_date': start_date, 'end_date': end_date},
                                       context_instance=RequestContext(request))
     else:
         return HttpResponse('Invalid date, max 60 days')
@@ -156,7 +156,7 @@ def show_team_stat_week(request, team_id, week, year):
         return HttpResponseForbidden('Access denied')
 
 
-    return render_to_response('statistics/team_week.html', {'week': week, 'year': year, 'team_id': team_id},
+    return render_to_response('statistics/team_stat_week.html', {'week': week, 'year': year, 'team_id': team_id},
                                       context_instance=RequestContext(request))
 
 
@@ -170,7 +170,7 @@ def show_team_stat_month(request, team_id, month, year):
     if request.user.id not in members_id:
         return HttpResponseForbidden('Access denied')
 
-    return render_to_response('statistics/team_month.html', {'month': month, 'year': year, 'team_id': team_id},
+    return render_to_response('statistics/team_stat_month.html', {'month': month, 'year': year, 'team_id': team_id},
                                       context_instance=RequestContext(request))
 
 
