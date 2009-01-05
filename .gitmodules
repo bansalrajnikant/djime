@@ -1,3 +1,0 @@
-[submodule "static/js/jquery.timeclock"]
-	path = static/js/jquery.timeclock
-	url = git://github.com/mikl/jquery.timeclock.js.git
