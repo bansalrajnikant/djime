@@ -2,7 +2,7 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "hest" %}{% endblock %}
+{% block head_title %}{% trans "Statistics" %}{% endblock %}
 
 {% block content %}
     <div id="flash-chart">
@@ -18,6 +18,6 @@
         var params = {};
         var attributes = {};
         swfobject.embedSWF("{{ STATIC_URL }}swf/open-flash-chart-patch2.swf", "flash-chart", "740", "400", "9.0.0", "{{ STATIC_URL }}swf/expressInstall.swf",
-                           {"data-file":"/statistics/data/{{ search }}/{{ search_id }}/year/{{ year }}/month/{{ month }}/"});
+                           {"data-file":"/statistics/data/{{ user_type }}/{{ user_id }}/year/{{ year }}/month/{{ month }}/"});
     </script>
 {% endblock %}
