@@ -1,16 +1,16 @@
-from django.http import *
-from django.db import models
 import datetime
-from tracker.models import Slip, TimeSlice
-from django.contrib.auth.models import User
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from exceptions import ImportError
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.models import User
+from django.db import models
+from django.http import *
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
 from djime.statistics.forms import DateSelectionForm, DateSelectionBetaForm
 from teams.models import Team
 from djime.statistics.colour import colour
-from exceptions import ImportError
+from djime.models import Slip, TimeSlice
 try:
     import json
 except ImportError:

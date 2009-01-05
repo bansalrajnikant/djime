@@ -1,21 +1,21 @@
+import random
+import time
 import unittest
 import urllib
-from django.test.client import *
 from django.contrib.auth.models import User
+from django.test import TestCase
+from django.test.client import *
 from django.utils.http import urlencode
 from djime.models import Slip, TimeSlice
-from teams.models import Team
-from statistics.colour import colour
-import datetime
 from djime.tests import RESTClient
-from django.test import TestCase
 from exceptions import ImportError
+from statistics.colour import colour
+from teams.models import Team
+import datetime
 try:
     import json
 except ImportError:
     import simplejson as json
-import random
-import time
 
 class StatisticsRESTActionsTestCase(TestCase):
     fixtures = ['auth.json','slip.json', 'slice.json', 'team.json']

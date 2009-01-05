@@ -1,13 +1,12 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden, Http404
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from teams.models import Team
-from teams.forms import *
 from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden, Http404
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from teams.forms import *
+from teams.models import Team
 
 def create(request, form_class=TeamForm, template_name="teams/create.html"):
     if request.user.is_authenticated() and request.method == "POST":

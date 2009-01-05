@@ -1,12 +1,12 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseForbidden
-from project.models import Project, Client
-from teams.models import Team
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.contrib.auth.decorators import login_required
-from tracker.models import Slip
-from django.contrib.auth.models import User
 from django.template.loader import render_to_string
+from project.models import Project, Client
+from teams.models import Team
+from djime.models import Slip
 
 def index(request):
     projects = Project.objects.all()

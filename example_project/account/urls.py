@@ -5,3 +5,4 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout', name="acct_logout"),
     url(r'^signup/$', 'account.views.signup', name="acct_signup"),
 )
+
