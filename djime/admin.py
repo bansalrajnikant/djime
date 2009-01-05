@@ -1,5 +1,5 @@
 from django.contrib import admin
-from tracker.models import Slip, TimeSlice
+from djime.models import Slip, TimeSlice
 
 
 class InlineTimeSlice(admin.TabularInline):
@@ -16,3 +16,4 @@ class TimeSliceAdmin(admin.ModelAdmin):
 
 admin.site.register(TimeSlice, TimeSliceAdmin)
 admin.site.register(Slip, SlipAdmin)
+

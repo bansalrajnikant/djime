@@ -3,11 +3,11 @@ import hashlib
 import cPickle as pickle
 import time
 from datetime import datetime
-from project.models import Project
-from tracker.models import Slip, TimeSlice
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
-from data_import.models import Import
+from project.models import Project
+from djime.models import Slip, TimeSlice
+from djime.data_import.models import Import
 
 
 def handle_uploaded_file(file, user_id):

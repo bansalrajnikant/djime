@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns('statistics.views',
+urlpatterns = patterns('djime.statistics.views',
     url(r'^$', 'index', name='statistics_index'),
     (r'^user/(?P<user_id>\d+)/year/(?P<year>\d{4,4})/week/(?P<week>[1-9]|[1-4][0-9]|5[0-3])/$', 'display_user_week'),
     (r'^user/(?P<user_id>\d+)/year/(?P<year>\d{4,4})/month/(?P<month>[1-9]|1[0-2])/$', 'display_user_month'),

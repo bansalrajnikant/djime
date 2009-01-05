@@ -1,7 +1,7 @@
-from django.db import models, IntegrityError
-from django.contrib.auth.models import User
 import datetime
 from math import floor
+from django.db import models, IntegrityError
+from django.contrib.auth.models import User
 from project.models import Project, Client
 
 
@@ -88,3 +88,4 @@ class TimeSlice(models.Model):
 
     class Meta:
         ordering = ["-begin"]
+

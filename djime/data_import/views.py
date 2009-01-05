@@ -1,12 +1,12 @@
+import cPickle as pickle
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
-from data_import.forms import DataImportForm
-from data_import.models import Import
-from data_import.importer import handle_uploaded_file, importer_save
-import cPickle as pickle
+from djime.data_import.forms import DataImportForm
+from djime.data_import.models import Import
+from djime.data_import.importer import handle_uploaded_file, importer_save
 
 
 @login_required

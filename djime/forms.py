@@ -1,5 +1,5 @@
 from django import forms
-from tracker.models import Slip
+from djime.models import Slip
 
 class SlipAddForm(forms.ModelForm):
     class Meta:

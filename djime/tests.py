@@ -1,10 +1,10 @@
 import unittest
 import urllib
+from datetime import datetime
 from django.test.client import *
 from django.contrib.auth.models import User
 from django.utils.http import urlencode
-from tracker.models import Slip, TimeSlice
-from datetime import datetime
+from djime.models import Slip, TimeSlice
 
 
 class RESTClient(Client):

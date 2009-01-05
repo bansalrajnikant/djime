@@ -3,11 +3,11 @@ import urllib
 from django.test.client import *
 from django.contrib.auth.models import User
 from django.utils.http import urlencode
-from tracker.models import Slip, TimeSlice
+from djime.models import Slip, TimeSlice
 from teams.models import Team
 from statistics.colour import colour
 import datetime
-from tracker.tests import RESTClient
+from djime.tests import RESTClient
 from django.test import TestCase
 from exceptions import ImportError
 try:

@@ -7,9 +7,9 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from statistics.forms import DateSelectionForm, DateSelectionBetaForm
+from djime.statistics.forms import DateSelectionForm, DateSelectionBetaForm
 from teams.models import Team
-from statistics.colour import colour
+from djime.statistics.colour import colour
 from exceptions import ImportError
 try:
     import json

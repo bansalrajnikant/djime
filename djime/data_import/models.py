@@ -7,3 +7,4 @@ class Import(models.Model):
     completed = models.DateTimeField(blank=True, null=True)
     complete_data = models.FileField(upload_to='import_data/complete/%Y/%m/')
     partial_data = models.FileField(upload_to='import_data/partial/%Y/%m/')
+

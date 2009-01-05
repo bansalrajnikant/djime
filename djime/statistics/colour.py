@@ -11,3 +11,4 @@ def colour(number):
         return '#FF00FF'
     elif number % 6 == 0:
         return '#FFFF00'
+

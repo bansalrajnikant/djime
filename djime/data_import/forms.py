@@ -22,5 +22,5 @@ class DataImportForm(forms.Form):
                 list.append(value)
         except csv.Error:
             raise  forms.ValidationError('You having uploaded a bad file or is very sneaky and have been caught.')
-
         return cleaned_data
+

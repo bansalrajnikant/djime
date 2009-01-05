@@ -1,5 +1,5 @@
 from django.contrib import admin
-from data_import.models import Import
+from djime.data_import.models import Import
 
 class ImportAdmin(admin.ModelAdmin):
     list_display = ('user', 'created', 'completed')
@@ -8,3 +8,4 @@ class ImportAdmin(admin.ModelAdmin):
     ordering = ('-created',)
 
 admin.site.register(Import, ImportAdmin)
+

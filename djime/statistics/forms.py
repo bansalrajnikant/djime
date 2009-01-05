@@ -3,7 +3,7 @@ import datetime
 import re
 from exceptions import ValueError
 
-class DateSelectionForm (forms.Form):
+class DateSelectionForm(forms.Form):
     date = forms.CharField()
 
     def clean(self):
@@ -98,3 +98,4 @@ class DateSelectionBetaForm (forms.Form):
                     cleaned_data['start'] = start_date
                     cleaned_data['end'] = end_date
         return cleaned_data
+
