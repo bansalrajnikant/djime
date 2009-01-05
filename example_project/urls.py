@@ -5,11 +5,7 @@ import os.path
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', 'djimeboard.views.index', name='djime_index'),
     (r'^accounts/', include('account.urls')),
-    (r'^import/', include('data_import.urls')),
-    (r'^tracker/', include('tracker.urls')),
-    (r'^statistics/', include('statistics.urls')),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
     (r'^teams/', include('teams.urls')),
@@ -25,3 +21,9 @@ if settings.DEBUG:
         (r'^%s(?P<path>.*)' % settings.MEDIA_URL[1:], 'serve',
          {'document_root': settings.MEDIA_ROOT}),
     )
+
+# Finally, add Djime so it'll have the root namespace.
+urlpatterns += patterns('',
+    (r'^', include('djime.urls')),
+)
+
