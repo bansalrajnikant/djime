@@ -1,0 +1,11 @@
+<div class="content-navigation">
+  <ul class="links">
+    <li>Statistics for</li>
+    <li><a href="{% url statistics.views.week search="user", search_id=user.id, year=2008, week=52 %}">this week</a></li>
+    <li><a href="{% url statistics.views.week search="user", search_id=user.id, year=2008, week=52 %}">last week</a></li>
+    <li><a href="{% url statistics.views.month search="user", search_id=user.id, year=2008, month=12 %}">this month</a></li>
+    <li><a href="{% url statistics.views.month search="user", search_id=user.id, year=2008, month=11 %}">last month</a></li>
+    <li class="custom-date"><a href="{% url statistics.views.date_selection_form search="user", search_id=user.id %}">a different period</a></li>
+  </ul>
+</div>
+

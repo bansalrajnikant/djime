@@ -1,0 +1,34 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+<div class="yui-g">
+  <div class="yui-u current-slips">
+    <h4>Current tasks</h4>
+    <ul>
+      {% for slip in slip_list %}
+        <li class="slip slip-{{ slip.id }}">
+          <span class="elapsed-time">{{ slip.display_time }}</span>
+          <a href="{% url slip_page slip_id=slip.id %}">{{slip.name}}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="yui-u current-projects">
+    <h4>Current projects</h4>
+    <ul>
+      {% for project in project_list %}
+        <li class="project project-{{ project.id }}">
+          <span class="elapsed-time">{{ project.elapsed_time }}</span>
+          <a href="{% url project_page project_id=project.id %}">{{project.name}}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+</div>
+
+{% endblock %}
+

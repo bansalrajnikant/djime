@@ -2,7 +2,7 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Slip" %}: {{ slip.id }}{% endblock %}
+{% block head_title %}{{ slip.name }}{% endblock %}
 
 {% block extra_head %}
   <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}jquery.ui/themes/default/ui.all.css" />
@@ -14,8 +14,7 @@
     <div class="edit" id="div-1">{{ slip.name }}</div>
   </h2>
   <p>Total time: <span id="slip-total-time">{{ slip.display_time }}</span></p>
-  <div id="slip-timer-button"><div class="timeclock">0:00</div></div>
-
+  <div id="slip-timer-button" class="{{ timer.class }}"><div class="timeclock">0:00</div></div>
 {% endblock %}
 
 {% block sidebar %}
@@ -26,8 +25,12 @@
   <script type="text/javascript" src="{{ STATIC_URL }}jquery.ui/ui/jquery.ui.all.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.jeditable.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.timeclock/jquery.timeclock.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/tracker.js"></script>
   <script type="text/javascript">
     djime.messages['slip_delete_title'] = '{% trans "Delete this slip?" %}';
     djime.messages['slip_delete_body'] = '{% trans "If you delete this slip, you will lose all the time records associated with it. This is irrevocable." %}';
+    {% if slip.is_active %}
+        djime.current_time = new Date({{ slice_time.year }}, {{ slice_time.month }}, {{ slice_time.day }}, {{ slice_time.hour }}, {{ slice_time.minute }}, {{ slice_time.second }});
+    {% endif %}
   </script>
 {% endblock %}

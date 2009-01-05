@@ -1,14 +1,15 @@
-from django.db import models
+from django.db import models, IntegrityError
 from django.contrib.auth.models import User
 import datetime
 from math import floor
+from project.models import Project, Client
 
 
 class Slip(models.Model):
     name = models.CharField(max_length=128)
     user = models.ForeignKey(User, related_name="slips", blank=True, null=True)
-    #project = models.ForeignKey(Project)
-    #client = models.ForeignKey(Client)
+    project = models.ForeignKey(Project, blank = True, null=True)
+    client = models.ForeignKey(Client, blank = True, null=True)
     #type = models.CharField(max_length=32)
     due = models.DateField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -32,6 +33,12 @@ class Slip(models.Model):
         return '%02i:%02i' % (duration['hours'], duration['minutes'])
 
 
+    def display_days_time(self, date):
+        seconds = 0
+        for slice in self.timeslice_set.filter(create_date = date):
+            seconds += slice.duration
+        return seconds
+
     def is_active(self):
         slice = self.timeslice_set.filter(end = None)
         return bool(slice)
@@ -47,6 +54,8 @@ class TimeSlice(models.Model):
     slip = models.ForeignKey(Slip)
     user = models.ForeignKey(User, related_name="timeslices", blank=True, null=True)
     duration = models.PositiveIntegerField(editable=False, default=0)
+    week_number = models.PositiveIntegerField(default=datetime.datetime.now().isocalendar()[1])
+    create_date = models.DateField(default=datetime.datetime.now().date())
 
     def __unicode__(self):
         if self.duration == 0:
@@ -68,6 +77,14 @@ class TimeSlice(models.Model):
         else:
             self.duration = 0
             self.save()
+
+    def update_date(self):
+        self.save()
+        pk = self.pk
+        self = TimeSlice.objects.get(pk=pk)
+        self.week_number = self.begin.isocalendar()[1]
+        self.create_date = self.begin.date()
+        self.save()
 
     class Meta:
         ordering = ["-begin"]

@@ -1,0 +1,62 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "hest" %}{% endblock %}
+
+{% block extra_head %}
+  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}jquery.ui/themes/default/ui.all.css" />
+{% endblock %}
+
+{% block content %}
+    <form method="post" action="/statistics/{{ search }}/{{ search_id }}/date/selection/">
+        <fieldset>
+            {% trans "Date selection: " %}
+            <ol>
+                {{ form.as_ul }}
+                <li class="submit">
+                    <input type="submit" name="submit" value="{% trans 'Get Chart' %}" />
+                </li>
+            </ol>
+        </fieldset>
+    </form>
+
+    <form method="get" action="/statistics/{{ search }}/{{ search_id }}/week/">
+        <input type="submit" name="submit" value="{% trans 'This week' %}" />
+    </form>
+    <form method="get" action="/statistics/{{ search }}/{{ search_id }}/month/">
+        <input type="submit" name="submit" value="{% trans 'This month' %}" />
+    </form>
+
+    <form method="post" action="/statistics/team_stat/{{ team_id }}/date/selection/">
+        <fieldset>
+              {% trans "Team Statistics: " %}
+            <ol>
+                {{ form_beta.as_ul }}
+                <li class="submit">
+                    <input type="submit" name="submit" value="{% trans 'Get Chart' %}" />
+                </li>
+            </ol>
+        </fieldset>
+    </form>
+
+    <form method="get" action="/statistics/team_stat/{{ team_id }}/year/{{ year }}/week/{{ week }}/">
+        <input type="submit" name="submit" value="{% trans 'This week' %}" />
+    </form>
+    <form method="get" action="/statistics/team_stat/{{ team_id }}/year/{{ year }}/month/{{ month }}/">
+        <input type="submit" name="submit" value="{% trans 'This month' %}" />
+    </form>
+
+{% endblock %}
+
+{% block closure %}
+    <script type="text/javascript" src="{{ STATIC_URL }}jquery.ui/ui/jquery.ui.all.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/statistics.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.jeditable.js"></script>
+    <script type="text/javascript">
+        var flashvars = {};
+        var params = {};
+        var attributes = {};
+        swfobject.embedSWF("{{ STATIC_URL }}swf/open-flash-chart-patch2.swf", "flash-chart", "740", "400", "9.0.0", "{{ STATIC_URL }}swf/expressInstall.swf", {"data-file":"/statistics/data/{{ search }}/{{ search_id }}/date/"});
+    </script>
+{% endblock %}

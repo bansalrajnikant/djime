@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from teams.models import Team
 
 class Client(models.Model):
     """
@@ -20,6 +21,7 @@ class Project(models.Model):
     Acts as a basic container for Slips (tasks)
     """
     name = models.CharField(max_length=128)
+    team = models.ForeignKey(Team, null=True, blank = True)
     client = models.ForeignKey(Client, null=True, blank=True)
     members = models.ManyToManyField(User)
     deadline = models.DateField(null=True, blank=True)
