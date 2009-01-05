@@ -22,25 +22,6 @@ def index(request):
     return render_to_response('statistics/index.html', {},
                               context_instance=RequestContext(request))
 
-@login_required()
-def todays_week(request, search, search_id):
-    if search == 'user':
-        if int(request.user.id) != int(search_id):
-            return HttpResponseForbidden('Access denied')
-    elif search == 'team':
-        team = get_object_or_404(Team, pk=int(search_id))
-        members = team.members.all()
-        members_id = []
-        for member in members:
-            members_id.append(member.id)
-        if request.user.id not in members_id:
-            return HttpResponseForbidden('Access denied')
-
-    week = datetime.datetime.now().isocalendar()[1]
-    year = datetime.datetime.now().isocalendar()[0]
-    return render_to_response('statistics/week.html', {'week' : week, 'year': year, 'search': search, 'search_id': search_id},
-                                  context_instance=RequestContext(request))
-
 
 @login_required()
 def week(request, search, search_id, year, week):
@@ -62,26 +43,6 @@ def week(request, search, search_id, year, week):
 
 
 @login_required()
-def todays_month(request, search, search_id):
-    if search == 'user':
-        if int(request.user.id) != int(search_id):
-            return HttpResponseForbidden('Access denied')
-    elif search == 'team':
-        team = get_object_or_404(Team, pk=int(search_id))
-        members = team.members.all()
-        members_id = []
-        for member in members:
-            members_id.append(member.id)
-        if request.user.id not in members_id:
-            return HttpResponseForbidden('Access denied')
-
-    month = datetime.datetime.now().month
-    year = datetime.datetime.now().year
-    return render_to_response('statistics/month.html', {'month' : month, 'year': year, 'search': search, 'search_id': search_id},
-                                      context_instance=RequestContext(request))
-
-
-@login_required()
 def month(request, search, search_id, year, month):
     if search == 'user':
         if int(request.user.id) != int(search_id):
@@ -98,28 +59,6 @@ def month(request, search, search_id, year, month):
     return render_to_response('statistics/month.html', {'month' : month, 'year': year, 'search': search, 'search_id': search_id},
                                       context_instance=RequestContext(request))
 
-@login_required()
-def date(request, search, search_id):
-    if search == 'user':
-        if int(request.user.id) != int(search_id):
-            return HttpResponseForbidden('Access denied')
-    elif search == 'team':
-        team = get_object_or_404(Team, pk=int(search_id))
-        members = team.members.all()
-        members_id = []
-        for member in members:
-            members_id.append(member.id)
-        if request.user.id not in members_id:
-            return HttpResponseForbidden('Access denied')
-
-
-    week = datetime.datetime.now().isocalendar()[1]
-    year = datetime.datetime.now().year
-    month = datetime.datetime.now().month
-    form = DateSelectionForm()
-    form_beta = DateSelectionBetaForm()
-    return render_to_response('statistics/date.html', {'search': search, 'search_id': search_id, 'form': form, 'team_id': search_id, 'form_beta': form_beta, 'week': week, 'month': month, 'year': year},
-                                      context_instance=RequestContext(request))
 
 @login_required()
 def date_selection_form(request, search, search_id):
@@ -143,7 +82,7 @@ def date_selection_form(request, search, search_id):
 
 
 @login_required()
-def team_date_selection_form(request, team_id):
+def team_stat_date_selection_form(request, team_id):
     if request.method not in ('POST', 'GET'):
         return HttpResponseNotAllowed('POST', 'GET')
 
@@ -187,7 +126,7 @@ def date_selection_display(request, search, search_id, start_date, end_date):
 
 
 @login_required()
-def team_date_selection_display(request, team_id, start_date, end_date):
+def team_stat_date_selection_display(request, team_id, start_date, end_date):
     team = get_object_or_404(Team, pk=int(team_id))
     members = team.members.all()
     members_id = []
@@ -207,7 +146,7 @@ def team_date_selection_display(request, team_id, start_date, end_date):
 
 
 @login_required()
-def show_team_week(request, team_id, week, year):
+def show_team_stat_week(request, team_id, week, year):
     team = get_object_or_404(Team, pk=int(team_id))
     members = team.members.all()
     members_id = []
@@ -222,7 +161,7 @@ def show_team_week(request, team_id, week, year):
 
 
 @login_required()
-def show_team_month(request, team_id, month, year):
+def show_team_stat_month(request, team_id, month, year):
     team = get_object_or_404(Team, pk=int(team_id))
     members = team.members.all()
     members_id = []
@@ -470,7 +409,7 @@ def get_date_data(request, search, search_id, start_date, end_date):
     return HttpResponse(json.dumps(value_dictionary))
 
 
-def get_team_week_data(request, team_id, week, year):
+def get_team_stat_week_data(request, team_id, week, year):
     # the method for getting team specific data is gennerally the same as with team/user data.
     # However as the charts work a bit different using bar and scatter_line, the actual data needed to be generated and the setup is a bit different
     team_id = int(team_id)
@@ -546,7 +485,7 @@ def get_team_week_data(request, team_id, week, year):
     return HttpResponse(json.dumps(value_dictionary))
 
 
-def get_team_month_data(request, team_id, month, year):
+def get_team_stat_month_data(request, team_id, month, year):
     # uses same method as above.
 
     team_id = int(team_id)
@@ -621,7 +560,7 @@ def get_team_month_data(request, team_id, month, year):
     return HttpResponse(json.dumps(value_dictionary))
 
 
-def get_team_date_data(request, team_id, start_date, end_date):
+def get_team_stat_date_data(request, team_id, start_date, end_date):
     s_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
     e_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
     team_id = int(team_id)
