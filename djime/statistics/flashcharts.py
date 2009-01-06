@@ -9,7 +9,7 @@ except ImportError:
     import simplejson as json
 
 def user_week_json(user, week, year):
-    slice_query_set = TimeSlice.objects.filter(week_number=week, create_date__year= year, user = user.id)
+    slice_query_set = TimeSlice.objects.filter(week_number=week, create_date__year= year, user = user)
     # start date is set to a day in the week before the week we want to search.
     start_date = datetime.date(year, 1, 1) + datetime.timedelta(days = (week-2)*7)
     # this while loop will keep adding a day to the start date, until first day of the week is reached
@@ -95,7 +95,7 @@ def user_month_json(user, month, year):
         sorted_date_list.append(w_date)
         w_date += datetime.timedelta(days=1)
 
-    slice_query_set = TimeSlice.objects.filter(user = user.id, create_date__range=(start_date, end_date))
+    slice_query_set = TimeSlice.objects.filter(user = user, create_date__range=(start_date, end_date))
     for slice in slice_query_set:
         if slice.slip not in date_slip_dict[slice.create_date]:
             date_slip_dict[slice.create_date].append(slice.slip)
