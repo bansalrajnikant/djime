@@ -1,20 +1,10 @@
 import datetime
-from exceptions import ImportError
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.db import models
 from django.http import *
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from djime.statistics.forms import DateSelectionForm, DateSelectionBetaForm
+from djime.statistics.forms import DateSelectionForm
 from teams.models import Team
-from djime.statistics.colour import colour
-from djime.models import Slip, TimeSlice
-try:
-    import json
-except ImportError:
-    import simplejson as json
-import time
 import djime.statistics.flashcharts as flashcharts
 
 @login_required()
@@ -103,13 +93,13 @@ def display_team_month(request, team_id, year, month):
 
 
 @login_required()
-def team_date_selection_form(request, user_id):
+def team_date_selection_form(request, team_id):
     if request.method not in ('POST', 'GET'):
         return HttpResponseNotAllowed('POST', 'GET')
 
     if request.method == 'GET':
         form = DateSelectionForm()
-        return render_to_response('statistics/user_team_selection.html', {'team_id': team_id, 'form': form},
+        return render_to_response('statistics/team_date_selection.html', {'team_id': team_id, 'form': form},
                                       context_instance=RequestContext(request))
 
     if request.method == 'POST':
@@ -117,9 +107,9 @@ def team_date_selection_form(request, user_id):
         if form.is_valid():
             start = form.cleaned_data['start']
             end = form.cleaned_data['end']
-            return HttpResponseRedirect('/statistics/team/%s/date/%s/%s/' % (user_id, start, end))
+            return HttpResponseRedirect('/statistics/team/%s/date/%s/%s/' % (team_id, start, end))
         else:
-            return render_to_response('statistics/user_team_selection.html', {'user_id': user_id, 'form': form},
+            return render_to_response('statistics/team_date_selection.html', {'team_id': team_id, 'form': form},
                                       context_instance=RequestContext(request))
 
 
@@ -182,7 +172,7 @@ def team_stat_date_selection_form(request, team_id):
                                       context_instance=RequestContext(request))
 
     if request.method == 'POST':
-        form = DateSelectionBetaForm(request.POST)
+        form = DateSelectionForm(request.POST)
         if form.is_valid():
             start = form.cleaned_data['start']
             end = form.cleaned_data['end']
