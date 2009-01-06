@@ -5,7 +5,7 @@ from django.core.management import execute_manager
 
 # Add our own apps dir to the PYTHONPATH
 PROJECT_ROOT = abspath(dirname(__file__))
-sys.path.insert(0, join(PROJECT_ROOT, "apps"))
+sys.path.insert(0, join(PROJECT_ROOT, "../"))
 
 try:
     import settings # Assumed to be in the same directory.
