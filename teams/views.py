@@ -8,6 +8,20 @@ from django.template import RequestContext
 from teams.forms import *
 from teams.models import Team
 
+@login_required()
+def index(request):
+    teams = Team.objects.filter(deleted=False, members=request.user)
+    teams_member = teams.exclude(creator=request.user).order_by("name")
+    teams_creator = teams.filter(creator=request.user).order_by("name")
+
+    return render_to_response("teams/index.html", {
+        "teams_member": teams_member,
+        "teams_member_count": len(teams_member),
+        "teams_creator": teams_creator,
+        "teams_creator_count": len(teams_creator),
+    }, context_instance=RequestContext(request))
+
+
 def create(request, form_class=TeamForm, template_name="teams/create.html"):
     if request.user.is_authenticated() and request.method == "POST":
         if request.POST["action"] == "create":
@@ -44,18 +58,12 @@ def delete(request, slug, redirect_url=None):
     return HttpResponseRedirect(redirect_url)
 
 
-def your_teams(request, template_name="teams/your_teams.html"):
-    return render_to_response(template_name, {
-        "teams": Team.objects.filter(deleted=False, members=request.user).order_by("name"),
-    }, context_instance=RequestContext(request))
-your_teams = login_required(your_teams)
-
 def team(request, slug, form_class=TeamUpdateForm,
         template_name="teams/team.html"):
     team = get_object_or_404(Team, slug=slug)
-
     if team.deleted:
         raise Http404
+
 
     if request.user.is_authenticated() and request.method == "POST":
         if request.POST["action"] == "update" and request.user == team.creator:

@@ -1,0 +1,42 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Your Teams" %}{% endblock %}
+
+{% block content %}    
+        
+    {% if not teams_creator %}
+        <h1>{% trans "You are not creator of any team" %}</h1>
+    {% else %}
+        {% ifequal teams_creator_count 1 %}
+            <h1>{% trans "This is the team you have created" %}</h1>
+            {% for team in teams_creator %}
+                <ul><a href="{% url team_display slug=team.slug %}">{{ team.name }}</a></ul>
+            {% endfor %}
+        {% else %}
+            <h1>{% trans "These are the teams you have created" %}</h1>
+            {% for team in teams_creator %}
+                <ul><a href="{% url team_display slug=team.slug %}">{{ team.name }}</a></ul>
+            {% endfor %}
+        {% endifequal %}
+    {% endif %}
+    {% if not teams_member %}
+        <h1>{% trans "You are not member of any team" %}</h1>
+    {% else %}
+        {% ifequal teams_member_count 1 %}
+            <h1>{% trans "This is the team you are member of" %}</h1>
+            {% for team in teams_member %}
+                <ul><a href="{% url team_display slug=team.slug %}">{{ team.name }}</a></ul>
+            {% endfor %}
+        {% else %}
+            <h1>{% trans "These are the teams you are member of" %}</h1>
+            {% for team in teams_member %}
+                <ul><a href="{% url team_display slug=team.slug %}">{{ team.name }}</a></ul>
+            {% endfor %}
+        {% endifequal %}
+    {% endif %}
+                
+            <p><a href="{% url team_create %}">{% trans "Create new team" %}</a></p>
+
+{% endblock %}
