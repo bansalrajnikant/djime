@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -57,33 +56,58 @@ def delete(request, slug, redirect_url=None):
 
     return HttpResponseRedirect(redirect_url)
 
-
-def team(request, slug, form_class=TeamUpdateForm,
-        template_name="teams/team.html"):
+@login_required()
+def team(request, slug):
     team = get_object_or_404(Team, slug=slug)
     if team.deleted:
         raise Http404
+    if request.user not in team.members.all():
+        return HttpResponseForbidden('Access Denied')
 
+    if request.method == "POST":
+        if request.POST["action"] == "leave":
+            team.members.remove(request.user)
+            request.user.message_set.create(message="You have left the team %s" % team.name)
+            return HttpResponseRedirect(reverse('team_index'))
 
-    if request.user.is_authenticated() and request.method == "POST":
+    are_member = request.user in team.members.all()
+
+    return render_to_response("teams/team.html", {
+        "team": team,
+        "are_member": are_member,
+    }, context_instance=RequestContext(request))
+
+@login_required()
+def edit(request, slug, form_class=TeamUpdateForm):
+    team = get_object_or_404(Team, slug=slug)
+    if team.deleted:
+        raise Http404
+    if request.user != team.creator:
+        return HttpResponseForbidden('Access Denied')
+
+    if request.method == "POST":
         if request.POST["action"] == "update" and request.user == team.creator:
             team_form = form_class(request.POST, instance=team)
             if team_form.is_valid():
                 team = team_form.save()
         else:
             team_form = form_class(instance=team)
-        if request.POST["action"] == "join":
-            team.members.add(request.user)
-            request.user.message_set.create(message="You have joined the team %s" % team.name)
-        elif request.POST["action"] == "leave":
-            team.members.remove(request.user)
-            request.user.message_set.create(message="You have left the team %s" % team.name)
+        if request.POST["action"].split('_')[0] == 'remove':
+            try:
+                remove_user = User.objects.get(pk=int(request.POST["action"].split('_')[1]))
+                team.members.remove(remove_user)
+                request.user.message_set.create(message="User %s have been removed from your team." % remove_user.username)
+                return HttpResponseRedirect(reverse('team_edit', args=(team.slug,)))
+            except User.DoesNotExist:
+                request.user.message_set.create(message="User does not exist.")
+                return HttpResponseRedirect(reverse('team_edit', args=(team.slug,)))
+
     else:
         team_form = form_class(instance=team)
 
     are_member = request.user in team.members.all()
 
-    return render_to_response(template_name, {
+    return render_to_response("teams/edit.html", {
         "team_form": team_form,
         "team": team,
         "are_member": are_member,

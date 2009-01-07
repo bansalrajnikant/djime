@@ -1,0 +1,64 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{{ team.name }}{% endblock %}
+
+{% block content %}
+
+    <h1>{% trans "Team:" %} {{ team.name }}</h1>
+    
+    <div class="members">
+        <h2>{% trans "Your members:" %}</h2>
+        <table width="100%">
+            {% for member in team.members.all %}
+                {% ifnotequal member user %}
+                    {{ member }}
+                    <form method="POST" action="">
+                    <input type="hidden" name="action" value="remove_{{ member.id}}" />
+                    <input type="submit" value="{% trans 'Remove' %}"/>
+                    </form>
+                    <br>
+                {% endifnotequal %}
+            {% endfor %}
+        </table>
+        <br />
+    </div>   
+
+    {% ifequal user team.creator %}
+        <form id="team_form" method="POST" action="">
+            <table>
+                {{ team_form }}
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="hidden" name="action" value="update" />
+                            <input type="submit" value="{% trans 'update' %}"/>
+                        </td>
+                    </tr>
+            </table>
+        </form>
+
+        {% ifequal team.members.all.count 1 %}
+                <form method="post" action="{% url team_delete slug=team.slug %}">
+                    <input type="submit" name="submit" value="{% trans 'Delete' %}" />
+            {% else %}
+                <p>You are not the only member of the team so you can't delete the team.</p>
+        {% endifequal %}
+
+    {% endifequal %}
+
+            <div>
+                <form method="POST" action="">
+                    {% if are_member %}
+                        {% ifequal user team.creator %}
+                            <p>{% trans "You are the creator of this team so can't leave." %}</p>
+                        {% else %}
+                            <input type="hidden" name="action" value="leave" />
+                            <input type="submit" value="{% trans 'leave' %}"/>
+                        {% endifequal %}
+                    {% endif %}
+                </form>
+            </div>
+
+{% endblock %}
