@@ -7,7 +7,7 @@
 {% block content %}
 
     <h1>{% trans "Team:" %} {{ team.name }}</h1>
-    
+
     <div class="members">
         <h2>{% trans "Your members:" %}</h2>
         <table width="100%">
@@ -23,7 +23,7 @@
             {% endfor %}
         </table>
         <br />
-    </div>   
+    </div>
 
     {% ifequal user team.creator %}
         <form id="team_form" method="POST" action="">

@@ -7,6 +7,7 @@ from django.template import RequestContext
 from teams.forms import *
 from teams.models import Team
 
+
 @login_required()
 def index(request):
     teams = Team.objects.filter(deleted=False, members=request.user)
@@ -21,6 +22,7 @@ def index(request):
     }, context_instance=RequestContext(request))
 
 
+@login_required()
 def create(request, form_class=TeamForm, template_name="teams/create.html"):
     if request.user.is_authenticated() and request.method == "POST":
         if request.POST["action"] == "create":
@@ -42,19 +44,18 @@ def create(request, form_class=TeamForm, template_name="teams/create.html"):
     }, context_instance=RequestContext(request))
 
 
-def delete(request, slug, redirect_url=None):
+@login_required()
+def delete(request, slug):
     team = get_object_or_404(Team, slug=slug)
-    if not redirect_url:
-        redirect_url = "/teams/" # @@@ can't use reverse("teams") -- what is URL name using things?
 
     # @@@ eventually, we'll remove restriction that team.creator can't leave team but we'll still require team.members.all().count() == 1
-    if request.user.is_authenticated() and request.method == "POST" and request.user == team.creator and team.members.all().count() == 1:
+    if request.method == "POST" and request.user == team.creator and team.members.all().count() == 1:
         team.deleted = True
         team.save()
         request.user.message_set.create(message="Team %s deleted." % team)
         # @@@ no notification as the deleter must be the only member
+    return HttpResponseRedirect(reverse('team_index'))
 
-    return HttpResponseRedirect(redirect_url)
 
 @login_required()
 def team(request, slug):
@@ -76,6 +77,7 @@ def team(request, slug):
         "team": team,
         "are_member": are_member,
     }, context_instance=RequestContext(request))
+
 
 @login_required()
 def edit(request, slug, form_class=TeamUpdateForm):
