@@ -88,29 +88,43 @@ def edit(request, slug, form_class=TeamUpdateForm):
         return HttpResponseForbidden('Access Denied')
 
     if request.method == "POST":
-        if request.POST["action"] == "update" and request.user == team.creator:
-            team_form = form_class(request.POST, instance=team)
-            if team_form.is_valid():
-                team = team_form.save()
-        else:
-            team_form = form_class(instance=team)
-        if request.POST["action"].split('_')[0] == 'remove':
+        if request.POST.has_key('action'):
+            if request.POST["action"] == "update" and request.user == team.creator:
+                team_form = form_class(request.POST, instance=team)
+                if team_form.is_valid():
+                    team = team_form.save()
+            else:
+                team_form = form_class(instance=team)
+            if request.POST["action"].split('_')[0] == 'remove':
+                try:
+                    remove_user = User.objects.get(pk=int(request.POST["action"].split('_')[1]))
+                    team.members.remove(remove_user)
+                    request.user.message_set.create(message="User %s has been removed from your team." % remove_user.username)
+                    return HttpResponseRedirect(reverse('team_edit', args=(team.slug,)))
+                except User.DoesNotExist:
+                    request.user.message_set.create(message="User does not exist.")
+                return HttpResponseRedirect(reverse('team_edit', args=(team.slug,)))
+        if request.POST.has_key('add'):
             try:
-                remove_user = User.objects.get(pk=int(request.POST["action"].split('_')[1]))
-                team.members.remove(remove_user)
-                request.user.message_set.create(message="User %s have been removed from your team." % remove_user.username)
+                add_user = User.objects.get(username=request.POST['add'])
+                team.members.add(add_user)
+                request.user.message_set.create(message="User %s has been added to your team." % add_user.username)
                 return HttpResponseRedirect(reverse('team_edit', args=(team.slug,)))
             except User.DoesNotExist:
-                request.user.message_set.create(message="User does not exist.")
+                request.user.message_set.create(message="User %s does not exist." % request.POST['add'])
                 return HttpResponseRedirect(reverse('team_edit', args=(team.slug,)))
 
     else:
         team_form = form_class(instance=team)
 
-    are_member = request.user in team.members.all()
+    users = User.objects.all()
+    user_list = []
+    for user in users:
+        if user not in team.members.all():
+            user_list.append(user.username)
 
     return render_to_response("teams/edit.html", {
         "team_form": team_form,
         "team": team,
-        "are_member": are_member,
+        "user_list": user_list,
     }, context_instance=RequestContext(request))

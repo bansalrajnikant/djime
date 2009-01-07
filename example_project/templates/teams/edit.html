@@ -5,6 +5,11 @@
 {% block head_title %}{{ team.name }}{% endblock %}
 
 {% block content %}
+    <form method="POST" action="">
+    <input type="textfield" name="add" id="auto-complete" value="" />
+    <input type="submit" value="{% trans 'Add' %}"/>
+    </form>
+
 
     <h1>{% trans "Team:" %} {{ team.name }}</h1>
 
@@ -25,6 +30,9 @@
         <br />
     </div>
 
+    <h2>{% trans "Add new member" %}</h2>
+
+    <br />
     {% ifequal user team.creator %}
         <form id="team_form" method="POST" action="">
             <table>
@@ -61,4 +69,15 @@
                 </form>
             </div>
 
+{% endblock %}
+{% block closure %}
+  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc4/ui/jquery.ui.all.js"></script>
+  <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/autocomplete/jquery.autocomplete.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/team.js"></script>
+  <script type="text/javascript">
+  djime.autocomplete_usernames = new Array()
+  {% for user in user_list %}
+    djime.autocomplete_usernames[{{ forloop.counter0 }}] = "{{ user }}";
+  {% endfor %}
+  </script>
 {% endblock %}
