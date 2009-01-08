@@ -90,6 +90,13 @@ def slip_action(request, slip_id, action):
             else:
                 start_time = datetime.now()
 
+            # Stop active timeslices if any
+            slice_query_set = TimeSlice.objects.filter(user=request.user, end=None)
+            if slice_query_set:
+                for slice in slice_query_set:
+                    slice.end = datetime.now()
+                    slice.update_duration() # updates duration and saves the timeslice
+
             new_time_slice = TimeSlice.objects.create(user = request.user, begin = start_time, slip_id = slip_id )
             new_time_slice.save()
             return HttpResponse('Your timeslice begin time %s has been created' % start_time)
