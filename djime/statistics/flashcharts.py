@@ -3,6 +3,7 @@ import time
 from django.contrib.auth.models import User
 from djime.models import TimeSlice
 from djime.statistics.colour import colour
+from exceptions import ImportError
 try:
     import json
 except ImportError:
