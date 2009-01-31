@@ -7,7 +7,7 @@ from exceptions import ImportError
 try:
     import json
 except ImportError:
-    import simplejson as json
+    from django.utils import simplejson as json
 
 def user_week_json(user, week, year):
     slice_query_set = TimeSlice.objects.filter(week_number=week, create_date__year= year, user = user)
@@ -579,3 +579,4 @@ def team_stat_date_json(team, start_date, end_date):
     value_dictionary['title']['text'] = '%s: From %s to %s' % (team.name, s_date, e_date)
 
     return json.dumps(value_dictionary)
+
