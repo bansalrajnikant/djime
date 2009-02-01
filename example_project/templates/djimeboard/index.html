@@ -5,29 +5,32 @@
 {% block content %}
 
 <div class="yui-g">
-  <div class="yui-u current-slips">
+  <div class="yui-u first current-slips">
     <h4>Current tasks</h4>
-    <ul>
+    <ul class="item-list slip-list">
       {% for slip in slip_list %}
         <li class="slip slip-{{ slip.id }}">
-          <span class="elapsed-time">{{ slip.display_time }}</span>
-          <a href="{% url slip_page slip_id=slip.id %}">{{slip.name}}</a>
+          <a href="{% url slip_page slip_id=slip.id %}">
+            <span class="elapsed-time">{{ slip.display_time }}</span>
+            {{slip.name}}
+          </a>
         </li>
       {% endfor %}
     </ul>
   </div>
   <div class="yui-u current-projects">
     <h4>Current projects</h4>
-    <ul>
+    <ul class="item-list project-list">
       {% for project in project_list %}
         <li class="project project-{{ project.id }}">
-          <span class="elapsed-time">{{ project.elapsed_time }}</span>
-          <a href="{% url project_page project_id=project.id %}">{{project.name}}</a>
+          <a href="{% url project_page project_id=project.id %}">
+            <span class="elapsed-time">{{ project.elapsed_time }}</span>
+              {{project.name}}
+          </a>
         </li>
       {% endfor %}
     </ul>
   </div>
-
 </div>
 
 {% endblock %}

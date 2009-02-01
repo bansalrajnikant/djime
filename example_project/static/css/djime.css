@@ -19,6 +19,38 @@ html, body {
   background-color: #C2C8D1;
 }
 
+/* @group General HTML styles */
+
+/* Links are blue */
+
+a:link, a:visited, a:hover, a:active {
+  color: #005573;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:active {
+  color: #007BA7;
+}
+
+#content h4 {
+  font-size: 138.5%;
+  color: #001C26;
+  margin-bottom: 0.5em;
+}
+
+#content .yui-u h4 {
+  text-align: center;
+}
+
+
+/* @end */
+
+
+
 /* @group Page header */
 #hd {
   background-color: #007BA7;
@@ -106,6 +138,30 @@ html, body {
 
 /* @end */
 /* @end */
+
+/* @group Listings */
+
+ul.item-list li a {
+  border-top: 1px dashed #C2C8D1;
+  padding: 0.5em 0 0.5em 0;
+  display: block;
+}
+
+ul.item-list li a:hover {
+  background-color: #d8fdfa;
+  text-decoration: none;
+}
+
+ul.item-list li span.elapsed-time {
+  display: block;
+  float: left;
+  margin-right: 1em;
+  min-width: 3em;
+}
+
+/* @end */
+
+
 
 /* @group Sidebar */
 
