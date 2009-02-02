@@ -3,14 +3,15 @@ $(document).ready(function () {
   $("div.ui-dialog").hide();
 
   $("#delete-slip-button").click(function () {
-    var dialog_box = $("#dialog-box");
+    $("#content").before('<div id="delete-dialog" class="ui-dialog"/>');
+    var dialog_box = $("div#delete-dialog");
     dialog_box.dialog({
       buttons: {
         "Delete this slip": function() {
           $.delete_(document.URL, {}, function (data, textStatus){
             if (textStatus == "success") {
               // If deleting succeeds, redirect to the tracker index page.
-              document.location.href = '/tracker/'
+              document.location.href = '/slip/'
             }
           });
           $(this).dialog("close");
@@ -19,10 +20,11 @@ $(document).ready(function () {
           $(this).dialog("close");
         }
       },
+      bgiframe: true,
       draggable: false,
-      modal: false,
+      modal: true,
       resizable: false,
-      show: 'size',
+      //show: 'size',
       title: djime.messages.slip_delete_title
     });
     dialog_box.text(djime.messages.slip_delete_body);

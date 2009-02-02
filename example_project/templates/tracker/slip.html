@@ -5,11 +5,11 @@
 {% block head_title %}{{ slip.name }}{% endblock %}
 
 {% block extra_head %}
-  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc4/themes/default/ui.all.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc6/themes/redmond/ui.all.css" />
 {% endblock %}
 
 {% block content %}
-  <div id="dialog-box" class="ui-dialog" title="Delete this slip?"></div>
+  <div id="dialog-box"></div>
   <h2>
     <div class="edit" id="div-1">{{ slip.name }}</div>
   </h2>
@@ -22,7 +22,7 @@
 {% endblock %}
 
 {% block closure %}
-  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc4/ui/jquery.ui.all.js"></script>
+  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc6/ui/jquery.ui.all.js"></script>
   <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.jeditable.js"></script>
   <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.timeclock.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/tracker.js"></script>
@@ -34,3 +34,4 @@
     {% endif %}
   </script>
 {% endblock %}
+
