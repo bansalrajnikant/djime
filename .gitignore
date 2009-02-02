@@ -12,4 +12,5 @@
 local_settings.py
 
 # All contents of site_media
-site_media/*
+example_project/site_media/*
+
