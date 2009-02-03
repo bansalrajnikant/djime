@@ -7,6 +7,7 @@ from django.template.loader import render_to_string
 from project.models import Project, Client
 from teams.models import Team
 from djime.models import Slip
+from django.utils.translation import ugettext_lazy as _
 
 def index(request):
     projects = Project.objects.all()
@@ -19,14 +20,14 @@ def show_user_projects(request, user_type, user_id):
     user_id = int(user_id)
     if user_type == 'user':
         if request.user.id != int(user_id):
-            return HttpResponseForbidden('Access Denied')
+            return HttpResponseForbidden(_('Access Denied'))
         user = User.objects.get(pk=user_id)
         user.name = user.username
         projects = Project.objects.filter(members = user_id)
     elif user_type == 'team':
         user = team = get_object_or_404(Team, pk=user_id)
         if request.user not in team.members.all():
-            return HttpResponseForbidden('Access Denied')
+            return HttpResponseForbidden(_('Access Denied'))
         projects = Project.objects.filter(team = user_id)
     elif user_type == 'client':
         user = client = get_object_or_404(Client, pk=user_id)
@@ -39,7 +40,7 @@ def show_user_projects(request, user_type, user_id):
 def show_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.user not in project.members.all():
-        return HttpResponseForbidden('Access Denied')
+        return HttpResponseForbidden(_('Access Denied'))
     # Data returned to the template.
     data = {
         'project': project,

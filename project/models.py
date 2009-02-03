@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from teams.models import Team
+from django.utils.translation import ugettext_lazy as _
 
 class Client(models.Model):
     """
@@ -9,7 +10,7 @@ class Client(models.Model):
     Clients could be external customers, other departmens of your company, etc.
     Since we're not creating a CRM here, we'll just keep this model simple.
     """
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, verbose_name=_(name))
 
     def __unicode__(self):
         return self.name
@@ -20,11 +21,11 @@ class Project(models.Model):
 
     Acts as a basic container for Slips (tasks)
     """
-    name = models.CharField(max_length=128)
-    team = models.ForeignKey(Team, null=True, blank = True)
-    client = models.ForeignKey(Client, null=True, blank=True)
-    members = models.ManyToManyField(User)
-    deadline = models.DateField(null=True, blank=True)
+    name = models.CharField(max_length=128, verbose_name=_(name))
+    team = models.ForeignKey(Team, null=True, blank = True, verbose_name=_(team))
+    client = models.ForeignKey(Client, null=True, blank=True, verbose_name=_(client))
+    members = models.ManyToManyField(User, verbose_name=_(members))
+    deadline = models.DateField(null=True, blank=True, verbose_name=_(deadline))
 
     def __unicode__(self):
         return self.name
