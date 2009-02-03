@@ -372,7 +372,7 @@ def team_date_json(team, start_date, end_date):
     for numb in range(11):
         value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
 
-    value_dictionary['title']['text'] = _('%(team)s %(start)s to %(end)s') % ('team': team.name, 'start': start_date, 'end': end_date)
+    value_dictionary['title']['text'] = _('%(team)s %(start)s to %(end)s') % {'team': team.name, 'start': start_date, 'end': end_date}
 
     return json.dumps(value_dictionary)
 
@@ -466,7 +466,7 @@ def team_stat_month_json(team, month, year):
     counter = 0
     for mem_id in members_id:
         team_list_dict[mem_id] = {}
-        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], _("tip": "%(username)s<br>Time: #ygmdate:H:i#") % {'username': User.objects.get(pk=mem_id).username}, "colour": colour(counter)}
+        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": _("%(username)s<br>Time: #ygmdate:H:i#") % {'username': User.objects.get(pk=mem_id).username}, "colour": colour(counter)}
         counter += 1
 
     sorted_date_list = []
