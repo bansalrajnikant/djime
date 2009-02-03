@@ -5,8 +5,8 @@
 {% block head_title %}{% trans "Projects" %}{% endblock %}
 
 {% block content %}
-  <h2>All Clients for {{ user_type }} {{ user_model.name }}</h2>
+  <h2>{% blocktrans %}All Clients for {{ user_type }} {{ user_model }}{% endblocktrans %}</h2>
   {% for client in clients %}
-    <ul><a href="{% url client_page client_id=client.id %}">{{ client.name }}</a></ul>
+    <ul><a href="{% url client_page client_id=client.id %}">{{ client }}</a></ul>
   {% endfor %}
 {% endblock %}

@@ -1,13 +1,14 @@
+{% load i18n %}
 {% load statistics_navigation_tags %}
 {% statistics_nav_vars get %}
 <div class="content-navigation">
   <ul class="links">
-    <li>Statistics for user {{ user.username }}</li>
-    <li><a href="{% url djime.statistics.views.display_user_week user_id=user.id, year=statistics_nav_current_week_year, week=statistics_nav_current_week %}">this week</a></li>
-    <li><a href="{% url djime.statistics.views.display_user_week user_id=user.id, year=statistics_nav_last_week_year, week=statistics_nav_last_week %}">last week</a></li>
-    <li><a href="{% url djime.statistics.views.display_user_month user_id=user.id, year=statistics_nav_current_month_year, month=statistics_nav_current_month %}">this month</a></li>
-    <li><a href="{% url djime.statistics.views.display_user_month user_id=user.id, year=statistics_nav_last_month_year, month=statistics_nav_last_month %}">last month</a></li>
-    <li class="custom-date"><a href="{% url djime.statistics.views.user_date_selection_form user_id=user.id %}">a different period</a></li>
+    <li>{% blocktrans %}Statistics for user {{ user }}{% endblocktrans %}</li>
+    <li><a href="{% url djime.statistics.views.display_user_week user_id=user.id, year=statistics_nav_current_week_year, week=statistics_nav_current_week %}">{% trans "this week" %}</a></li>
+    <li><a href="{% url djime.statistics.views.display_user_week user_id=user.id, year=statistics_nav_last_week_year, week=statistics_nav_last_week %}">{% trans "last week" %}</a></li>
+    <li><a href="{% url djime.statistics.views.display_user_month user_id=user.id, year=statistics_nav_current_month_year, month=statistics_nav_current_month %}">{% trans "this month" %}</a></li>
+    <li><a href="{% url djime.statistics.views.display_user_month user_id=user.id, year=statistics_nav_last_month_year, month=statistics_nav_last_month %}">{% trans "last month" %}</a></li>
+    <li class="custom-date"><a href="{% url djime.statistics.views.user_date_selection_form user_id=user.id %}">{% trans "a different period" %}</a></li>
   </ul>
 </div>
 

@@ -6,10 +6,10 @@
 
 {% block content %}
 
-  <h1>Client: {{ client.name }} Total duration: {{ time_all }}<h1>
-  <h2>{{ user }}'s Tasks in {{ client.name }} Total duration: {{ time_user }}</h2>
+  <h1>{% blocktrans %}Client: {{ client }} Total duration: {{ time_all }}{% endblocktrans %}<h1>
+  <h2>{% blocktrans %}{{ user }}'s Tasks in {{ client.name }} Total duration: {{ time_user }}{% endblocktrans %}</h2>
     {{ user_list }}
 
-  <h2>Other's tasks in {{ client.name }} Total duration: {{ time_other }}</h2>
+  <h2>{% blocktrans %}Other's tasks in {{ client }} Total duration: {{ time_other }}{% endblocktrans %}</h2>
     {{ other_list }}
 {% endblock %}

@@ -13,7 +13,7 @@
   <h2>
     <div class="edit" id="div-1">{{ slip.name }}</div>
   </h2>
-  <p>Total time: <span id="slip-total-time">{{ slip.display_time }}</span></p>
+  <p>{% trans "Total time:" %} <span id="slip-total-time">{{ slip.display_time }}</span></p>
   <div id="slip-timer-button" class="{{ timer.class }}"><div class="timeclock">0:00</div></div>
 {% endblock %}
 

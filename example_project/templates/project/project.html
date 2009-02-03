@@ -2,14 +2,14 @@
 
 {% load i18n %}
 
-{% block head_title %}{{ project.name }}{% endblock %}
+{% block head_title %}{{ project }}{% endblock %}
 
 {% block content %}
 
-  <h1>Project: {{ project.name }} Total duration: {{ time_all }}<h1>
-  <h2>{{ user }}'s Tasks in {{ project.name }} Total duration: {{ time_user }}</h2>
+  <h1>{% blocktrans %}Project: {{ project }} Total duration: {{ time_all }}{% endblocktrans %}<h1>
+  <h2>{% blocktrans %}{{ user }}'s Tasks in {{ project }} Total duration: {{ time_user }}{% endblocktrans %}</h2>
   {{ user_list }}
 
-  <h2>Other's tasks in {{ project.name }} Total duration: {{ time_other }}</h2>
+  <h2>{% blocktrans %}Other's tasks in {{ project }} Total duration: {{ time_other }}{% endblocktrans %}</h2>
   {{ other_list }}
 {% endblock %}

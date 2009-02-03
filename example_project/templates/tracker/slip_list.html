@@ -1,20 +1,20 @@
 {% comment %} 
   This template is included in a lot of pages, so be careful with blocks
   extends and other stuff like that :)
-{% endcomment %}
 {% load pagination_tags %}
 {% autopaginate slip_list %}
+{% endcomment %}
 
 <table>
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Time</th>
+      <th>{% trans "Name" %}</th>
+      <th>{% trans "Time" %}</th>
       {% if not list_exclude_project %}
-      <th>Project</th>
+      <th>{% trans "Project" %}</th>
       {% endif %}
       {% if not list_exclude_client %}
-      <th>Client</th>
+      <th>{% trans "Client" %}</th>
       {% endif %}
     </tr>
   </thead>
@@ -48,5 +48,7 @@
   </tbody>
 </table>
 
+{% comment %}
 {% paginate %}
+{% endcomment %}
 
