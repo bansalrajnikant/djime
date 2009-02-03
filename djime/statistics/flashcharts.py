@@ -8,6 +8,7 @@ try:
     import json
 except ImportError:
     from django.utils import simplejson as json
+from django.utils.translation import ugettext as _ #note, we dont use ugettext_lazy as we use json or simplejson to generate json data.
 
 def user_week_json(user, week, year):
     slice_query_set = TimeSlice.objects.filter(week_number=week, begin__year= year, user = user)
@@ -38,7 +39,7 @@ def user_week_json(user, week, year):
     # but there are 6 varibles that are different. 2 empty lists where data will be appended (values and labels list) and 4 values set to True.
     # can add a colour generator later to create colours for the graph instead of static colours.
     value_dictionary = {}
-    value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
+    value_dictionary['elements'] = [{"tip": _("#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#"), "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": { "labels": []}}
     value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
@@ -73,7 +74,7 @@ def user_week_json(user, week, year):
         y_time = numb*step
         value_dictionary['y_axis']['labels']['labels'].append({'y': y_time})
 
-    value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (user.username, week, year)
+    value_dictionary['title']['text'] = _('%(username)s Week: %(week)s Year: %(year)s') % {'username': user.username, 'week': week, 'year': year}
 
     return json.dumps(value_dictionary)
 
@@ -102,7 +103,7 @@ def user_month_json(user, month, year):
             date_slip_dict[slice.begin.date()].append(slice.slip)
 
     value_dictionary = {}
-    value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
+    value_dictionary['elements'] = [{"tip": _("#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#"), "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": {"labels": []}}
     value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
@@ -131,9 +132,9 @@ def user_month_json(user, month, year):
     value_dictionary['y_axis']['min'] = 0
     step = max(max_list) * 0.1
     for numb in range(11):
-        value_dictionary['y_axis']['labels']['labels'].append({'y':  numb*step})
+        value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
 
-    value_dictionary['title']['text'] = '%s %s %s' % (user.username, start_date.strftime('%B'), year)
+    value_dictionary['title']['text'] = _('%(username)s %(month)s %(year)s') % {'username': user.username, 'month': start_date.strftime('%B'), 'year': year}
     return json.dumps(value_dictionary)
 
 
@@ -157,7 +158,7 @@ def user_date_json(user, start_date, end_date):
             date_slip_dict[slice.begin.date()].append(slice.slip)
 
     value_dictionary = {}
-    value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
+    value_dictionary['elements'] = [{"tip": _("#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#"), "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": { "labels": []}}
     value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
@@ -187,7 +188,7 @@ def user_date_json(user, start_date, end_date):
     for numb in range(11):
         value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
 
-        value_dictionary['title']['text'] = '%s %s to %s' % (user.username, start_date, end_date)
+        value_dictionary['title']['text'] = _('%(username)s %(start_date)s to %(end_date)s') % {'username': user.username, 'start_date': start_date, 'end_date': end_date}
 
     return json.dumps(value_dictionary)
 
@@ -218,7 +219,7 @@ def team_week_json(team, week, year):
             date_slip_dict[slice.begin.date()].append(slice.slip)
 
     value_dictionary = {}
-    value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
+    value_dictionary['elements'] = [{"tip": _("#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#"), "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": { "labels": []}}
     value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
@@ -250,7 +251,7 @@ def team_week_json(team, week, year):
         y_time = numb*step
         value_dictionary['y_axis']['labels']['labels'].append({'y': y_time})
 
-    value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (team.name, week, year)
+    value_dictionary['title']['text'] = _('%(team)s Week: %(week)s Year: %(year)s') % {'team': team.name, 'week': week, 'year': year}
 
     return json.dumps(value_dictionary)
 
@@ -280,7 +281,7 @@ def team_month_json(team, month, year):
             date_slip_dict[slice.begin.date()].append(slice.slip)
 
     value_dictionary = {}
-    value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
+    value_dictionary['elements'] = [{"tip": _("#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#"), "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": {"labels": []}}
     value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
@@ -309,9 +310,9 @@ def team_month_json(team, month, year):
     value_dictionary['y_axis']['min'] = 0
     step = max(max_list) * 0.1
     for numb in range(11):
-        value_dictionary['y_axis']['labels']['labels'].append({'y':  numb*step})
+        value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
 
-    value_dictionary['title']['text'] = '%s %s %s' % (team.name, start_date.strftime('%B'), year)
+    value_dictionary['title']['text'] = _('%(team)s %(month)s %(year)s') % {'team': team.name, 'month': start_date.strftime('%B'), 'year': year}
 
     return json.dumps(value_dictionary)
 
@@ -341,7 +342,7 @@ def team_date_json(team, start_date, end_date):
             date_slip_dict[slice.begin.date()].append(slice.slip)
 
     value_dictionary = {}
-    value_dictionary['elements'] = [{"tip": "#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#", "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
+    value_dictionary['elements'] = [{"tip": _("#key#<br>Time: #gmdate:H.i# Total: #totalgmdate:H.i#"), "type": "bar_stack", "colours": ["#FF0000", "#0000FF", "#00FF00", "#FFFF00", "#FF00FF", "#00FFFF", "#000000", "#FFFFFF"], "values": []}]
     value_dictionary['title'] = {"text": True, "style": "{font-size: 20px; color: #000000; text-align: center;}"}
     value_dictionary['x_axis'] = {"labels": { "labels": []}}
     value_dictionary['y_axis'] = { "min": 0, "max": True, "labels": {"text":"#gmdate:H:i#", "labels": []}}
@@ -371,7 +372,7 @@ def team_date_json(team, start_date, end_date):
     for numb in range(11):
         value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
 
-    value_dictionary['title']['text'] = '%s %s to %s' % (team.name, start_date, end_date)
+    value_dictionary['title']['text'] = _('%(team)s %(start)s to %(end)s') % ('team': team.name, 'start': start_date, 'end': end_date)
 
     return json.dumps(value_dictionary)
 
@@ -394,7 +395,7 @@ def team_stat_week_json(team, week, year):
     counter = 0
     for mem_id in members_id:
         team_list_dict[mem_id] = {}
-        team_list_dict[mem_id]['value'] = {"type": "bar", "values": [], "tip": "%s<br>Time: #gmdate:H.i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
+        team_list_dict[mem_id]['value'] = {"type": "bar", "values": [], "tip": _("%s<br>Time: #gmdate:H.i#") % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
         counter += 1
 
     sorted_date_list = []
@@ -441,7 +442,7 @@ def team_stat_week_json(team, week, year):
     for numb in range(11):
         value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
 
-    value_dictionary['title']['text'] = '%s Week: %s Year: %s' % (team.name, week, year)
+    value_dictionary['title']['text'] = _('%(team)s Week: %(week)s Year: %(year)s') % {'team': team.name, 'week': week, 'year': year}
 
     return json.dumps(value_dictionary)
 
@@ -465,7 +466,7 @@ def team_stat_month_json(team, month, year):
     counter = 0
     for mem_id in members_id:
         team_list_dict[mem_id] = {}
-        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Time: #ygmdate:H:i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
+        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], _("tip": "%(username)s<br>Time: #ygmdate:H:i#") % {'username': User.objects.get(pk=mem_id).username}, "colour": colour(counter)}
         counter += 1
 
     sorted_date_list = []
@@ -511,7 +512,7 @@ def team_stat_month_json(team, month, year):
     # x max and min needs to be set as this graph utilizes that instead of labels. Max is set to one day more than the max day for the best result.
     value_dictionary['x_axis']['min'] = start_date.day
     value_dictionary['x_axis']['max'] = end_date.day
-    value_dictionary['title']['text'] = '%s, %s %s' % (team.name, start_date.strftime('%B'), year)
+    value_dictionary['title']['text'] = _('%(team)s, %(month)s %(year)s') % {'team': team.name, 'month': start_date.strftime('%B'), 'year': year}
 
     return json.dumps(value_dictionary)
 
@@ -529,7 +530,7 @@ def team_stat_date_json(team, start_date, end_date):
     counter = 0
     for mem_id in members_id:
         team_list_dict[mem_id] = {}
-        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": "%s<br>Time: #ygmdate:H:i#" % User.objects.get(pk=mem_id).username, "colour": colour(counter)}
+        team_list_dict[mem_id]['value'] = {"type": "scatter_line", "values": [], "tip": _("%(username)s<br>Time: #ygmdate:H:i#") % {'username': User.objects.get(pk=mem_id).username}, "colour": colour(counter)}
         counter += 1
 
     sorted_date_list = []
@@ -576,7 +577,7 @@ def team_stat_date_json(team, start_date, end_date):
         value_dictionary['y_axis']['labels']['labels'].append({'y': numb*step})
     value_dictionary['x_axis']['min'] = time.mktime(s_date.timetuple()) # a way to make a unix timestamp.
     value_dictionary['x_axis']['max'] = time.mktime(e_date.timetuple())
-    value_dictionary['title']['text'] = '%s: From %s to %s' % (team.name, s_date, e_date)
+    value_dictionary['title']['text'] = _('%(team)s: From %(start)s to %(end)s') % {'team': team.name, 'start': s_date, 'end': e_date}
 
     return json.dumps(value_dictionary)
 
