@@ -55,7 +55,6 @@ class TimeSlice(models.Model):
     user = models.ForeignKey(User, related_name="timeslices", blank=True, null=True)
     duration = models.PositiveIntegerField(editable=False, default=0)
     week_number = models.PositiveIntegerField(default=datetime.datetime.now().isocalendar()[1])
-    create_date = models.DateField(default=datetime.datetime.now().date())
 
     def __unicode__(self):
         if self.duration == 0:
@@ -83,7 +82,6 @@ class TimeSlice(models.Model):
         pk = self.pk
         self = TimeSlice.objects.get(pk=pk)
         self.week_number = self.begin.isocalendar()[1]
-        self.create_date = self.begin.date()
         self.save()
 
     class Meta:
