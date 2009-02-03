@@ -148,7 +148,7 @@ def show_user_clients(request, user_id, user_type):
     user_id = int(user_id)
     if user_type == 'user':
         if request.user.id != int(user_id):
-            return HttpResponseForbidden('Access Denied')
+            return HttpResponseForbidden(_('Access Denied'))
         user = User.objects.get(pk=user_id)
         user.name = user.username
         projects = Project.objects.filter(members = user_id)
@@ -159,7 +159,7 @@ def show_user_clients(request, user_id, user_type):
     elif user_type == 'team':
         user = team = get_object_or_404(Team, pk=user_id)
         if request.user not in team.members.all():
-            return HttpResponseForbidden('Access Denied')
+            return HttpResponseForbidden(_('Access Denied'))
         projects = Project.objects.filter(team = user_id)
         clients = []
         for project in projects:

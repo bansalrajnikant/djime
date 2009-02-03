@@ -69,7 +69,7 @@ def team(request, slug):
     if request.method == "POST":
         if request.POST["action"] == "leave":
             team.members.remove(request.user)
-            request.user.message_set.create(message=_("You have left the team %(name)s") % team.name)
+            request.user.message_set.create(message=_("You have left the team %(name)s") % {'name': team.name})
             return HttpResponseRedirect(reverse('team_index'))
 
     are_member = request.user in team.members.all()
@@ -100,7 +100,7 @@ def edit(request, slug, form_class=TeamUpdateForm):
                 try:
                     remove_user = User.objects.get(pk=int(request.POST["action"].split('_')[1]))
                     team.members.remove(remove_user)
-                    request.user.message_set.create(message=_("User %(username)s has been removed from your team.") % remove_user.username)
+                    request.user.message_set.create(message=_("User %(username)s has been removed from your team.") % {'username': remove_user.username})
                     return HttpResponseRedirect(reverse('team_edit', args=(team.slug,)))
                 except User.DoesNotExist:
                     request.user.message_set.create(message=_("User does not exist."))
@@ -109,10 +109,10 @@ def edit(request, slug, form_class=TeamUpdateForm):
             try:
                 add_user = User.objects.get(username=request.POST['add'])
                 team.members.add(add_user)
-                request.user.message_set.create(message=_("User %(username)s has been added to your team.") % add_user.username)
+                request.user.message_set.create(message=_("User %(username)s has been added to your team.") % {'username': add_user.username})
                 return HttpResponseRedirect(reverse('team_edit', args=(team.slug,)))
             except User.DoesNotExist:
-                request.user.message_set.create(message=("User %(username)s does not exist.") % request.POST['add'])
+                request.user.message_set.create(message=("User %(username)s does not exist.") % {'username': request.POST['add']})
                 return HttpResponseRedirect(reverse('team_edit', args=(team.slug,)))
 
     else:

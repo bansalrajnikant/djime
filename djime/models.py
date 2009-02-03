@@ -67,7 +67,7 @@ class TimeSlice(models.Model):
         if self.end:
             return _('From %(begin)s to %(end)s') % {'begin': self.begin, 'end': self.end}
         else:
-            return _('From %(begin)s') % self.begin
+            return _('From %(begin)s') % {'begin': self.begin}
 
     def update_duration(self):
         if self.end:
