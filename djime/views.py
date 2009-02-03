@@ -8,7 +8,7 @@ from django.template import RequestContext
 from djime.forms import SlipAddForm
 from djime.models import Slip, TimeSlice
 from project.models import Client, Project
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as trans
 
 @login_required()
 def dashboard(request):
@@ -47,7 +47,7 @@ def slip(request, slip_id):
     else:
         slip = get_object_or_404(Slip, pk=slip_id)
         if request.user != slip.user:
-            return HttpResponseForbidden(_('Access denied'))
+            return HttpResponseForbidden(trans('Access denied'))
 
         if request.method == 'GET':
             timer = {}
@@ -100,9 +100,9 @@ def slip_action(request, slip_id, action):
 
             new_time_slice = TimeSlice.objects.create(user = request.user, begin = start_time, slip_id = slip_id )
             new_time_slice.save()
-            return HttpResponse(_('Your timeslice begin time %(start_time)s has been created') % start_time)
+            return HttpResponse(trans('Your timeslice begin time %(start_time)s has been created') % start_time)
         else:
-            return HttpResponse(_('You already have an unfinished time slice for this task. A new one has not been created.'), status=409)
+            return HttpResponse(trans('You already have an unfinished time slice for this task. A new one has not been created.'), status=409)
 
     elif action == 'stop':
         slice = TimeSlice.objects.get(user = request.user, slip = slip_id, end = None)
@@ -120,7 +120,7 @@ def slip_action(request, slip_id, action):
         slice.update_duration()
 
 
-        return HttpResponse(_('Your timeslice for slip "%(name)s", begintime %(begin)s has been stopped at %(end)s') % {'name': slice.slip.name, 'begin': slice.begin, 'end': slice.end})
+        return HttpResponse(trans('Your timeslice for slip "%(name)s", begintime %(begin)s has been stopped at %(end)s') % {'name': slice.slip.name, 'begin': slice.begin, 'end': slice.end})
 
     elif action == 'get_json':
         slip = Slip.objects.get(id = slip_id)

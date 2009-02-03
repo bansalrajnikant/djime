@@ -7,6 +7,8 @@ from django.template import RequestContext
 from teams.forms import *
 from teams.models import Team
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as trans
+
 
 
 @login_required()
@@ -64,7 +66,7 @@ def team(request, slug):
     if team.deleted:
         raise Http404
     if request.user not in team.members.all():
-        return HttpResponseForbidden('Access Denied')
+        return HttpResponseForbidden(trans('Access Denied'))
 
     if request.method == "POST":
         if request.POST["action"] == "leave":
@@ -86,7 +88,7 @@ def edit(request, slug, form_class=TeamUpdateForm):
     if team.deleted:
         raise Http404
     if request.user != team.creator:
-        return HttpResponseForbidden('Access Denied')
+        return HttpResponseForbidden(trans('Access Denied'))
 
     if request.method == "POST":
         if request.POST.has_key('action'):

@@ -7,6 +7,8 @@ from django.core.urlresolvers import reverse
 from djime.data_import.forms import DataImportForm
 from djime.models import DataImport
 from djime.data_import.importer import handle_uploaded_file, importer_save
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as trans
 
 
 @login_required
@@ -25,7 +27,7 @@ def import_form(request):
 def action(request, import_id, action):
     import_data = get_object_or_404(DataImport, pk=import_id, completed=None)
     if request.user.id != import_data.user_id:
-        return HttpResponseForbidden(_('Access denied'))
+        return HttpResponseForbidden(trans('Access denied'))
 
     if request.method == 'GET':
         if action == 'confirm':
@@ -42,7 +44,7 @@ def action(request, import_id, action):
             import_data.delete()
             request.user.message_set.create(message=_('Import cancelled'))
         else:
-            return HttpResponseForbidden(_('Invalid post action'))
+            return HttpResponseForbidden(trans('Invalid post action'))
 
         return HttpResponseRedirect(reverse('djime_index'))
 
