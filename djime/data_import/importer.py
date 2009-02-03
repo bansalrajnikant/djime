@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from project.models import Project
 from djime.models import Slip, TimeSlice, DataImport
+from django.utils.translation import ugettext_lazy as _
 
 
 def handle_uploaded_file(file, user_id):
@@ -29,11 +30,11 @@ def handle_uploaded_file(file, user_id):
                 if len(project_set) >1:
                     project = Project()
                     project.name = line['project']
-                    project_created_msg = 'Found more than one project, you are on, with same name. New project will be created.'
+                    project_created_msg = _('Found more than one project, you are on, with same name. New project will be created.')
                     project_created_bool = True
                 else:
                     project = project_set[0]
-                    project_created_msg = "Found project, and will add slips and timeslices to the existing project."
+                    project_created_msg = _('Found project, and will add slips and timeslices to the existing project.')
                     project_created_bool = False
             else:
                 project_set = Project.objects.filter(name=line['project'])
@@ -41,16 +42,16 @@ def handle_uploaded_file(file, user_id):
                     if len(project_set) >1:
                         project = Project()
                         project.name = line['project']
-                        project_created_msg = 'Found more than one project, with same name. New project will be created.'
+                        project_created_msg = _('Found more than one project, with same name. New project will be created.')
                         project_created_bool = True
                     else:
                         project = project_set[0]
-                        project_created_msg = "Found project, and will add user profile, slips and timeslices to the existing project."
+                        project_created_msg = _('Found project, and will add user profile, slips and timeslices to the existing project.')
                         project_created_bool = False
                 else:
                     project = Project()
                     project.name = line['project']
-                    project_created_msg = 'No project of that name. New project will be created'
+                    project_created_msg = _('No project of that name. New project will be created')
                     project_created_bool = True
             val[line['project']] = {'created': project_created_bool, 'message': project_created_msg, 'project_object': project, 'slips': {}}
             pickles['projects'].append(project)

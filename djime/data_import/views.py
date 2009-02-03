@@ -25,7 +25,7 @@ def import_form(request):
 def action(request, import_id, action):
     import_data = get_object_or_404(DataImport, pk=import_id, completed=None)
     if request.user.id != import_data.user_id:
-        return HttpResponseForbidden('Access denied')
+        return HttpResponseForbidden(_('Access denied'))
 
     if request.method == 'GET':
         if action == 'confirm':
@@ -37,12 +37,12 @@ def action(request, import_id, action):
     if request.method == 'POST':
         if action == 'save':
             importer_save(import_data, request.user)
-            request.user.message_set.create(message='Import successful.')
+            request.user.message_set.create(message=_('Import successful'))
         elif action == 'cancel':
             import_data.delete()
-            request.user.message_set.create(message='Import cancelled.')
+            request.user.message_set.create(message=_('Import cancelled'))
         else:
-            return HttpResponseForbidden('Invalid post action')
+            return HttpResponseForbidden(_('Invalid post action'))
 
         return HttpResponseRedirect(reverse('djime_index'))
 
