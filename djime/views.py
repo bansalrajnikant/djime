@@ -32,7 +32,7 @@ def index(request):
     else:
         form = SlipAddForm()
 
-    slip_list = Slip.objects.all()
+    slip_list = Slip.objects.filter(user=request.user)
     return render_to_response('tracker/index.html',
                               {'slip_list': slip_list, 'form': form},
                               context_instance=RequestContext(request))
