@@ -1,13 +1,15 @@
 from django import template
 import datetime
+from django.utils.translation import ugettext_lazy as _
+
 
 register = template.Library()
 
 def do_statistics_nav_vars(parser, token):
     if len(token.contents.split()) != 2:
-        raise template.TemplateSyntaxError, "%r tag needs a single argument" % token.contents.split()[0]
+        raise template.TemplateSyntaxError, _("%(name)r tag needs a single argument") % {'name': token.contents.split()[0]}
     if token.contents.split()[1] not in ['get']:
-        raise template.TemplateSyntaxError, "%r tag valid arguments is: get" % token.contents.split()[0]
+        raise template.TemplateSyntaxError, _("%(name)r tag valid arguments is: get") % {'name': token.contents.split()[0]}
     now = datetime.datetime.now()
     current_week = now.isocalendar()[1]
     current_week_year = now.isocalendar()[0]
