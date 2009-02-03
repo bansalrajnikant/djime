@@ -3,17 +3,18 @@ from math import floor
 from django.db import models, IntegrityError
 from django.contrib.auth.models import User
 from project.models import Project, Client
+from django.utils.translation import ugettext_lazy as _
 
 
 class Slip(models.Model):
-    name = models.CharField(max_length=128)
-    user = models.ForeignKey(User, related_name="slips", blank=True, null=True)
-    project = models.ForeignKey(Project, blank = True, null=True)
-    client = models.ForeignKey(Client, blank = True, null=True)
+    name = models.CharField(max_length=128, verbose_name=_('name'))
+    user = models.ForeignKey(User, related_name="slips", blank=True, null=True, verbose_name=_('user'))
+    project = models.ForeignKey(Project, blank = True, null=True, verbose_name=_('project'))
+    client = models.ForeignKey(Client, blank = True, null=True, verbose_name=_('client'))
     #type = models.CharField(max_length=32)
-    due = models.DateField(null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    due = models.DateField(null=True, blank=True, verbose_name=_('due'))
+    created = models.DateTimeField(auto_now_add=True, verbose_name=_('created'))
+    updated = models.DateTimeField(auto_now=True, verbose_name=_('updated'))
 
     def __unicode__(self):
         return self.name
@@ -49,12 +50,12 @@ class Slip(models.Model):
 
 
 class TimeSlice(models.Model):
-    begin = models.DateTimeField(default=datetime.datetime.now)
-    end = models.DateTimeField(null=True, blank=True)
-    slip = models.ForeignKey(Slip)
-    user = models.ForeignKey(User, related_name="timeslices", blank=True, null=True)
-    duration = models.PositiveIntegerField(editable=False, default=0)
-    week_number = models.PositiveIntegerField(default=datetime.datetime.now().isocalendar()[1])
+    begin = models.DateTimeField(default=datetime.datetime.now, verbose_name=_('begin'))
+    end = models.DateTimeField(null=True, blank=True, verbose_name=_('end'))
+    slip = models.ForeignKey(Slip, verbose_name=_('slip'))
+    user = models.ForeignKey(User, related_name="timeslices", blank=True, null=True, verbose_name=_('user'))
+    duration = models.PositiveIntegerField(editable=False, default=0, verbose_name=_('duration'))
+    week_number = models.PositiveIntegerField(default=datetime.datetime.now().isocalendar()[1], verbose_name=_('week number'))
 
     def __unicode__(self):
         if self.duration == 0:
@@ -62,11 +63,11 @@ class TimeSlice(models.Model):
 
         if self.duration:
             delta = datetime.timedelta(seconds=self.duration)
-            return '%i days, %i seconds' % (delta.days, delta.seconds)
+            return _('%(days)i days, %(seconds)i seconds') % {'days': delta.days, 'seconds': delta.seconds}
         if self.end:
-            return 'From %s to %s' % (self.begin, self.end)
+            return _('From %(begin)s to %(end)s') % {'begin': self.begin, 'end': self.end}
         else:
-            return 'From %s' % self.begin
+            return _('From %(begin)s') % self.begin
 
     def update_duration(self):
         if self.end:
@@ -88,9 +89,9 @@ class TimeSlice(models.Model):
         ordering = ["-begin"]
 
 class DataImport(models.Model):
-    user = models.ForeignKey(User)
-    created = models.DateTimeField(auto_now_add=True)
-    completed = models.DateTimeField(blank=True, null=True)
-    complete_data = models.FileField(upload_to='import_data/complete/%Y/%m/')
-    partial_data = models.FileField(upload_to='import_data/partial/%Y/%m/')
+    user = models.ForeignKey(User, verbose_name=_('user'))
+    created = models.DateTimeField(auto_now_add=True, verbose_name=_('created'))
+    completed = models.DateTimeField(blank=True, null=True, verbose_name=_('completed'))
+    complete_data = models.FileField(upload_to='import_data/complete/%Y/%m/', verbose_name=_('complete data'))
+    partial_data = models.FileField(upload_to='import_data/partial/%Y/%m/', verbose_name=_('partial data'))
 
