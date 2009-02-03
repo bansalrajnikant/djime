@@ -13,7 +13,7 @@ from project.models import Client, Project
 def dashboard(request):
     display_data = {
         'slip_list': Slip.objects.filter(user=request.user)[:10],
-        'project_list': Project.objects.all()[:10],
+        'project_list': Project.objects.filter(members=request.user.id)[:10],
     }
     return render_to_response('djimeboard/index.html', display_data,
                               context_instance=RequestContext(request))
