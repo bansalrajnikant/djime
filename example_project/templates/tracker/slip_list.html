@@ -1,9 +1,9 @@
 {% comment %} 
   This template is included in a lot of pages, so be careful with blocks
   extends and other stuff like that :)
+{% endcomment %}
 {% load pagination_tags %}
 {% autopaginate slip_list %}
-{% endcomment %}
 {% load i18n %}
 
 <table>
@@ -49,7 +49,5 @@
   </tbody>
 </table>
 
-{% comment %}
 {% paginate %}
-{% endcomment %}
 
