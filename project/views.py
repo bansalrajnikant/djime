@@ -71,13 +71,13 @@ def show_project(request, project_id):
     data['time_other'] ='%02i:%02i' % (duration/3600, duration%3600/60)
 
     data['user_list'] = render_to_string('tracker/slip_list.html',
-                              {'slip_list': data['slip_user'],
+                              {'slip_list': data['slip_user'], '10_paginate': True,
                                'list_exclude_project': True,
                               },
                               context_instance=RequestContext(request))
 
     data['other_list'] = render_to_string('tracker/slip_list.html',
-                              {'slip_list': data['slip_rest'],
+                              {'slip_list': data['slip_rest'], '10_paginate': True,
                                'list_exclude_project': True,
                               },
                               context_instance=RequestContext(request))
@@ -126,13 +126,13 @@ def show_client(request, client_id):
     data['time_other'] ='%02i:%02i' % (duration/3600, duration%3600/60)
     
     data['user_list'] = render_to_string('tracker/slip_list.html',
-                              {'slip_list': data['slip_user'],
+                              {'slip_list': data['slip_user'], '10_paginate': True,
                               'list_exclude_client': True
                               },
                               context_instance=RequestContext(request))
 
     data['other_list'] = render_to_string('tracker/slip_list.html',
-                              {'slip_list': data['slip_rest'],
+                              {'slip_list': data['slip_rest'], '10_paginate': True,
                               'list_exclude_client': True
                               },
                               context_instance=RequestContext(request))
