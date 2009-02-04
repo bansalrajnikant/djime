@@ -3,7 +3,11 @@
   extends and other stuff like that :)
 {% endcomment %}
 {% load pagination_tags %}
-{% autopaginate slip_list %}
+{% if 10_paginate %}
+    {% autopaginate slip_list 10 %}
+{% else %}
+    {% autopaginate slip_list %}
+{% endif %}
 {% load i18n %}
 
 <table>
