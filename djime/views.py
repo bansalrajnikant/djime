@@ -13,7 +13,7 @@ from django.utils.translation import ugettext as trans
 @login_required()
 def dashboard(request):
     display_data = {
-        'slip_list': Slip.objects.filter(user=request.user)[:10],
+        'slip_list': Slip.objects.filter(user=request.user).order_by('-updated')[:10],
         'project_list': Project.objects.filter(members=request.user.id)[:10],
     }
     return render_to_response('djimeboard/index.html', display_data,
