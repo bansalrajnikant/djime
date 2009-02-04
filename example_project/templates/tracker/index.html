@@ -10,7 +10,7 @@
 
 {% block sidebar %}
 
-<form method="post">
+<form method="post" action="{% url slip_create %}">
     <ul class="form-items">
         {{ form.as_ul }}
     </ul>

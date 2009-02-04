@@ -6,7 +6,7 @@
 
 <div class="yui-g">
   <div class="yui-u first current-slips">
-    <h4>Current tasks</h4>
+    <h4>{% trans "Current tasks" %}</h4>
     <ul class="item-list slip-list">
       {% for slip in slip_list %}
         <li class="slip slip-{{ slip.id }}">
@@ -19,7 +19,7 @@
     </ul>
   </div>
   <div class="yui-u current-projects">
-    <h4>Current projects</h4>
+    <h4>{% trans "Current projects" %}</h4>
     <ul class="item-list project-list">
       {% for project in project_list %}
         <li class="project project-{{ project.id }}">
@@ -35,3 +35,11 @@
 
 {% endblock %}
 
+{% block sidebar %}
+    <form method="post" action="{% url slip_create %}">
+        <ul class="form-items">
+            {{ form.as_ul }}
+        </ul>
+        <input type="submit" value="Add a new task" />
+    </form>
+{% endblock %}

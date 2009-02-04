@@ -12,9 +12,11 @@ from django.utils.translation import ugettext as trans
 
 @login_required()
 def dashboard(request):
+    
     display_data = {
         'slip_list': Slip.objects.filter(user=request.user).order_by('-updated')[:10],
         'project_list': Project.objects.filter(members=request.user.id)[:10],
+        'form': SlipAddForm(request.user),
     }
     return render_to_response('djimeboard/index.html', display_data,
                               context_instance=RequestContext(request))
@@ -22,20 +24,9 @@ def dashboard(request):
 
 @login_required
 def index(request):
-    if request.method == 'POST':
-        form = SlipAddForm(request.POST)
-        if form.is_valid():
-            new_slip = Slip.objects.create(user=request.user,
-                                           name=form.cleaned_data['name'])
-            new_slip.save()
-            return HttpResponseRedirect(reverse('slip_page',
-                                                kwargs={'slip_id': new_slip.id}))
-    else:
-        form = SlipAddForm()
-
     slip_list = Slip.objects.filter(user=request.user)
     return render_to_response('tracker/index.html',
-                              {'slip_list': slip_list, 'form': form},
+                              {'slip_list': slip_list, 'form': SlipAddForm(request.user)},
                               context_instance=RequestContext(request))
 
 @login_required()
@@ -132,11 +123,27 @@ def slip_create(request):
     if request.method not in ('GET', 'POST'):
         return HttpResponseNotAllowed(('POST', 'GET'))
     if request.method == 'POST':
-        name = request.POST['name']
-        new_slip = Slip.objects.create(user = request.user, name = name)
-        new_slip.save()
-        return HttpResponse("")
-
+        form_data = {}
+        for key in request.POST.keys():
+            form_data[key] = request.POST[key]
+        if form_data['project']:
+            form_data['input'] = form_data['project']
+            form_data['project'] = u''
+        form = SlipAddForm(request.user, form_data)
+        if form.is_valid():
+            new_slip = Slip.objects.create(user=request.user,
+                                           name=form.cleaned_data['name'],
+                                           project=Project.objects.get(name=form.cleaned_data['project']),
+                                           client=form.cleaned_data['client'])
+            new_slip.save()
+            return HttpResponseRedirect(reverse('slip_page',
+                                                kwargs={'slip_id': new_slip.id}))
+        else:
+            return render_to_response('tracker/slip_create.html', {'form': form},
+                                      context_instance=RequestContext(request))
+                                                
     if request.method == 'GET':
-        latest_id = request.user.slips.order_by()[len(request.user.slips.order_by())-1].id
-        return HttpResponse("{'slip': '%s'}" % latest_id)
+        form = SlipAddForm(user=request.user)
+        return render_to_response('tracker/slip_create.html',
+                                  {'form': form},
+                                  context_instance=RequestContext(request))
