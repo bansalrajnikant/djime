@@ -4,6 +4,8 @@ from django.db import models, IntegrityError
 from django.contrib.auth.models import User
 from project.models import Project, Client
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.signals import pre_save
+from djime.signals import timeslice_save
 
 
 class Slip(models.Model):
@@ -69,22 +71,6 @@ class TimeSlice(models.Model):
         else:
             return _('From %(begin)s') % {'begin': self.begin}
 
-    def update_duration(self):
-        if self.end:
-            time = self.end - self.begin
-            self.duration = time.days * 86400 + time.seconds
-            self.save()
-        else:
-            self.duration = 0
-            self.save()
-
-    def update_date(self):
-        self.save()
-        pk = self.pk
-        self = TimeSlice.objects.get(pk=pk)
-        self.week_number = self.begin.isocalendar()[1]
-        self.save()
-
     class Meta:
         ordering = ["-begin"]
 
@@ -94,4 +80,6 @@ class DataImport(models.Model):
     completed = models.DateTimeField(blank=True, null=True, verbose_name=_('completed'))
     complete_data = models.FileField(upload_to='import_data/complete/%Y/%m/', verbose_name=_('complete data'))
     partial_data = models.FileField(upload_to='import_data/partial/%Y/%m/', verbose_name=_('partial data'))
+    
 
+pre_save.connect(timeslice_save, sender=TimeSlice)
