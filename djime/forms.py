@@ -2,7 +2,7 @@ from django import forms
 from djime.models import Slip
 from django.db import models
 from project.models import Project
-from django.utils.translation import ugettext as trans
+from django.utils.translation import ugettext as _
 
 
 class SlipAddForm(forms.ModelForm):
@@ -19,11 +19,15 @@ class SlipAddForm(forms.ModelForm):
         if data['input']:
             project = Project.objects.filter(name__iexact=data['input'])
             if not project:
-                error['project'] = [trans(u'Project does not exist')]
+                error['project'] = [_(u'Project does not exist')]
                 data['project'] = data['input']
             else:
-                cleaned_data['project'] = project[0].name
-                data['project'] = project[0].name
+                if data['user_id'] not in project[0].members.all():
+                    error['project'] = [_('You are not a member of this project.')]
+                    data['project'] = project[0].name
+                else:
+                    cleaned_data['project'] = project[0].name
+                    data['project'] = project[0].name
         return cleaned_data
     
     class Meta:

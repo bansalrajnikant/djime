@@ -129,6 +129,7 @@ def slip_create(request):
         if form_data['project']:
             form_data['input'] = form_data['project']
             form_data['project'] = u''
+            form_data['user_id'] = request.user.id
         form = SlipAddForm(request.user, form_data)
         if form.is_valid():
             new_slip = Slip.objects.create(user=request.user,
