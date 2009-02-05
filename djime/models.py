@@ -60,12 +60,6 @@ class TimeSlice(models.Model):
     week_number = models.PositiveIntegerField(default=datetime.datetime.now().isocalendar()[1], verbose_name=_('week number'))
 
     def __unicode__(self):
-        if self.duration == 0:
-            self.update_duration()
-
-        if self.duration:
-            delta = datetime.timedelta(seconds=self.duration)
-            return _('%(days)i days, %(seconds)i seconds') % {'days': delta.days, 'seconds': delta.seconds}
         if self.end:
             return _('From %(begin)s to %(end)s') % {'begin': self.begin, 'end': self.end}
         else:
