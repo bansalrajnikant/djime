@@ -7,16 +7,23 @@ class InlineTimeSlice(admin.TabularInline):
     extra = 2
 
 class SlipAdmin(admin.ModelAdmin):
-    list_display = ['name', 'user', 'display_time']
-    inlines = [InlineTimeSlice]
+    date_hierarchy = 'created'
+    inlines = (InlineTimeSlice,)
+    list_display = ('name', 'user', 'created', 'display_time', 'project', 'client')
+    list_filter = ('user', 'project', 'client')
+    ordering = ('-created',)
+    search_fields = ('name',)
 
 class TimeSliceAdmin(admin.ModelAdmin):
-    list_display = ['begin', 'end', 'duration']
+    date_hierarchy = 'begin'
+    list_display = ('begin', 'end', 'duration', 'slip', 'user')
+    list_filter = ('user', 'begin')
+    ordering = ('-begin',)
 
 class DataImportAdmin(admin.ModelAdmin):
+    date_hierarchy = 'created'
     list_display = ('user', 'created', 'completed')
     list_filter = ('user', 'completed')
-    date_hierarchy = 'created'
     ordering = ('-created',)
 
 

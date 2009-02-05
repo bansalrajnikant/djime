@@ -46,10 +46,6 @@ class Slip(models.Model):
         slice = self.timeslice_set.filter(end = None)
         return bool(slice)
 
-    class Meta:
-        ordering = ["-created"]
-
-
 
 class TimeSlice(models.Model):
     begin = models.DateTimeField(default=datetime.datetime.now, verbose_name=_('begin'))
@@ -65,15 +61,13 @@ class TimeSlice(models.Model):
         else:
             return _('From %(begin)s') % {'begin': self.begin}
 
-    class Meta:
-        ordering = ["-begin"]
-
 class DataImport(models.Model):
     user = models.ForeignKey(User, verbose_name=_('user'))
     created = models.DateTimeField(auto_now_add=True, verbose_name=_('created'))
     completed = models.DateTimeField(blank=True, null=True, verbose_name=_('completed'))
     complete_data = models.FileField(upload_to='import_data/complete/%Y/%m/', verbose_name=_('complete data'))
     partial_data = models.FileField(upload_to='import_data/partial/%Y/%m/', verbose_name=_('partial data'))
-    
+
 
 pre_save.connect(timeslice_save, sender=TimeSlice)
+
