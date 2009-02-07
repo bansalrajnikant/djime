@@ -2,7 +2,7 @@ from django import forms
 from djime.models import Slip
 from django.db import models
 from project.models import Project
-from django.utils.translation import ugettext as trans
+from django.utils.translation import ugettext as _
 
 
 class SlipAddForm(forms.ModelForm):
@@ -16,14 +16,40 @@ class SlipAddForm(forms.ModelForm):
         cleaned_data = self.cleaned_data
         data = self.data
         error = self._errors
-        if data['input']:
-            project = Project.objects.filter(name__iexact=data['input'])
-            if not project:
-                error['project'] = [trans(u'Project does not exist')]
+        # not_a_member: a value to track if the user is member of project(s) found
+        not_a_member = True 
+        # Check to see if input contains something => 
+        # project field is filled in the form
+        if data.has_key('input'):
+            # get projects by a non case sensetive seach on the project name
+            projects = Project.objects.filter(name__iexact=data['input'])
+            # if no project could be found send error message and set
+            # not a member to False.
+            if not projects:
+                error['project'] = [_(u'Project does not exist')]
                 data['project'] = data['input']
+                not_a_member = False
             else:
-                cleaned_data['project'] = project[0].name
-                data['project'] = project[0].name
+                # If we do get something back on our search, it will be in a
+                # list. There can be more than one result. Iterate to see if
+                # the user is member of any of the projects. We are satisfied
+                # if we find one project that the user is member of. We wont
+                # Support if the user is member of more than one project of the
+                # same name, and try to figure out which project the alip should
+                # join. In this case the slip will be placed under the last
+                # project that matches.
+                for project in projects:
+                    if data['user'] in project.members.all():
+                        cleaned_data['project'] = project.name
+                        data['project'] = project.name
+                        not_a_member = False
+
+                # if projects was found but the user was not a member in any of them
+                # not a member will be true and error message is sent.
+                if not_a_member:
+                    error['project'] = [_('You are not a member of this project.')]
+                    data['project'] = project.name
+                
         return cleaned_data
     
     class Meta:

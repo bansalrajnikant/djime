@@ -33,5 +33,16 @@
         djime.current_time = new Date({{ slice_time.year }}, {{ slice_time.month }}, {{ slice_time.day }}, {{ slice_time.hour }}, {{ slice_time.minute }}, {{ slice_time.second }});
     {% endif %}
   </script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/djime.js"></script>
+  <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/autocomplete/jquery.autocomplete.js"></script>
+  <script type="text/javascript">
+  djime.autocomplete_projectnames = new Array()
+  {% for project in project_list %}
+    djime.autocomplete_projectnames[{{ forloop.counter0 }}] = new Array("{{ project }}", "{{ project.client.id }}");
+  {% endfor %}
+  </script>
+  <script type="text/javascript">
+  djime.client_list = {{ client_list|safe }}
+  </script>
 {% endblock %}
 
