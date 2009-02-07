@@ -5,15 +5,15 @@ from django.core.urlresolvers import reverse
 from django.http import *
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
+from django.utils.html import escape
+from django.utils.translation import ugettext as trans
 from djime.forms import SlipAddForm
 from djime.models import Slip, TimeSlice
 from project.models import Client, Project
-from django.utils.translation import ugettext as trans
 try:
     import json
 except ImportError:
     from django.utils import simplejson as json
-from django.utils.html import escape
 
 
 @login_required()
