@@ -36,12 +36,14 @@
 {% endblock %}
 
 {% block sidebar %}
+    {% if slip_add_form %}
     <form method="post" action="{% url slip_create %}">
         <ul class="form-items">
-            {{ form.as_ul }}
+            {{ slip_add_form.as_ul }}
         </ul>
         <input type="submit" value="Add a new task" />
     </form>
+    {% endif %}
 {% endblock %}
 
 {% block closure %}
@@ -57,3 +59,4 @@
   djime.client_list = {{ client_list|safe }}
   </script>
 {% endblock %}
+

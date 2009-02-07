@@ -6,12 +6,15 @@
 
 {% block content %}
     <h2>{% trans "Create a new slip" %}</h2>
-    <form method="post" action="{% url slip_create %}">
+    {% if slip_add_form %}
+    <form method="post">
         <ul class="form-items">
-            {{ form.as_ul }}
+            {{ slip_add_form.as_ul }}
         </ul>
         <input type="submit" value="Add a new task" />
     </form>
+    {% endif %}
+
 {% endblock %}
 {% block closure %}
   <script type="text/javascript" src="{{ STATIC_URL }}js/djime.js"></script>
