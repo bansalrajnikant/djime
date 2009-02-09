@@ -51,7 +51,7 @@
   <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/autocomplete/jquery.autocomplete.js"></script>
   <script type="text/javascript">
   djime.autocomplete_projectnames = new Array()
-  {% for project in project_list %}
+  {% for project in project_js_list %}
     djime.autocomplete_projectnames[{{ forloop.counter0 }}] = new Array("{{ project }}", "{{ project.client.id }}");
   {% endfor %}
   </script>
