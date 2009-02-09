@@ -40,10 +40,11 @@ MEDIA_URL = '/site_media/'
 STATIC_ROOT = os.path.join(os.path.dirname(__file__), "static")
 STATIC_URL = '/static/'
 
-# HACK: TEMPLATE_CONTEXT_PROCESSORS has to be callable, so make a small function
-#
-get_static_url = lambda x: {'STATIC_URL': STATIC_URL,
-                            'DEMO_STATIC_URL': 'http://d.ooh.dk/djime/'}
+# And a third kind of static media, namely external dependencies, are
+# not stored within the Djime code, and thus requested from a third place
+# d.ooh.dk is a demo mirror, and SHOULD NOT be relied upon for
+# production environments.
+EXTERNAL_STATIC_URL = 'http://d.ooh.dk/djime/'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.auth",
@@ -51,9 +52,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.core.context_processors.request",
-    'example_project.settings.get_static_url'
+    "djime.context_processors.static_urls",
 )
-
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
