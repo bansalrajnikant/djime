@@ -12,13 +12,22 @@ class SlipAddForm(forms.ModelForm):
         """
         Cleaning/validation method for the project field
         """
-        cleaned_data = self.cleaned_data
-        if cleaned_data.has_key('project'):
-            project = Project.objects.filter(name__iexact=cleaned_data['project']).filter(members=self.data['user'])[:1]
-            if project:
-                return project[0]
+        # As this method is for the project field, we only get the clean_data for the project.
+        cleaned_data = self.cleaned_data['project']
+        if cleaned_data:
+            # if user choses no project after choosing a client: set cleaned data to None
+            if cleaned_data == u'-----------':
+                cleaned_data = None
             else:
-                raise forms.ValidationError(_('%s is not a valid project.' % cleaned_data['project']))
+                project = Project.objects.filter(name__iexact=cleaned_data).filter(members=self.data['user'])
+                if project:
+                    cleaned_data['project'] = project[0]
+                else:
+                    raise forms.ValidationError(_('%s is not a valid project.' % cleaned_data))
+        # if cleaned_data is an empty string, user has not entered a project: set cleaned data to None
+        else:
+            cleaned_data = None
+        return cleaned_data
 
     class Meta:
         model = Slip
