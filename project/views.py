@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseForbidden
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import render_to_string
@@ -8,20 +9,34 @@ from project.models import Project, Client
 from teams.models import Team
 from djime.models import Slip
 from django.utils.translation import ugettext as trans
-from project.forms import ProjectUpdateForm
+from project.forms import ProjectUpdateForm, ProjectAddForm
 
 @login_required()
 def index(request):
-    projects_active = Project.objects.filter(members=request.user, state='active').order_by('name')
-    projects_on_hold = Project.objects.filter(members=request.user, state='on_hold').order_by('name')
-    projects_completed = Project.objects.filter(members=request.user, state='completed').order_by('name')
-    projects_dropped = Project.objects.filter(members=request.user, state='dropped').order_by('name')
-    return render_to_response('project/project_index.html', {'projects_active': projects_active,
-                                                                'projects_on_hold': projects_on_hold,
-                                                                'projects_completed': projects_completed,
-                                                                'projects_dropped': projects_dropped,
-                                                            },
+    # Data returned to the template
+    data = {
+            'projects_active': Project.objects.filter(members=request.user, state='active').order_by('name'),
+            'projects_on_hold': Project.objects.filter(members=request.user, state='on_hold').order_by('name'),
+            'projects_completed': Project.objects.filter(members=request.user, state='completed').order_by('name'),
+            'projects_dropped': Project.objects.filter(members=request.user, state='dropped').order_by('name'),
+            }
+    if request.method == 'GET':
+        data['project_add_form'] = ProjectAddForm()
+    elif request.method == 'POST':
+        post_data = request.POST.copy()
+        post_data['state'] = 'active'
+        form = ProjectAddForm(post_data)
+        if form.is_valid:
+            new_project = form.save()
+            # Need to save the new project before we can assign the user to the project.
+            new_project.members.add(request.user)
+            new_project.save()
+            return HttpResponseRedirect(reverse('project_page', kwargs={'project_id': new_project.id}))
+        else:
+            data['project_add_form'] = form
+    return render_to_response('project/project_index.html', data,
                                          context_instance=RequestContext(request))
+
 
 
 

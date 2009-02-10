@@ -21,6 +21,7 @@
 {% endblock %}
 
 {% block sidebar %}
+  <p>{% trans "Update project" %}
   <form method="post" action="">
       <ul class="form-items">
           {{ form.as_ul }}
@@ -30,8 +31,10 @@
 {% endblock %}
 
 {% block closure %}
- <script>
+ <script type="text/javascript">
     $('#id_client').val({{ project.client.id }});
     $('#id_state').val("{{ project.state }}");
+    $('#id_team').val({{ project.team.id }});
+    $('#id_name').val("{{ project }}");
  </script>
 {% endblock %}

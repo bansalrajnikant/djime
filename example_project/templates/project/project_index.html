@@ -30,3 +30,11 @@
     {% endfor %}
   {% endif %}
 {% endblock %}
+{% block sidebar %}
+  <form method="post" action="">
+      <ul class="form-items">
+          {{ project_add_form.as_ul }}
+      </ul>
+      <input type="submit" value="Create Project" />
+  </form>
+{% endblock %}

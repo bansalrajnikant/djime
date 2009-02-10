@@ -7,4 +7,11 @@ class ProjectUpdateForm(forms.ModelForm):
     
     class Meta:
         model = Project
-        fields = ('state', 'client')
+        fields = ('state', 'client', 'team', 'name')
+
+
+class ProjectAddForm(forms.ModelForm):
+
+    class Meta:
+        model = Project
+        fields = ('name', 'client', 'team')
