@@ -13,18 +13,21 @@
   <h2>
     <div class="edit" id="div-1">{{ slip.name }}</div>
   </h2>
+  <p>{% trans "Project: " %}{{ slip.project }}</p>
+  <p>{% trans "Client: " %}{{ slip.client }}</p>
   <p>{% trans "Total time:" %} <span id="slip-total-time">{{ slip.display_time }}</span></p>
   <div id="slip-timer-button" class="{{ timer.class }}"><div class="timeclock">0:00</div></div>
 {% endblock %}
 
 {% block sidebar %}
   <input type="button" name="delete-slip" id="delete-slip-button" value="Delete this slip" />
-  {% if slip_add_form %}
-  <form method="post" action="{% url slip_create %}">
+  {% if slip_change_form %}
+  <p>{% trans "Assign new project or client to your task." %}</p>
+  <form method="post" action="">
       <ul class="form-items">
-          {{ slip_add_form.as_ul }}
+          {{ slip_change_form.as_ul }}
       </ul>
-      <input type="submit" value="Add a new task" />
+      <input type="submit" value="Update task" />
   </form>
   {% endif %}
 {% endblock %}
@@ -34,6 +37,8 @@
   <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.jeditable.js"></script>
   <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.timeclock.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/tracker.js"></script>
+  <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/autocomplete/jquery.autocomplete.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/djime.js"></script>
   <script type="text/javascript">
     djime.messages['slip_delete_title'] = '{% trans "Delete this slip?" %}';
     djime.messages['slip_delete_body'] = '{% trans "If you delete this slip, you will lose all the time records associated with it. This is irrevocable." %}';
@@ -41,8 +46,6 @@
         djime.current_time = new Date({{ slice_time.year }}, {{ slice_time.month }}, {{ slice_time.day }}, {{ slice_time.hour }}, {{ slice_time.minute }}, {{ slice_time.second }});
     {% endif %}
   </script>
-  <script type="text/javascript" src="{{ STATIC_URL }}js/djime.js"></script>
-  <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/autocomplete/jquery.autocomplete.js"></script>
   <script type="text/javascript">
   djime.autocomplete_projectnames = new Array()
   {% for project in project_js_list %}
