@@ -20,7 +20,8 @@ except ImportError:
 def dashboard(request):
     client_list = []
     client_dict = {}
-    for project in Project.objects.filter(members=request.user):
+    project_js_list = Project.objects.filter(members=request.user).exclude(state__in=['dropped', 'completed'])
+    for project in project_js_list:
         if project.client:
             if not client_dict.has_key((project.client.id)):
                 client_dict[(project.client.id)] = []
@@ -38,8 +39,8 @@ def dashboard(request):
 
     display_data = {
         'slip_list': Slip.objects.filter(user=request.user).order_by('-updated')[:10],
-        'project_list': Project.objects.filter(members=request.user.id)[:10],
-        'project_js_list': Project.objects.filter(members=request.user),
+        'project_list': Project.objects.filter(members=request.user.id, state='active')[:10],
+        'project_js_list': project_js_list,
         'client_list': json.dumps(client_list),
         'slip_add_form': SlipAddForm()
     }
@@ -51,7 +52,8 @@ def dashboard(request):
 def index(request):
     client_list = []
     client_dict = {}
-    for project in Project.objects.filter(members=request.user):
+    project_js_list = Project.objects.filter(members=request.user).exclude(state__in=['dropped', 'completed'])
+    for project in project_js_list:
         if project.client:
             if not client_dict.has_key((project.client.id)):
                 client_dict[(project.client.id)] = []
@@ -70,7 +72,7 @@ def index(request):
     slip_list = Slip.objects.filter(user=request.user)
     return render_to_response('tracker/index.html',
                               {'slip_list': slip_list,
-                               'project_js_list': Project.objects.filter(members=request.user),
+                               'project_js_list': project_js_list,
                                'client_list': json.dumps(client_list),
                                'slip_add_form': SlipAddForm()
                                },
@@ -90,7 +92,8 @@ def slip(request, slip_id):
         # data generated to be used by js.
         client_list = []
         client_dict = {}
-        for project in Project.objects.filter(members=request.user):
+        project_js_list = Project.objects.filter(members=request.user).exclude(state__in=['dropped', 'completed'])
+        for project in project_js_list:
             if project.client:
                 if not client_dict.has_key((project.client.id)):
                     client_dict[(project.client.id)] = []
@@ -123,7 +126,7 @@ def slip(request, slip_id):
                                         'timer': timer,
                                         'timeslice': timeslice,
                                         'slice_time': slice_time,
-                                        'project_js_list': Project.objects.filter(members=request.user),
+                                        'project_js_list': project_js_list,
                                         'client_list': json.dumps(client_list),
                                         'slip_change_form': SlipChangeForm()
                                         },
@@ -158,7 +161,7 @@ def slip(request, slip_id):
                                                         'timeslice': timeslice,
                                                         'slice_time': slice_time,
                                                         'slip_change_form': form,
-                                                        'project_js_list': Project.objects.filter(members=request.user),
+                                                        'project_js_list': project_js_list,
                                                         'client_list': json.dumps(client_list),
                                                         },
                                                         context_instance=RequestContext(request))
@@ -222,7 +225,8 @@ def slip_create(request):
 
     client_list = []
     client_dict = {}
-    for project in Project.objects.filter(members=request.user):
+    project_js_list = Project.objects.filter(members=request.user).exclude(state__in=['dropped', 'completed'])
+    for project in project_js_list:
         if project.client:
             if not client_dict.has_key((project.client.id)):
                 client_dict[(project.client.id)] = []
@@ -255,7 +259,7 @@ def slip_create(request):
         else:
             return render_to_response('tracker/slip_create.html',
                                         {'slip_add_form': form,
-                                         'project_js_list': Project.objects.filter(members=request.user),
+                                         'project_js_list': project_js_list,
                                          'client_list': json.dumps(client_list),
                                         },
                                         context_instance=RequestContext(request))
@@ -264,7 +268,7 @@ def slip_create(request):
         slip_add_form = SlipAddForm()
         return render_to_response('tracker/slip_create.html',
                                   {'slip_add_form': SlipAddForm(),
-                                    'project_js_list': Project.objects.filter(members=request.user),
+                                    'project_js_list': project_js_list,
                                     'client_list': json.dumps(client_list),
                                   },
                                   context_instance=RequestContext(request))
