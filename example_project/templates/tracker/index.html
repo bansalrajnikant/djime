@@ -10,14 +10,27 @@
 
 {% block sidebar %}
 
-{% if slip_add_form %}
-<form method="post" action="{% url slip_create %}">
-    <ul class="form-items">
+  {% if slip_add_form %}
+    <form method="post" action="{% url slip_create %}">
+      <ul class="form-items">
         {{ slip_add_form.as_ul }}
-    </ul>
+      </ul>
     <input type="submit" value="Add a new task" />
-</form>
-{% endif %}
+  </form>
+  {% endif %}
 
 {% endblock %}
 
+{% block closure %}
+  <script type="text/javascript" src="{{ STATIC_URL }}js/djime.js"></script>
+  <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/autocomplete/jquery.autocomplete.js"></script>
+  <script type="text/javascript">
+  djime.autocomplete_projectnames = new Array()
+  {% for project in project_js_list %}
+    djime.autocomplete_projectnames[{{ forloop.counter0 }}] = new Array("{{ project }}", "{{ project.client.id }}");
+  {% endfor %}
+  </script>
+  <script type="text/javascript">
+  djime.client_list = {{ client_list|safe }}
+  </script>
+{% endblock %}
