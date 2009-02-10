@@ -70,7 +70,6 @@ def index(request):
     slip_list = Slip.objects.filter(user=request.user)
     return render_to_response('tracker/index.html',
                               {'slip_list': slip_list,
-                               'project_list': Project.objects.filter(members=request.user.id)[:10],
                                'project_js_list': Project.objects.filter(members=request.user),
                                'client_list': json.dumps(client_list),
                                'slip_add_form': SlipAddForm()
@@ -256,7 +255,6 @@ def slip_create(request):
         else:
             return render_to_response('tracker/slip_create.html',
                                         {'slip_add_form': form,
-                                         'project_list': Project.objects.filter(members=request.user.id)[:10],
                                          'project_js_list': Project.objects.filter(members=request.user),
                                          'client_list': json.dumps(client_list),
                                         },
@@ -266,7 +264,6 @@ def slip_create(request):
         slip_add_form = SlipAddForm()
         return render_to_response('tracker/slip_create.html',
                                   {'slip_add_form': SlipAddForm(),
-                                    'project_list': Project.objects.filter(members=request.user.id)[:10],
                                     'project_js_list': Project.objects.filter(members=request.user),
                                     'client_list': json.dumps(client_list),
                                   },
