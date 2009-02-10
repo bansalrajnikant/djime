@@ -162,33 +162,3 @@ def show_client(request, client_id):
     
     return render_to_response('project/client.html', data,
                                       context_instance=RequestContext(request))
-
-
-@login_required()                                      
-def show_user_clients(request, user_id, user_type):
-    user_id = int(user_id)
-    if user_type == 'user':
-        if request.user.id != int(user_id):
-            return HttpResponseForbidden(trans('Access Denied'))
-        user = User.objects.get(pk=user_id)
-        user.name = user.username
-        projects = Project.objects.filter(members = user_id)
-        clients = []
-        for project in projects:
-            if project.client and project.client not in clients:
-                clients.append(project.client)
-    elif user_type == 'team':
-        user = team = get_object_or_404(Team, pk=user_id)
-        if request.user not in team.members.all():
-            return HttpResponseForbidden(trans('Access Denied'))
-        projects = Project.objects.filter(team = user_id)
-        clients = []
-        for project in projects:
-            if project.client and project.client not in clients:
-                clients.append(project.client)
-    elif user_type == 'project':
-        user = project = Project.objects.get(pk=user_id)
-        clients = [project.client]
-    return render_to_response('project/all_user_clients.html', {'clients': clients, 'user_model': user, 'user_type': user_type},
-                                      context_instance=RequestContext(request))
-    
