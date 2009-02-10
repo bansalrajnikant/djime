@@ -8,32 +8,21 @@ from project.models import Project, Client
 from teams.models import Team
 from djime.models import Slip
 from django.utils.translation import ugettext as trans
-
-def index(request):
-    projects = Project.objects.all()
-    return render_to_response('project/project_index.html', {'projects': projects},
-                                         context_instance=RequestContext(request))
-
+from project.forms import ProjectUpdateForm
 
 @login_required()
-def show_user_projects(request, user_type, user_id):
-    user_id = int(user_id)
-    if user_type == 'user':
-        if request.user.id != int(user_id):
-            return HttpResponseForbidden(trans('Access Denied'))
-        user = User.objects.get(pk=user_id)
-        user.name = user.username
-        projects = Project.objects.filter(members = user_id)
-    elif user_type == 'team':
-        user = team = get_object_or_404(Team, pk=user_id)
-        if request.user not in team.members.all():
-            return HttpResponseForbidden(trans('Access Denied'))
-        projects = Project.objects.filter(team = user_id)
-    elif user_type == 'client':
-        user = client = get_object_or_404(Client, pk=user_id)
-        projects = Project.objects.filter(client = client)
-    return render_to_response('project/all_user_projects.html', {'projects': projects, 'user_model': user, 'user_type': user_type},
-                                      context_instance=RequestContext(request))
+def index(request):
+    projects_active = Project.objects.filter(members=request.user, state='active').order_by('name')
+    projects_on_hold = Project.objects.filter(members=request.user, state='on_hold').order_by('name')
+    projects_completed = Project.objects.filter(members=request.user, state='completed').order_by('name')
+    projects_dropped = Project.objects.filter(members=request.user, state='dropped').order_by('name')
+    return render_to_response('project/project_index.html', {'projects_active': projects_active,
+                                                                'projects_on_hold': projects_on_hold,
+                                                                'projects_completed': projects_completed,
+                                                                'projects_dropped': projects_dropped,
+                                                            },
+                                         context_instance=RequestContext(request))
+
 
 
 @login_required()
@@ -70,20 +59,37 @@ def show_project(request, project_id):
         duration += seconds
     data['time_other'] ='%02i:%02i' % (duration/3600, duration%3600/60)
 
-    data['user_list'] = render_to_string('tracker/slip_list.html',
+    if data['slip_user']:
+        data['user_list'] = render_to_string('tracker/slip_list.html',
                               {'slip_list': data['slip_user'], '10_paginate': True,
                                'list_exclude_project': True,
+                               'list_exclude_client': True,
                               },
                               context_instance=RequestContext(request))
 
-    data['other_list'] = render_to_string('tracker/slip_list.html',
+    if data['slip_rest']:
+        data['other_list'] = render_to_string('tracker/slip_list.html',
                               {'slip_list': data['slip_rest'], '10_paginate': True,
                                'list_exclude_project': True,
+                               'list_exclude_client': True,
                               },
                               context_instance=RequestContext(request))
 
-    return render_to_response('project/project.html', data,
+    if request.method == 'GET':
+        data['form'] = ProjectUpdateForm()
+        return render_to_response('project/project.html', data,
                               context_instance=RequestContext(request))
+
+    if request.method == 'POST':
+        form = ProjectUpdateForm(request.POST, instance=project)
+        if form.is_valid():
+            test = form.save()
+            data['form'] = ProjectUpdateForm()
+            data['project'] = Project.objects.get(pk=project_id)
+        else:
+            data['form'] = form
+        return render_to_response('project/project.html', data,
+                                      context_instance=RequestContext(request))
 
 
 @login_required()

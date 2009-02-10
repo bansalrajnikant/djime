@@ -5,8 +5,28 @@
 {% block head_title %}{% trans "Projects" %}{% endblock %}
 
 {% block content %}
-  <h2>{% trans "All Projects" %}</h2>
-  {% for project in projects %}
-    <ul><a href="{% url project_page project_id=project.id %}">{{ project }}</a></ul>
-  {% endfor %}
+  {% if projects_active %}
+    <h2>{% trans "Active projects" %}</h2>
+    {% for project in projects_active %}
+      <ul><a href="{% url project_page project_id=project.id %}">{{ project }}</a></ul>
+    {% endfor %}
+  {% endif %}
+    {% if projects_on_hold %}
+    <h2>{% trans "Projects on hold" %}</h2>
+    {% for project in projects_on_hold %}
+      <ul><a href="{% url project_page project_id=project.id %}">{{ project }}</a></ul>
+    {% endfor %}
+  {% endif %}
+  {% if projects_completed %}
+    <h2>{% trans "Completed projects" %}</h2>
+    {% for project in projects_completed %}
+      <ul><a href="{% url project_page project_id=project.id %}">{{ project }}</a></ul>
+    {% endfor %}
+  {% endif %}
+  {% if projects_dropped %}
+    <h2>{% trans "Dropped projects" %}</h2>
+    {% for project in projects_dropped %}
+      <ul><a href="{% url project_page project_id=project.id %}">{{ project }}</a></ul>
+    {% endfor %}
+  {% endif %}
 {% endblock %}
