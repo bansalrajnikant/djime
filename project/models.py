@@ -21,11 +21,18 @@ class Project(models.Model):
 
     Acts as a basic container for Slips (tasks)
     """
+    STATE_CHOICES = (
+        ('active', 'Active'),
+        ('on_hold', 'On Hold'),
+        ('completed', 'Completed'),
+        ('dropped', 'Dropped'),
+    )
     name = models.CharField(max_length=128, verbose_name=_('name'))
     team = models.ForeignKey(Team, null=True, blank = True, verbose_name=_('team'))
     client = models.ForeignKey(Client, null=True, blank=True, verbose_name=_('client'))
     members = models.ManyToManyField(User, verbose_name=_('members'))
     deadline = models.DateField(null=True, blank=True, verbose_name=_('deadline'))
+    state = models.CharField(max_length=31, choices=STATE_CHOICES, default='active', verbose_name=_('state'))
 
     def __unicode__(self):
         return self.name

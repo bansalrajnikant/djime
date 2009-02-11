@@ -7,9 +7,34 @@
 {% block content %}
 
   <h1>{% blocktrans %}Project: {{ project }} Total duration: {{ time_all }}{% endblocktrans %}<h1>
-  <h2>{% blocktrans %}{{ user }}'s Tasks in {{ project }} Total duration: {{ time_user }}{% endblocktrans %}</h2>
-  {{ user_list }}
+  <p>{% trans "Client: " %}{{ project.client }}</p>
+  {% if user_list %}
+    <h2>{% blocktrans %}{{ user }}'s Tasks in {{ project }} Total duration: {{ time_user }}{% endblocktrans %}</h2>
+    {{ user_list }}
+  {% endif %}
 
-  <h2>{% blocktrans %}Other's tasks in {{ project }} Total duration: {{ time_other }}{% endblocktrans %}</h2>
-  {{ other_list }}
+  {% if other_list %}
+    <h2>{% blocktrans %}Other's tasks in {{ project }} Total duration: {{ time_other }}{% endblocktrans %}</h2>
+    {{ other_list }}
+  {% endif %}
+
+{% endblock %}
+
+{% block sidebar %}
+  <p>{% trans "Update project" %}
+  <form method="post" action="">
+      <ul class="form-items">
+          {{ form.as_ul }}
+      </ul>
+      <input type="submit" value="Update Project" />
+  </form>
+{% endblock %}
+
+{% block closure %}
+ <script type="text/javascript">
+    $('#id_client').val({{ project.client.id }});
+    $('#id_state').val("{{ project.state }}");
+    $('#id_team').val({{ project.team.id }});
+    $('#id_name').val("{{ project }}");
+ </script>
 {% endblock %}

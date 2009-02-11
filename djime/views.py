@@ -7,7 +7,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.html import escape
 from django.utils.translation import ugettext as trans
-from djime.forms import SlipAddForm
+from djime.forms import SlipAddForm, SlipChangeForm
 from djime.models import Slip, TimeSlice
 from project.models import Client, Project
 try:
@@ -20,7 +20,8 @@ except ImportError:
 def dashboard(request):
     client_list = []
     client_dict = {}
-    for project in Project.objects.filter(members=request.user):
+    project_js_list = Project.objects.filter(members=request.user).exclude(state__in=['dropped', 'completed'])
+    for project in project_js_list:
         if project.client:
             if not client_dict.has_key((project.client.id)):
                 client_dict[(project.client.id)] = []
@@ -38,7 +39,8 @@ def dashboard(request):
 
     display_data = {
         'slip_list': Slip.objects.filter(user=request.user).order_by('-updated')[:10],
-        'project_list': Project.objects.filter(members=request.user.id)[:10],
+        'project_list': Project.objects.filter(members=request.user.id, state='active')[:10],
+        'project_js_list': project_js_list,
         'client_list': json.dumps(client_list),
         'slip_add_form': SlipAddForm()
     }
@@ -50,7 +52,8 @@ def dashboard(request):
 def index(request):
     client_list = []
     client_dict = {}
-    for project in Project.objects.filter(members=request.user):
+    project_js_list = Project.objects.filter(members=request.user).exclude(state__in=['dropped', 'completed'])
+    for project in project_js_list:
         if project.client:
             if not client_dict.has_key((project.client.id)):
                 client_dict[(project.client.id)] = []
@@ -69,7 +72,7 @@ def index(request):
     slip_list = Slip.objects.filter(user=request.user)
     return render_to_response('tracker/index.html',
                               {'slip_list': slip_list,
-                               'project_list': Project.objects.filter(members=request.user.id)[:10],
+                               'project_js_list': project_js_list,
                                'client_list': json.dumps(client_list),
                                'slip_add_form': SlipAddForm()
                                },
@@ -86,18 +89,48 @@ def slip(request, slip_id):
         if request.user != slip.user:
             return HttpResponseForbidden(trans('Access denied'))
 
-        if request.method == 'GET':
-            timer = {}
-            if slip.is_active():
-                timer['class'] = 'timer-running'
-                timeslice = slip.timeslice_set.filter(user=slip.user, end=None)[0]
-                slice_time = {'year': timeslice.begin.year, 'month': timeslice.begin.month-1, 'day': timeslice.begin.day, 'hour': timeslice.begin.hour, 'minute': timeslice.begin.minute, 'second': timeslice.begin.second}
+        # data generated to be used by js.
+        client_list = []
+        client_dict = {}
+        project_js_list = Project.objects.filter(members=request.user).exclude(state__in=['dropped', 'completed'])
+        for project in project_js_list:
+            if project.client:
+                if not client_dict.has_key((project.client.id)):
+                    client_dict[(project.client.id)] = []
+                    client_dict[(project.client.id)].append(project)
+                else:
+                    client_dict[(project.client.id)].append(project)
+        for client in range(max(client_dict.keys())+1):
+            if client_dict.has_key(client):
+                options = '<option>-----------</option>'
+                for project in client_dict[client]:
+                    options += '<option>%s</option>' % escape(project.name)
+                client_list.append(options)
             else:
-                timer['class'] = ''
-                timeslice = ''
-                slice_time = ''
-            return render_to_response('tracker/slip.html', {'slip': slip, 'timer': timer, 'timeslice': timeslice, 'slice_time': slice_time},
-                                      context_instance=RequestContext(request))
+                client_list.append(0)
+
+        timer = {}
+        if slip.is_active():
+            timeslice = slip.timeslice_set.filter(end = None, user=request.user)[0]
+            timer['class'] = 'timer-running'
+            timeslice = slip.timeslice_set.filter(user = slip.user, end = None)[0]
+            slice_time = {'year': timeslice.begin.year, 'month': timeslice.begin.month-1, 'day': timeslice.begin.day, 'hour': timeslice.begin.hour, 'minute': timeslice.begin.minute, 'second': timeslice.begin.second}
+        else:
+            timer['class'] = ''
+            timeslice = ''
+            slice_time = ''
+
+        if request.method == 'GET':
+            return render_to_response('tracker/slip.html',
+                                        {'slip': slip,
+                                        'timer': timer,
+                                        'timeslice': timeslice,
+                                        'slice_time': slice_time,
+                                        'project_js_list': project_js_list,
+                                        'client_list': json.dumps(client_list),
+                                        'slip_change_form': SlipChangeForm()
+                                        },
+                                        context_instance=RequestContext(request))
 
         elif request.method == 'DELETE':
             slip.delete()
@@ -106,10 +139,32 @@ def slip(request, slip_id):
 
         elif request.method == 'POST':
             slip = Slip.objects.get(id = slip_id)
-            old_name = slip.name
-            slip.name = request.POST['name']
-            slip.save()
-            return HttpResponse("%s" % slip.name)
+            if request.POST.has_key('name'):
+                old_name = slip.name
+                slip.name = request.POST['name']
+                slip.save()
+                return HttpResponse("%s" % slip.name)
+            else:
+                post_data = request.POST.copy()
+                # Inject the user into the post data, so we can validate based
+                # on the user.
+                post_data['user'] = request.user
+                form = SlipChangeForm(post_data, instance=slip)
+                if form.is_valid():
+                    form.save()
+                    # After saving the form, reinitiate the form to clear the data on return.
+                    form = SlipChangeForm()
+                return render_to_response('tracker/slip.html',
+                                                        {'slip_id': slip_id,
+                                                        'slip': slip,
+                                                        'timer': timer,
+                                                        'timeslice': timeslice,
+                                                        'slice_time': slice_time,
+                                                        'slip_change_form': form,
+                                                        'project_js_list': project_js_list,
+                                                        'client_list': json.dumps(client_list),
+                                                        },
+                                                        context_instance=RequestContext(request))
 
 
 @login_required()
@@ -170,7 +225,8 @@ def slip_create(request):
 
     client_list = []
     client_dict = {}
-    for project in Project.objects.filter(members=request.user):
+    project_js_list = Project.objects.filter(members=request.user).exclude(state__in=['dropped', 'completed'])
+    for project in project_js_list:
         if project.client:
             if not client_dict.has_key((project.client.id)):
                 client_dict[(project.client.id)] = []
@@ -203,16 +259,16 @@ def slip_create(request):
         else:
             return render_to_response('tracker/slip_create.html',
                                         {'slip_add_form': form,
-                                         'project_list': Project.objects.filter(members=request.user.id)[:10],
+                                         'project_js_list': project_js_list,
                                          'client_list': json.dumps(client_list),
                                         },
                                         context_instance=RequestContext(request))
 
     if request.method == 'GET':
-        form = SlipAddForm(user=request.user)
+        slip_add_form = SlipAddForm()
         return render_to_response('tracker/slip_create.html',
-                                  {'slip_add_form': form,
-                                    'project_list': Project.objects.filter(members=request.user.id)[:10],
+                                  {'slip_add_form': SlipAddForm(),
+                                    'project_js_list': project_js_list,
                                     'client_list': json.dumps(client_list),
                                   },
                                   context_instance=RequestContext(request))
