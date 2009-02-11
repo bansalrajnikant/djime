@@ -89,9 +89,8 @@ def slip(request, slip_id):
         if request.method == 'GET':
             timer = {}
             if slip.is_active():
-                timeslice = slip.timeslice_set.filter(end = None, user=request.user)[0]
                 timer['class'] = 'timer-running'
-                timeslice = slip.timeslice_set.filter(user = slip.user, end = None)[0]
+                timeslice = slip.timeslice_set.filter(user=slip.user, end=None)[0]
                 slice_time = {'year': timeslice.begin.year, 'month': timeslice.begin.month-1, 'day': timeslice.begin.day, 'hour': timeslice.begin.hour, 'minute': timeslice.begin.minute, 'second': timeslice.begin.second}
             else:
                 timer['class'] = ''
