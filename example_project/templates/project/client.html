@@ -2,12 +2,12 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Client | " %}{{ client.name }}{% endblock %}
+{% block head_title %}{% trans "Client | " %}{{ client }}{% endblock %}
 
 {% block content %}
 
   <h1>{% blocktrans %}Client: {{ client }} Total duration: {{ time_all }}{% endblocktrans %}<h1>
-  <h2>{% blocktrans %}{{ user }}'s Tasks in {{ client.name }} Total duration: {{ time_user }}{% endblocktrans %}</h2>
+  <h2>{% blocktrans %}{{ user }}'s Tasks in {{ client }} Total duration: {{ time_user }}{% endblocktrans %}</h2>
     {{ user_list }}
 
   <h2>{% blocktrans %}Other's tasks in {{ client }} Total duration: {{ time_other }}{% endblocktrans %}</h2>
