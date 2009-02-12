@@ -34,19 +34,14 @@ class SlipChangeForm(forms.ModelForm):
         """
         Cleaning/validation method for the project field
         """
-        # As this method is for the project field, we only get the clean_data for the project.
-        cleaned_data = self.cleaned_data['project']
-        # if user choses no project after choosing a client or
-        # if cleaned_data is an empty string, user has not entered a project: set cleaned data to None
-        if cleaned_data == u'-----------' or cleaned_data == u'':
-            cleaned_data = None
-        if cleaned_data:
-            project = Project.objects.filter(name__iexact=cleaned_data).filter(members=self.data['user'])
+        if self.cleaned_data.has_key('project') and self.cleaned_data['project']:
+            project = Project.objects.filter(name__iexact=self.cleaned_data).filter(members=self.data['user'])[:1]
             if project:
-                cleaned_data = project[0]
+                return project[0]
             else:
                 raise forms.ValidationError(_('%s is not a valid project.' % cleaned_data))
-        return cleaned_data
+        else:
+            return None
 
     class Meta:
         model = Slip

@@ -18,9 +18,11 @@ except ImportError:
 
 @login_required()
 def dashboard(request):
-    client_list = []
+    # Client list is to be used to create a js array. So we need an initial value for position 0.
+    # This value should not be 0+ so -1 is chosen. could be anything really.
+    client_list = [-1]
     client_dict = {}
-    project_js_list = Project.objects.filter(members=request.user).exclude(state__in=['dropped', 'completed'])
+    project_js_list = Project.objects.filter(members=request.user, state__in=['active', 'on_hold'])
     for project in project_js_list:
         if project.client:
             if not client_dict.has_key((project.client.id)):
@@ -28,10 +30,14 @@ def dashboard(request):
                 client_dict[(project.client.id)].append(project)
             else:
                 client_dict[(project.client.id)].append(project)
-    for client in range(max(client_dict.keys())+1):
-        if client_dict.has_key(client):
-            options = '<option>-----------</option>'
-            for project in client_dict[client]:
+    # this loop is to create a set of options tags, the first will will be the
+    # choice for nothing and will have a value of a empty string. The rest will
+    # have same value as their name. Escape is used on rojectname because we
+    # need to use the json version unescaped in the template.
+    for client in Client.objects.all():
+        if client_dict.has_key(client.id):
+            options = '<option value="">-----------</option>'
+            for project in client_dict[client.id]:
                 options += '<option>%s</option>' % escape(project.name)
             client_list.append(options)
         else:
@@ -50,9 +56,9 @@ def dashboard(request):
 
 @login_required
 def index(request):
-    client_list = []
+    client_list = [-1]
     client_dict = {}
-    project_js_list = Project.objects.filter(members=request.user).exclude(state__in=['dropped', 'completed'])
+    project_js_list = Project.objects.filter(members=request.user, state__in=['active', 'on_hold'])
     for project in project_js_list:
         if project.client:
             if not client_dict.has_key((project.client.id)):
@@ -60,10 +66,10 @@ def index(request):
                 client_dict[(project.client.id)].append(project)
             else:
                 client_dict[(project.client.id)].append(project)
-    for client in range(max(client_dict.keys())+1):
-        if client_dict.has_key(client):
-            options = '<option>-----------</option>'
-            for project in client_dict[client]:
+    for client in Client.objects.all():
+        if client_dict.has_key(client.id):
+            options = '<option value="">-----------</option>'
+            for project in client_dict[client.id]:
                 options += '<option>%s</option>' % escape(project.name)
             client_list.append(options)
         else:
@@ -90,9 +96,9 @@ def slip(request, slip_id):
             return HttpResponseForbidden(trans('Access denied'))
 
         # data generated to be used by js.
-        client_list = []
+        client_list = [-1]
         client_dict = {}
-        project_js_list = Project.objects.filter(members=request.user).exclude(state__in=['dropped', 'completed'])
+        project_js_list = Project.objects.filter(members=request.user, state__in=['active', 'on_hold'])
         for project in project_js_list:
             if project.client:
                 if not client_dict.has_key((project.client.id)):
@@ -100,10 +106,10 @@ def slip(request, slip_id):
                     client_dict[(project.client.id)].append(project)
                 else:
                     client_dict[(project.client.id)].append(project)
-        for client in range(max(client_dict.keys())+1):
-            if client_dict.has_key(client):
-                options = '<option>-----------</option>'
-                for project in client_dict[client]:
+        for client in Client.objects.all():
+            if client_dict.has_key(client.id):
+                options = '<option value="">-----------</option>'
+                for project in client_dict[client.id]:
                     options += '<option>%s</option>' % escape(project.name)
                 client_list.append(options)
             else:
@@ -223,9 +229,9 @@ def slip_create(request):
     if request.method not in ('GET', 'POST'):
         return HttpResponseNotAllowed(('POST', 'GET'))
 
-    client_list = []
+    client_list = [-1]
     client_dict = {}
-    project_js_list = Project.objects.filter(members=request.user).exclude(state__in=['dropped', 'completed'])
+    project_js_list = Project.objects.filter(members=request.user, state__in=['active', 'on_hold'])
     for project in project_js_list:
         if project.client:
             if not client_dict.has_key((project.client.id)):
@@ -233,10 +239,10 @@ def slip_create(request):
                 client_dict[(project.client.id)].append(project)
             else:
                 client_dict[(project.client.id)].append(project)
-    for client in range(max(client_dict.keys())+1):
-        if client_dict.has_key(client):
-            options = '<option>-----------</option>'
-            for project in client_dict[client]:
+    for client in Client.objects.all():
+        if client_dict.has_key(client.id):
+            options = '<option value="">-----------</option>'
+            for project in client_dict[client.id]:
                 options += '<option>%s</option>' % escape(project.name)
             client_list.append(options)
         else:

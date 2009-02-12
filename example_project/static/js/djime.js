@@ -24,10 +24,18 @@ $(document).ready(function () {
 	});
 	$("#id_client").mouseup(function () {
 		if (isNaN(parseInt($(this).val())) == false) {
-			$("#id_project").remove();
-			container.append('<select id="id_project" name="project">' + djime.client_list[parseInt($("#id_client").val())] + '</select>');	
+			if (djime.client_list[parseInt($("#id_client").val())] == 0) {
+				$("#id_project").val('');
+				container.hide();
+			}
+			else {
+				container.show();
+				$("#id_project").remove();
+				container.append('<select id="id_project" name="project">' + djime.client_list[parseInt($("#id_client").val())] + '</select>');
+			}
 		}
 		else {
+			container.show();
 			$("#id_project").remove();
 			container.append('<input type="text" id="id_project" name="project" autocomplete="off" class="ac_input"/>');
 		}
