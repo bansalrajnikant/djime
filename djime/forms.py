@@ -13,7 +13,7 @@ class SlipAddForm(forms.ModelForm):
         Cleaning/validation method for the project field
         """
         if self.cleaned_data.has_key('project') and self.cleaned_data['project']:
-            project = Project.objects.filter(name__iexact=cleaned_data['project']).filter(members=self.data['user'])[:1]
+            project = Project.objects.filter(name__iexact=self.cleaned_data['project'], members=self.data['user'])[:1]
             if project:
                 return project[0]
             else:
