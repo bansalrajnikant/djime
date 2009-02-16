@@ -139,7 +139,7 @@ def show_client(request, client_id):
         duration += seconds
     data['time_user'] ='%02i:%02i' % (duration/3600, duration%3600/60)
     duration = 0
-    for slip in data['slip_user']:
+    for slip in data['slip_rest']:
         seconds = 0
         for slice in slip.timeslice_set.all():
             seconds += slice.duration
@@ -157,8 +157,8 @@ def show_client(request, client_id):
                               'list_exclude_client': True
                               },
                               context_instance=RequestContext(request))
-    
-    
-    
+
+    data['project_list'] =client.project_set.filter(state__in=['active', 'on_hold'], members=request.user)
+
     return render_to_response('project/client.html', data,
                                       context_instance=RequestContext(request))

@@ -6,15 +6,15 @@
 
 {% block content %}
 
-  <h1>{% blocktrans %}Project: {{ project }} Total duration: {{ time_all }}{% endblocktrans %}<h1>
+  <h1>{% trans "Project: " %}{{ project.name }}{% trans " Total duration: " %}{{ time_all }}<h1>
   <p>{% trans "Client: " %}{{ project.client }}</p>
   {% if user_list %}
-    <h2>{% blocktrans %}{{ user }}'s Tasks in {{ project }} Total duration: {{ time_user }}{% endblocktrans %}</h2>
+    <h2>{{ user }}{% trans "Tasks in " %}{{ project }}{% trans " Total duration: " %}{{ time_user }}</h2>
     {{ user_list }}
   {% endif %}
 
   {% if other_list %}
-    <h2>{% blocktrans %}Other's tasks in {{ project }} Total duration: {{ time_other }}{% endblocktrans %}</h2>
+    <h2>{% trans "Other's tasks in " %}{{ project }}{% trans " Total duration: " %}{{ time_other }}</h2>
     {{ other_list }}
   {% endif %}
 

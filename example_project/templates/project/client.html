@@ -6,10 +6,17 @@
 
 {% block content %}
 
-  <h1>{% blocktrans %}Client: {{ client }} Total duration: {{ time_all }}{% endblocktrans %}<h1>
-  <h2>{% blocktrans %}{{ user }}'s Tasks in {{ client }} Total duration: {{ time_user }}{% endblocktrans %}</h2>
+  <h1>{% trans "Projects for " %}{{ client }}:</h1>
+    {% for project in project_list %}
+      <p><a href="{% url project_page project_id=project.id %}">
+        {{ project }}
+      </a></p>
+    {% endfor %}
+
+  <h2>{% trans "Client: " %}{{ client }}{% trans " Total duration: " %}{{ time_all }}</h2>
+  <h2>{{ user }}{% trans " Tasks in " %}{{ client }}{% trans " Total duration: " %}{{ time_user }}</h2>
     {{ user_list }}
 
-  <h2>{% blocktrans %}Other's tasks in {{ client }} Total duration: {{ time_other }}{% endblocktrans %}</h2>
+  <h2>{% trans "Other's tasks in " %}{{ client }}{% trans " Total duration: " %}{{ time_other }}</h2>
     {{ other_list }}
 {% endblock %}
