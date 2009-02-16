@@ -12,3 +12,13 @@
   </ul>
   {% endfor %}
 {% endblock %}
+
+{% block sidebar %}
+  <p>{% trans "Create new client" %}
+  <form method="post" action="">
+      <ul class="form-items">
+          {{ client_add_form.as_ul }}
+      </ul>
+      <input type="submit" value="Create client" />
+  </form>
+{% endblock %}

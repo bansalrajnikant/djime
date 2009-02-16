@@ -9,7 +9,7 @@ from project.models import Project, Client
 from teams.models import Team
 from djime.models import Slip
 from django.utils.translation import ugettext as trans
-from project.forms import ProjectUpdateForm, ProjectAddForm
+from project.forms import ProjectUpdateForm, ProjectAddForm, ClientAddForm
 
 @login_required()
 def index(request):
@@ -109,8 +109,18 @@ def show_project(request, project_id):
 
 @login_required()
 def client_index(request):
-    clients = Client.objects.all()
-    return render_to_response('project/client_index.html', {'clients': clients},
+    if request.method == 'POST':
+        form = ClientAddForm(request.POST)
+        if form.is_valid():
+            new_client = form.save()
+            return HttpResponseRedirect(reverse('client_page', kwargs={'client_id': new_client.id}))
+        else:
+            return render_to_response('project/client_index.html', {'client_add_form': form},
+                                         context_instance=RequestContext(request))
+
+    elif request.method == 'GET':
+        clients = Client.objects.all()
+        return render_to_response('project/client_index.html', {'clients': clients, 'client_add_form': ClientAddForm()},
                                         context_instance=RequestContext(request))
 
 
@@ -158,7 +168,7 @@ def show_client(request, client_id):
                               },
                               context_instance=RequestContext(request))
 
-    data['project_list'] =client.project_set.filter(state__in=['active', 'on_hold'], members=request.user)
+    data['project_list'] = client.project_set.filter(state__in=['active', 'on_hold'], members=request.user)
 
     return render_to_response('project/client.html', data,
                                       context_instance=RequestContext(request))
