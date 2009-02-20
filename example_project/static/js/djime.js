@@ -38,6 +38,7 @@ $(document).ready(function () {
 			container.show();
 			$("#id_project").remove();
 			container.append('<input type="text" id="id_project" name="project" autocomplete="off" class="ac_input"/>');
+			$("#id_project").autocomplete(djime.autocomplete_projectnames);
 		}
 	});
 });
