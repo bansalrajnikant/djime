@@ -2,12 +2,15 @@
 
 {% load i18n %}
 {% block login %}
+    {% url acct_logout as logout_url %}
+    {% url acct_login as login_url %}
+    {% url acct_signup as signup_url %}
     {% if user.is_authenticated %}
-        {% blocktrans %}Hello, <em>{{ user }}</em>!{% endblocktrans %} |
+        {% blocktrans with user as user %}Hello, <em>{{ user }}</em>!{% endblocktrans %} |
         {% if user.is_staff %}<a href="/admin/">{% trans "Admin" %}</a> | {% endif %}
-        <a href="{% url acct_logout %}">{% trans "Logout" %}</a>
+        <a href="{{ logout_url }}">{% trans "Logout" %}</a>
     {% else %}
-        <a href="{% url acct_login %}">{% trans "Login" %}</a> {% trans "or" %} <a href="{% url acct_signup %}"><b>{% trans "Sign up" %}</b></a>
+        {% blocktrans %}<a href="{{ login_url }}">Login</a> or <a href="{{ signup_url }}"><b>Sign up</b></a>{% endblocktrans %}
     {% endif %}
 {% endblock %}
 

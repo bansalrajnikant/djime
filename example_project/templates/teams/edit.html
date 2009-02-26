@@ -51,7 +51,7 @@
                 <form method="post" action="{% url team_delete slug=team.slug %}">
                     <input type="submit" name="submit" value="{% trans 'Delete' %}" />
             {% else %}
-                <p>You are not the only member of the team so you can't delete the team.</p>
+                <p>{% trans "You are not the only member of the team so you cannot delete the team." %}</p>
         {% endifequal %}
 
     {% endifequal %}
@@ -60,7 +60,7 @@
                 <form method="POST" action="">
                     {% if are_member %}
                         {% ifequal user team.creator %}
-                            <p>{% trans "You are the creator of this team so can't leave." %}</p>
+                            <p>{% trans "You are the creator of this team so cannot leave." %}</p>
                         {% else %}
                             <input type="hidden" name="action" value="leave" />
                             <input type="submit" value="{% trans 'leave' %}"/>
