@@ -13,10 +13,16 @@
       </a></p>
     {% endfor %}
 
-  <h2>{% trans "Client: " %}{{ client }}{% trans " Total duration: " %}{{ time_all }}</h2>
-  <h2>{{ user }}{% trans " Tasks in " %}{{ client }}{% trans " Total duration: " %}{{ time_user }}</h2>
+  {% comment %}
+    Here blocktrans is using "with" for the user submitted variables. The
+    reason for this, is that when not using with, it the variables will inside
+    the blocktrans tags will not be escaped.
+  {% endcomment %}
+
+  <h2>{% blocktrans with client as client %} Client: {{ client }}. Total duration: {{ time_all }}{% endblocktrans %}</h2>
+  <h2>{% blocktrans with user as user and client as client %}{{ user }}'s tasks in {{ client }}. Total duration: {{ time_user }}{% endblocktrans %}</h2>
     {{ user_list }}
 
-  <h2>{% trans "Other's tasks in " %}{{ client }}{% trans " Total duration: " %}{{ time_other }}</h2>
+  <h2>{% blocktrans with client as client %}Other's tasks in {{ client }}. Total duration: {{ time_other }}{% endblocktrans %}</h2>
     {{ other_list }}
 {% endblock %}
