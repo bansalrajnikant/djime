@@ -1,4 +1,8 @@
 def colour(number):
+    """
+    This is just a simple function that return a colour code. It is used to
+    create colour codes for some of the flashcharts.
+    """
     if number%6 == 1:
         return '#FF0000'
     elif number % 6 == 2:
