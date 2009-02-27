@@ -20,18 +20,19 @@ def index(request):
             'projects_completed': Project.objects.filter(members=request.user, state='completed').order_by('name'),
             'projects_dropped': Project.objects.filter(members=request.user, state='dropped').order_by('name'),
             }
+    # Adding a form to create a new project if user is viewing this page.
     if request.method == 'GET':
         data['project_add_form'] = ProjectAddForm()
+    # Handleing the form data that's being posted.
     elif request.method == 'POST':
-        post_data = request.POST.copy()
-        post_data['state'] = 'active'
-        form = ProjectAddForm(post_data)
+        form = ProjectAddForm(request.POST)
         if form.is_valid:
             new_project = form.save()
             # Need to save the new project before we can assign the user to the project.
             new_project.members.add(request.user)
             new_project.save()
             return HttpResponseRedirect(reverse('project_page', kwargs={'project_id': new_project.id}))
+        # if form doesn't validate, return the form with errors.
         else:
             data['project_add_form'] = form
     return render_to_response('project/project_index.html', data,
@@ -52,6 +53,10 @@ def show_project(request, project_id):
     data['slip_all'] = Slip.objects.filter(project=project)
     data['slip_user'] = data['slip_all'].filter(user=request.user)
     data['slip_rest'] = data['slip_all'].exclude(user=request.user)
+
+    # Here duration for project's slips is calculated by iterating over all the
+    # slips and then over all the timeslices. This is repeated for the user's
+    # slips and the remaining slips in the project.
     duration = 0
     for slip in data['slip_all']:
         seconds = 0
@@ -59,6 +64,7 @@ def show_project(request, project_id):
             seconds += slice.duration
         duration += seconds
     data['time_all'] ='%02i:%02i' % (duration/3600, duration%3600/60)
+
     duration = 0
     for slip in data['slip_user']:
         seconds = 0
@@ -66,6 +72,7 @@ def show_project(request, project_id):
             seconds += slice.duration
         duration += seconds
     data['time_user'] ='%02i:%02i' % (duration/3600, duration%3600/60)
+
     duration = 0
     for slip in data['slip_rest']:
         seconds = 0
@@ -74,6 +81,11 @@ def show_project(request, project_id):
         duration += seconds
     data['time_other'] ='%02i:%02i' % (duration/3600, duration%3600/60)
 
+    # run the user's slips through the slip_list template as a sting to create
+    # a list display of the slips as a template variable. This is repeated for
+    # the remaining slips in the project aswell.
+    # Note, when the 10_paginate variable is set to TRUE, a pagination
+    # displaying 10 items per page instead of the default 20.
     if data['slip_user']:
         data['user_list'] = render_to_string('tracker/slip_list.html',
                               {'slip_list': data['slip_user'], '10_paginate': True,
@@ -90,6 +102,7 @@ def show_project(request, project_id):
                               },
                               context_instance=RequestContext(request))
 
+    # Adding a form to update the project, if the page is being viewed.
     if request.method == 'GET':
         data['form'] = ProjectUpdateForm()
         return render_to_response('project/project.html', data,
@@ -97,6 +110,8 @@ def show_project(request, project_id):
 
     if request.method == 'POST':
         form = ProjectUpdateForm(request.POST, instance=project)
+        # if the form validates, a new form is displayed for the user, if not
+        # the form is redisplayed with errors.
         if form.is_valid():
             test = form.save()
             data['form'] = ProjectUpdateForm()
@@ -109,7 +124,12 @@ def show_project(request, project_id):
 
 @login_required()
 def client_index(request):
-    if request.method == 'POST':
+    if request.method == 'GET':
+        clients = Client.objects.all()
+        return render_to_response('project/client_index.html', {'clients': clients, 'client_add_form': ClientAddForm()},
+                                        context_instance=RequestContext(request))
+
+    elif request.method == 'POST':
         form = ClientAddForm(request.POST)
         if form.is_valid():
             new_client = form.save()
@@ -118,14 +138,12 @@ def client_index(request):
             return render_to_response('project/client_index.html', {'client_add_form': form},
                                          context_instance=RequestContext(request))
 
-    elif request.method == 'GET':
-        clients = Client.objects.all()
-        return render_to_response('project/client_index.html', {'clients': clients, 'client_add_form': ClientAddForm()},
-                                        context_instance=RequestContext(request))
-
 
 @login_required()
 def show_client(request, client_id):
+    # this view is pretty much the same as the  show_project view, only in this
+    # case, a form to update the client is not being presented.
+
     client = get_object_or_404(Client, pk=client_id)
     data = {
         'client': client,
