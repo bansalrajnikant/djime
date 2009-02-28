@@ -48,8 +48,7 @@ class DateSelectionForm(forms.Form):
         if e_date - (s_date) < datetime.timedelta(days=1):
             raise forms.ValidationError(trans("End date must be after start date"))
 
-            cleaned_data['start'] = s_date
-            cleaned_data['end'] = e_date
-
+        cleaned_data['start'] = s_date
+        cleaned_data['end'] = e_date
         # Always returning the cleaned data.
         return cleaned_data
