@@ -36,7 +36,12 @@
             {% endfor %}
         {% endifequal %}
     {% endif %}
-                
-            <p><a href="{% url team_create %}">{% trans "Create new team" %}</a></p>
-
+    {% comment %}
+        Should create a more fine grained control of who can create new teams
+        and who can't. But for the time being we will just be checking if the
+        user is a staff member.
+    {% endcomment %}
+    {% if user.is_staff %}
+        <p><a href="{% url team_create %}">{% trans "Create new team" %}</a></p>
+    {% endif %}
 {% endblock %}
