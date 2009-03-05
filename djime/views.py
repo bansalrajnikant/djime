@@ -18,9 +18,8 @@ except ImportError:
 
 @login_required()
 def dashboard(request):
-    # Client list is to be used to create a js array. So we need an initial
-    # value for position 0. This value should not be 0+ so -1 is chosen.
-    # could be anything really.
+    # Client list is to be used to create a js array. So we need an initial value for position 0.
+    # This value should not be 0+ so -1 is chosen. could be anything really.
     client_list = [-1]
     client_dict = {}
     project_js_list = Project.objects.filter(members=request.user, state__in=['active', 'on_hold'])
@@ -93,6 +92,8 @@ def slip(request, slip_id):
         return HttpResponseNotAllowed(('GET', 'POST', 'DELETE'))
     else:
         slip = get_object_or_404(Slip, pk=slip_id)
+        if request.user != slip.user:
+            return HttpResponseForbidden(trans('Access denied'))
 
         # data generated to be used by js.
         client_list = [-1]
@@ -126,8 +127,6 @@ def slip(request, slip_id):
             slice_time = ''
 
         if request.method == 'GET':
-            if not slip.check_permission(request.user, 'read'):
-                return HttpResponseForbidden(trans('Access denied'))
             return render_to_response('tracker/slip.html',
                                         {'slip': slip,
                                         'timer': timer,
@@ -140,28 +139,11 @@ def slip(request, slip_id):
                                         context_instance=RequestContext(request))
 
         elif request.method == 'DELETE':
-            if not slip.check_permission(request.user, 'delete'):
-                request.user.message_set.create(message='You have not permission to delete %s' % slip.name)
-                return HttpResponse('You have not permission to delete slip %s' & slip.name)
             slip.delete()
             # TODO: Send a message to the user that deltion succeeded.
             return HttpResponse('Successfully deleted slip %s' % slip.name)
 
         elif request.method == 'POST':
-            if not slip.check_permission(request.user, 'write'):
-                request.user.message_set.create(message='You have not permission to alter %s' % slip.name)
-                if request.POST.has_key('name'):
-                    return HttpResponse("%s" % slip.name)
-                return render_to_response('tracker/slip.html',
-                                                        {'slip': slip,
-                                                        'timer': timer,
-                                                        'timeslice': timeslice,
-                                                        'slice_time': slice_time,
-                                                        'project_js_list': project_js_list,
-                                                        'client_list': json.dumps(client_list),
-                                                        'slip_change_form': SlipChangeForm()
-                                                        },
-                                                        context_instance=RequestContext(request))
             slip = Slip.objects.get(id = slip_id)
             if request.POST.has_key('name'):
                 old_name = slip.name
