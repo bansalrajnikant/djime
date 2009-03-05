@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from djime.statistics.forms import DateSelectionForm
 from teams.models import Team
+from djime.models import TimeSlice
 import djime.statistics.flashcharts as flashcharts
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
@@ -279,3 +280,76 @@ def data_team_stat_month(request, team_id, month, year):
 def data_team_stat_date(request, team_id, start_date, end_date):
     team = get_object_or_404(Team, pk=int(team_id))
     return HttpResponse(flashcharts.team_stat_date_json(team, start_date, end_date))
+
+@login_required()
+def billing_index(request):
+    users = User.objects.all()
+    return render_to_response('statistics/billing_index.html', {'users': users},
+                            context_instance=RequestContext(request))
+
+@login_required()
+def user_billing(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    if request.method == 'GET':
+        return render_to_response('statistics/billing_time_page.html', {'user': user, 'form': DateSelectionForm()},
+                            context_instance=RequestContext(request))
+    elif request.method == 'POST':
+        if request.POST.has_key('number-of-weeks'):
+            date = request.POST['start-date']
+            number_of_weeks = request.POST['number-of-weeks']
+            return HttpResponseRedirect('/statistics/billing/%s/week/%s/%s/' % (user_id, date, number_of_weeks))
+            raise
+        elif request.POST.has_key('date'):
+            form = DateSelectionForm(request.POST)
+            if form.is_valid():
+                start = form.cleaned_data['start']
+                end = form.cleaned_data['end']
+                return HttpResponseRedirect('/statistics/billing/%s/date/%s/%s/' % (user_id, start, end))
+            else:
+                return render_to_response('statistics/team_stat_date_selection.html', {'user': user, 'form': form},
+                                          context_instance=RequestContext(request))
+
+@login_required()
+def user_billing_weeks(request, user_id, date, number_of_weeks):
+    user = get_object_or_404(User, pk=user_id)
+    if number_of_weeks > 5:
+        number_of_weeks = 4
+    date_list = date.split('-')
+    try:
+        start_date = datetime.date(int(date_list[0]), int(date_list[1]), int(date_list[2]))
+    except ValueError:
+        return HttpResponse(_('Invalid date, must be yyyy-mm-dd'))
+    end_date = start_date + datetime.timedelta(days=number_of_weeks*7)
+    slice_set = TimeSlice.objects.filter(user=user, begin__range=(start_date, end_date))
+    time_dict = {}
+    for timeslice in slice_set:
+        if time_dict.has_key(timeslice.slip.client):
+            time_dict[timeslice.slip.client] += timeslice.duration
+        else:
+            time_dict[timeslice.slip.client] = timeslice.duration
+
+    for key in time_dict.keys():
+        time_dict[key] = '%02i:%02i' % (time_dict[key]/3600, time_dict[key]%3600/60)
+    return render_to_response('statistics/billing_page.html', {'user': user, 'time_dict': time_dict, 'start_date': start_date, 'end_date': end_date},
+                                context_instance=RequestContext(request))
+
+
+def user_billing_date(request, user_id, start_date, end_date):
+    user = get_object_or_404(User, pk=user_id)
+    try:
+        start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+    except ValueError:
+        return HttpResponse('Invalid dateformat, must be yyyy-mm-dd')
+    slice_set = TimeSlice.objects.filter(user=user, begin__range=(start_date, end_date))
+    time_dict = {}
+    for timeslice in slice_set:
+        if time_dict.has_key(timeslice.slip.client):
+            time_dict[timeslice.slip.client] += timeslice.duration
+        else:
+            time_dict[timeslice.slip.client] = timeslice.duration
+
+    for key in time_dict.keys():
+        time_dict[key] = '%02i:%02i' % (time_dict[key]/3600, time_dict[key]%3600/60)
+    return render_to_response('statistics/billing_page.html', {'user': user, 'time_dict': time_dict, 'start_date': start_date, 'end_date': end_date},
+                                context_instance=RequestContext(request))

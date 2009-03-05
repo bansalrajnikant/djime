@@ -28,4 +28,9 @@ urlpatterns = patterns('djime.statistics.views',
     (r'^data/team_stat/(?P<team_id>\d+)/year/(?P<year>\d{4,4})/week/(?P<week>[1-9]|[1-4][0-9]|5[0-3])/$', 'data_team_stat_week'),
     (r'^data/team_stat/(?P<team_id>\d+)/year/(?P<year>\d{4,4})/month/(?P<month>[1-9]|1[0-2])/$', 'data_team_stat_month'),
     (r'^data/team_stat/(?P<team_id>\d+)/date/(?P<start_date>[0-9-]+)/(?P<end_date>[0-9-]+)/$', 'data_team_stat_date'),
+
+    url(r'^billing/$', 'billing_index', name='billing_index'),
+    url(r'^billing/(?P<user_id>\d+)/$', 'user_billing', name='billing_page'),
+    url(r'^billing/(?P<user_id>\d+)/week/(?P<date>[0-9-]+)/(?P<number_of_weeks>\d+)/$', 'user_billing_weeks', name='weekly_billings'),
+    url(r'^billing/(?P<user_id>\d+)/date/(?P<start_date>[0-9-]+)/(?P<end_date>[0-9-]+)/$', 'user_billing_date', name='date_billings'),
 )

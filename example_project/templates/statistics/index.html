@@ -5,6 +5,7 @@
 {% block head_title %}{% trans "Statistics" %}{% endblock %}
 
 {% block content %}
+  <a href="{% url billing_index %}">{% trans "Billing index" %}</a>
   {% include "statistics/navigation.html" %}
 {% endblock %}
 

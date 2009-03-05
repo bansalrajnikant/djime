@@ -6,4 +6,9 @@ $(document).ready(function () {
     numberOfMonths: 2,
     maxDate: '1d'
   });
+	$('#billing-date').datepicker({
+    dateFormat: 'yy-mm-dd',
+    firstDay: 1,
+    maxDate: '1d'
+	});
 });

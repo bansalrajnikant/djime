@@ -1,0 +1,13 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Statistics" %}{% endblock %}
+
+{% block content %}
+  {% trans "Choose a user whose billing hours you would like to see" %}
+  {% for user in users %}
+    <p><a href="{% url billing_page user.id %}">{{ user }}</a></p>
+  {% endfor %}
+{% endblock %}
+

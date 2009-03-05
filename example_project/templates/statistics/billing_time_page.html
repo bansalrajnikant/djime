@@ -1,0 +1,27 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Statistics" %}{% endblock %}
+
+{% block content %}
+  <p>{% trans "Choose what time period for the user that you would like to see for user: " %}{{ user }}</p>
+  <p>{% trans "Week selections:" %}</p>
+  <form method="POST" action="">
+  <p><input id="billing-date" type="textfield" name="start-date"/>{% trans " start date" %}</p>
+  <p><input type="textfield" name="number-of-weeks" value="" />{% trans "number of weeks (max 4)" %}</p>
+  <input type="submit" value="{% trans 'Get' %}"/>
+  </form>
+  <p>{% trans "Date selections:" %}</p>
+  <form method="POST" action="">
+   {{ form.as_ul }}
+  <input type="submit" value="{% trans 'Get' %}"/>
+  </form>
+  
+  
+{% endblock %}
+
+{% block closure %}
+    <script type="text/javascript" src="{{ DEMO_STATIC_URL }}jquery.ui-1.5.3/ui/jquery.ui.all.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/statistics.js"></script>
+{% endblock %}

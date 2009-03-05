@@ -1,0 +1,30 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Statistics" %}{% endblock %}
+
+{% block content %}
+  <p>{% trans "This is the billing info for user:" %} {{ user }}</p>
+  <p>{% blocktrans %}Time period from: {{ start_date }} to {{ end_date }}{% endblocktrans %}
+  
+  <table>
+    <thead>
+      <tr>
+        <th>{% trans "----Client~~~~" %}</th>
+        <th>{% trans "----Time~~~~" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for client, time in time_dict.items %}
+      <tr class="{% cycle 'even' 'odd' %}">
+        <td class="client-name">
+          {{ client }}
+        </td>
+        <td class="client-time">{{ time }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
