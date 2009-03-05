@@ -306,7 +306,7 @@ def user_billing(request, user_id):
                 end = form.cleaned_data['end']
                 return HttpResponseRedirect('/statistics/billing/%s/date/%s/%s/' % (user_id, start, end))
             else:
-                return render_to_response('statistics/team_stat_date_selection.html', {'user': user, 'form': form},
+                return render_to_response('statistics/billing_time_page.html', {'user': user, 'form': form},
                                           context_instance=RequestContext(request))
 
 @login_required()
@@ -323,13 +323,31 @@ def user_billing_weeks(request, user_id, date, number_of_weeks):
     slice_set = TimeSlice.objects.filter(user=user, begin__range=(start_date, end_date))
     time_dict = {}
     for timeslice in slice_set:
-        if time_dict.has_key(timeslice.slip.client):
-            time_dict[timeslice.slip.client] += timeslice.duration
+        project = timeslice.slip.project
+        client = timeslice.slip.client
+        if project and not client:
+            if time_dict.has_key(project.name):
+                time_dict[project.name][2] += timeslice.duration
+            else:
+                time_dict[project.name] = ['None', project.name, timeslice.duration]
+        elif client and not project:
+            if time_dict.has_key(client.name):
+                time_dict[client.name][2] += timeslice.duration
+            else:
+                time_dict[client.name] = [client.name, 'None', timeslice.duration]
+        elif project and client:
+            if time_dict.has_key(client.name+project.name):
+                time_dict[client.name+project.name][2] += timeslice.duration
+            else:
+                time_dict[client.name+project.name] = [client.name, project.name, timeslice.duration]
         else:
-            time_dict[timeslice.slip.client] = timeslice.duration
+            if time_dict.has_key('None'):
+                time_dict['None'][2] += timeslice.duration
+            else:
+                time_dict['None'] = ['None', 'None', timeslice.duration]
 
     for key in time_dict.keys():
-        time_dict[key] = '%02i:%02i' % (time_dict[key]/3600, time_dict[key]%3600/60)
+        time_dict[key][2] = '%02i:%02i' % (time_dict[key][2]/3600, time_dict[key][2]%3600/60)
     return render_to_response('statistics/billing_page.html', {'user': user, 'time_dict': time_dict, 'start_date': start_date, 'end_date': end_date},
                                 context_instance=RequestContext(request))
 
@@ -344,12 +362,30 @@ def user_billing_date(request, user_id, start_date, end_date):
     slice_set = TimeSlice.objects.filter(user=user, begin__range=(start_date, end_date))
     time_dict = {}
     for timeslice in slice_set:
-        if time_dict.has_key(timeslice.slip.client):
-            time_dict[timeslice.slip.client] += timeslice.duration
+        project = timeslice.slip.project
+        client = timeslice.slip.client
+        if project and not client:
+            if time_dict.has_key(project.name):
+                time_dict[project.name][2] += timeslice.duration
+            else:
+                time_dict[project.name] = ['None', project.name, timeslice.duration]
+        elif client and not project:
+            if time_dict.has_key(client.name):
+                time_dict[client.name][2] += timeslice.duration
+            else:
+                time_dict[client.name] = [client.name, 'None', timeslice.duration]
+        elif project and client:
+            if time_dict.has_key(client.name+project.name):
+                time_dict[client.name+project.name][2] += timeslice.duration
+            else:
+                time_dict[client.name+project.name] = [client.name, project.name, timeslice.duration]
         else:
-            time_dict[timeslice.slip.client] = timeslice.duration
+            if time_dict.has_key('None'):
+                time_dict['None'][2] += timeslice.duration
+            else:
+                time_dict['None'] = ['None', 'None', timeslice.duration]
 
     for key in time_dict.keys():
-        time_dict[key] = '%02i:%02i' % (time_dict[key]/3600, time_dict[key]%3600/60)
+        time_dict[key][2] = '%02i:%02i' % (time_dict[key][2]/3600, time_dict[key][2]%3600/60)
     return render_to_response('statistics/billing_page.html', {'user': user, 'time_dict': time_dict, 'start_date': start_date, 'end_date': end_date},
                                 context_instance=RequestContext(request))

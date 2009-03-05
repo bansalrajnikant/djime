@@ -12,16 +12,20 @@
     <thead>
       <tr>
         <th>{% trans "----Client~~~~" %}</th>
+        <th>{% trans "----Project~~~~" %}</th>
         <th>{% trans "----Time~~~~" %}</th>
       </tr>
     </thead>
     <tbody>
-      {% for client, time in time_dict.items %}
+      {% for key, list in time_dict.items %}
       <tr class="{% cycle 'even' 'odd' %}">
         <td class="client-name">
-          {{ client }}
+          {{ list.0 }}
         </td>
-        <td class="client-time">{{ time }}</td>
+        <td class="project-name">
+          {{ list.1 }}
+        </td>
+        <td class="client-time">{{ list.2 }}</td>
       </tr>
       {% endfor %}
     </tbody>
