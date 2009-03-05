@@ -2,6 +2,13 @@
 
 {% load i18n %}
 
+{% block extra_head %}
+  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}daterangepicker/ui.daterangepicker.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}daterangepicker/ui.datepicker.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}daterangepicker/ui.core.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}daterangepicker/ui.theme.css" />
+{% endblock %}
+
 {% block head_title %}{% trans "hest" %}{% endblock %}
 
 {% block extra_head %}
@@ -23,6 +30,7 @@
 {% endblock %}
 
 {% block closure %}
-    <script type="text/javascript" src="{{ DEMO_STATIC_URL }}jquery.ui-1.5.3/ui/jquery.ui.all.js"></script>
+    <script type="text/javascript" src="{{ DEMO_STATIC_URL }}daterangepicker/daterangepicker.jQuery.js"></script>
+    <script type="text/javascript" src="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc6/ui/jquery.ui.all.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/statistics.js"></script>
 {% endblock %}
