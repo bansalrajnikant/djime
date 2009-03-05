@@ -60,14 +60,14 @@ def display_user_date_selection(request, user_id, start_date, end_date):
     s_date = start_date.split('-')
     e_date = end_date.split('-')
     try:
-        date_diff datetime.date(int(e_date[0]), int(e_date[1]), int(e_date[2])) - datetime.date(int(s_date[0]), int(s_date[1]), int(s_date[2]))
+        date_diff = datetime.date(int(e_date[0]), int(e_date[1]), int(e_date[2])) - datetime.date(int(s_date[0]), int(s_date[1]), int(s_date[2]))
         if date_diff < datetime.timdelta(days=60) and date_diff > datetime.timedelta(days=0):
             return render_to_response('statistics/display_user_date.html', {'user_id': user_id, 'start_date': start_date, 'end_date': end_date},
                                           context_instance=RequestContext(request))
         else:
             return HttpResponse(_('Invalid date, min 1 day and max 60 days'))
     except ValueError:
-        return HttpResponse(_('Invalid date, must be dd-mm-yyyy'))
+        return HttpResponse(_('Invalid date, must be yyyy-mm-dd'))
 
 
 @login_required()
@@ -132,14 +132,14 @@ def display_team_date_selection(request, team_id, start_date, end_date):
     s_date = start_date.split('-')
     e_date = end_date.split('-')
     try:
-        date_diff datetime.date(int(e_date[0]), int(e_date[1]), int(e_date[2])) - datetime.date(int(s_date[0]), int(s_date[1]), int(s_date[2]))
+        date_diff = datetime.date(int(e_date[0]), int(e_date[1]), int(e_date[2])) - datetime.date(int(s_date[0]), int(s_date[1]), int(s_date[2]))
         if date_diff < datetime.timdelta(days=60) and date_diff > datetime.timedelta(days=0):
             return render_to_response('statistics/display_team_date.html', {'team_id': team_id, 'start_date': start_date, 'end_date': end_date},
                                       context_instance=RequestContext(request))
         else:
             return HttpResponse(_('Invalid date, min 1 day and max 60 days'))
     except ValueError:
-        return HttpResponse(_('Invalid date, must be dd-mm-yyyy'))
+        return HttpResponse(_('Invalid date, must be yyyy-mm-dd'))
 
 
 @login_required()
@@ -204,14 +204,14 @@ def display_team_stat_date_selection(request, team_id, start_date, end_date):
     s_date = start_date.split('-')
     e_date = end_date.split('-')
     try:
-        date_diff datetime.date(int(e_date[0]), int(e_date[1]), int(e_date[2])) - datetime.date(int(s_date[0]), int(s_date[1]), int(s_date[2]))
+        date_diff = datetime.date(int(e_date[0]), int(e_date[1]), int(e_date[2])) - datetime.date(int(s_date[0]), int(s_date[1]), int(s_date[2]))
         if date_diff < datetime.timdelta(days=60) and date_diff > datetime.timedelta(days=0):
             return render_to_response('statistics/display_team_stat_date.html', {'team_id': team_id, 'start_date': start_date, 'end_date': end_date},
                                       context_instance=RequestContext(request))
         else:
             return HttpResponse(_('Invalid date, min 1 day and max 60 days'))
     except ValueError:
-        return HttpResponse(_('Invalid date, must be dd-mm-yyyy'))
+        return HttpResponse(_('Invalid date, must be yyyy-mm-dd'))
 
 
 def data_user_week(request, week, year, user_id):
