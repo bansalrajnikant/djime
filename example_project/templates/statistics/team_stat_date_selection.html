@@ -11,10 +11,6 @@
 
 {% block head_title %}{% trans "hest" %}{% endblock %}
 
-{% block extra_head %}
-  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}jquery.ui-1.5.3/themes/djime/ui.theme.css" />
-{% endblock %}
-
 {% block content %}
     <form method="post" action="/statistics/team_stat/{{ team_id }}/date/selection/">
         <fieldset>
