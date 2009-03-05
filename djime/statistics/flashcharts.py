@@ -12,6 +12,10 @@ from django.utils.translation import ugettext as _ #note, we dont use ugettext_l
 
 def user_week_json(user, week, year):
     slice_query_set = TimeSlice.objects.filter(week_number=week, begin__year= year, user = user)
+    # need to exclude the days days in the start of the year that can have week
+    # number 52, 53. (The lasts week of the year before)
+    if week in [52, 53]:
+        slice_query_set.exclude(begin__month=1)
     # start date is set to a day in the week before the week we want to search.
     start_date = datetime.date(year, 1, 1) + datetime.timedelta(days = (week-2)*7)
     # this while loop will keep adding a day to the start date, until first day of the week is reached
@@ -200,6 +204,8 @@ def team_week_json(team, week, year):
     for member in members:
         members_id.append(member.id)
     slice_query_set = TimeSlice.objects.filter(week_number=week, begin__year= year, user__in = members_id)
+    if week in [52, 53]:
+        slice_query_set.exclude(begin__month=1)
 
     start_date = datetime.date(year, 1, 1) + datetime.timedelta(days = (week-2)*7)
     while start_date.isocalendar()[1] != week:
@@ -386,6 +392,8 @@ def team_stat_week_json(team, week, year):
         members_id.append(member.id)
 
     slice_set = TimeSlice.objects.filter(week_number=week, begin__year= year, user__in = members_id)
+    if week in [52, 53]:
+        slice_set.exclude(begin__month=1)
     start_date = datetime.date(year, 1, 1) + datetime.timedelta(days = (week-2)*7)
     while start_date.isocalendar()[1] != week:
         start_date += datetime.timedelta(days=1)
