@@ -31,7 +31,7 @@ class PermissionSlip(Permission):
     This is the permission model for slips.
     """
 
-    model = models.ForeignKey(Slip)
+    slip = models.ForeignKey(Slip)
 
     def __unicode__(self):
         return self.model.__unicode__() + ': ' + self.PERMISSION_CHOICES[self.permission][1]
@@ -41,7 +41,7 @@ class PermissionProject(Permission):
     This is the permission model for projets.
     """
 
-    model = models.ForeignKey(Project)
+    project = models.ForeignKey(Project)
 
     def __unicode__(self):
         return self.model.__unicode__() + ': ' + self.PERMISSION_CHOICES[self.permission][1]
@@ -51,7 +51,7 @@ class PermissionClient(Permission):
     This is the permission model for projets.
     """
 
-    model = models.ForeignKey(Client)
+    client = models.ForeignKey(Client)
 
     def __unicode__(self):
         return self.model.__unicode__() + ': ' + self.PERMISSION_CHOICES[self.permission][1]
