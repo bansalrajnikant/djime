@@ -96,7 +96,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'pagination',
-    'acapella',
     'account',
     'project',
     'teams',
