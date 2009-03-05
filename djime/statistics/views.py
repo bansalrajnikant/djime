@@ -6,7 +6,9 @@ from django.template import RequestContext
 from djime.statistics.forms import DateSelectionForm
 from teams.models import Team
 import djime.statistics.flashcharts as flashcharts
-from django.utils.translation import ugettext as trans
+from django.utils.translation import ugettext as _
+from django.contrib.auth.models import User
+from exceptions import ValueError
 
 @login_required()
 def index(request):
@@ -17,7 +19,7 @@ def index(request):
 @login_required()
 def display_user_week(request, user_id, year, week):
     if int(request.user.id) != int(user_id):
-        return HttpResponseForbidden(trans('Access denied'))
+        return HttpResponseForbidden(_('Access denied'))
     return render_to_response('statistics/display_user_week.html', {'week': week, 'year': year, 'user_id': user_id},
                                       context_instance=RequestContext(request))
 
@@ -25,7 +27,7 @@ def display_user_week(request, user_id, year, week):
 @login_required()
 def display_user_month(request, user_id, year, month):
     if int(request.user.id) != int(user_id):
-        return HttpResponseForbidden(trans('Access denied'))
+        return HttpResponseForbidden(_('Access denied'))
     return render_to_response('statistics/display_user_month.html', {'month' : month, 'year': year, 'user_id': user_id},
                                       context_instance=RequestContext(request))
 
@@ -57,12 +59,15 @@ def display_user_date_selection(request, user_id, start_date, end_date):
         return HttpResponseForbidden('Access denied')
     s_date = start_date.split('-')
     e_date = end_date.split('-')
-    date_diff = int(e_date[0])*365+int(e_date[1])*30+int(e_date[2])-(int(s_date[0])*365+int(s_date[1])*30+int(s_date[2]))
-    if date_diff < 60 and date_diff > 0:
-        return render_to_response('statistics/display_user_date.html', {'user_id': user_id, 'start_date': start_date, 'end_date': end_date},
-                                      context_instance=RequestContext(request))
-    else:
-        return HttpResponse(trans('Invalid date, max 60 days'))
+    try:
+        date_diff datetime.date(int(e_date[0]), int(e_date[1]), int(e_date[2])) - datetime.date(int(s_date[0]), int(s_date[1]), int(s_date[2]))
+        if date_diff < datetime.timdelta(days=60) and date_diff > datetime.timedelta(days=0):
+            return render_to_response('statistics/display_user_date.html', {'user_id': user_id, 'start_date': start_date, 'end_date': end_date},
+                                          context_instance=RequestContext(request))
+        else:
+            return HttpResponse(_('Invalid date, min 1 day and max 60 days'))
+    except ValueError:
+        return HttpResponse(_('Invalid date, must be dd-mm-yyyy'))
 
 
 @login_required()
@@ -73,7 +78,7 @@ def display_team_week(request, team_id, year, week):
     for member in members:
         members_id.append(member.id)
     if request.user.id not in members_id:
-        return HttpResponseForbidden(trans('Access denied'))
+        return HttpResponseForbidden(_('Access denied'))
 
     return render_to_response('statistics/display_team_week.html', {'week': week, 'year': year, 'team_id': team_id},
                                       context_instance=RequestContext(request))
@@ -87,7 +92,7 @@ def display_team_month(request, team_id, year, month):
     for member in members:
         members_id.append(member.id)
     if request.user.id not in members_id:
-        return HttpResponseForbidden(trans('Access denied'))
+        return HttpResponseForbidden(_('Access denied'))
 
     return render_to_response('statistics/display_team_month.html', {'month' : month, 'year': year, 'team_id': team_id},
                                       context_instance=RequestContext(request))
@@ -122,16 +127,19 @@ def display_team_date_selection(request, team_id, start_date, end_date):
     for member in members:
         members_id.append(member.id)
     if request.user.id not in members_id:
-        return HttpResponseForbidden(trans('Access denied'))
+        return HttpResponseForbidden(_('Access denied'))
 
     s_date = start_date.split('-')
     e_date = end_date.split('-')
-    date_diff = int(e_date[0])*365+int(e_date[1])*30+int(e_date[2])-(int(s_date[0])*365+int(s_date[1])*30+int(s_date[2]))
-    if date_diff < 60 and date_diff > 0:
-        return render_to_response('statistics/display_team_date.html', {'team_id': team_id, 'start_date': start_date, 'end_date': end_date},
+    try:
+        date_diff datetime.date(int(e_date[0]), int(e_date[1]), int(e_date[2])) - datetime.date(int(s_date[0]), int(s_date[1]), int(s_date[2]))
+        if date_diff < datetime.timdelta(days=60) and date_diff > datetime.timedelta(days=0):
+            return render_to_response('statistics/display_team_date.html', {'team_id': team_id, 'start_date': start_date, 'end_date': end_date},
                                       context_instance=RequestContext(request))
-    else:
-        return HttpResponse(trans('Invalid date, max 60 days'))
+        else:
+            return HttpResponse(_('Invalid date, min 1 day and max 60 days'))
+    except ValueError:
+        return HttpResponse(_('Invalid date, must be dd-mm-yyyy'))
 
 
 @login_required()
@@ -142,7 +150,7 @@ def display_team_stat_week(request, team_id, week, year):
     for member in members:
         members_id.append(member.id)
     if request.user.id not in members_id:
-        return HttpResponseForbidden(trans('Access denied'))
+        return HttpResponseForbidden(_('Access denied'))
 
     return render_to_response('statistics/display_team_stat_week.html', {'week': week, 'year': year, 'team_id': team_id},
                                       context_instance=RequestContext(request))
@@ -156,7 +164,7 @@ def display_team_stat_month(request, team_id, month, year):
     for member in members:
         members_id.append(member.id)
     if request.user.id not in members_id:
-        return HttpResponseForbidden(trans('Access denied'))
+        return HttpResponseForbidden(_('Access denied'))
 
     return render_to_response('statistics/display_team_stat_month.html', {'month': month, 'year': year, 'team_id': team_id},
                                       context_instance=RequestContext(request))
@@ -191,16 +199,19 @@ def display_team_stat_date_selection(request, team_id, start_date, end_date):
     for member in members:
         members_id.append(member.id)
     if request.user.id not in members_id:
-        return HttpResponseForbidden(trans('Access denied'))
+        return HttpResponseForbidden(_('Access denied'))
 
     s_date = start_date.split('-')
     e_date = end_date.split('-')
-    date_diff = int(e_date[0])*365+int(e_date[1])*30+int(e_date[2])-(int(s_date[0])*365+int(s_date[1])*30+int(s_date[2]))
-    if date_diff < 60 and date_diff > 0:
-        return render_to_response('statistics/display_team_stat_date.html', {'team_id': team_id, 'start_date': start_date, 'end_date': end_date},
+    try:
+        date_diff datetime.date(int(e_date[0]), int(e_date[1]), int(e_date[2])) - datetime.date(int(s_date[0]), int(s_date[1]), int(s_date[2]))
+        if date_diff < datetime.timdelta(days=60) and date_diff > datetime.timedelta(days=0):
+            return render_to_response('statistics/display_team_stat_date.html', {'team_id': team_id, 'start_date': start_date, 'end_date': end_date},
                                       context_instance=RequestContext(request))
-    else:
-        return HttpResponse(trans('Invalid date, max 60 days'))
+        else:
+            return HttpResponse(_('Invalid date, min 1 day and max 60 days'))
+    except ValueError:
+        return HttpResponse(_('Invalid date, must be dd-mm-yyyy'))
 
 
 def data_user_week(request, week, year, user_id):
