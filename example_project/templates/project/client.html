@@ -5,24 +5,34 @@
 {% block head_title %}{% trans "Client | " %}{{ client }}{% endblock %}
 
 {% block content %}
+  <div id="block-list" class="block">
+    <div class="content">
+      <h2 class="title">{% trans "Projects for " %}{{ client }}:</h1>
+      <div class="inner">
+        {% for project in project_list %}
+          <p><a href="{% url project_page project_id=project.id %}">
+            {{ project }}
+          </a></p>
+        {% endfor %}
+      </div>
 
-  <h1>{% trans "Projects for " %}{{ client }}:</h1>
-    {% for project in project_list %}
-      <p><a href="{% url project_page project_id=project.id %}">
-        {{ project }}
-      </a></p>
-    {% endfor %}
+{% comment %}
+  Here blocktrans is using "with" for the user submitted variables. The
+  reason for this, is that when not using with, it the variables will inside
+  the blocktrans tags will not be escaped.
+{% endcomment %}
 
-  {% comment %}
-    Here blocktrans is using "with" for the user submitted variables. The
-    reason for this, is that when not using with, it the variables will inside
-    the blocktrans tags will not be escaped.
-  {% endcomment %}
-
-  <h2>{% blocktrans with client as client %} Client: {{ client }}. Total duration: {{ time_all }}{% endblocktrans %}</h2>
-  <h2>{% blocktrans with user as user and client as client %}{{ user }}'s tasks in {{ client }}. Total duration: {{ time_user }}{% endblocktrans %}</h2>
-    {{ user_list }}
-
-  <h2>{% blocktrans with client as client %}Other's tasks in {{ client }}. Total duration: {{ time_other }}{% endblocktrans %}</h2>
-    {{ other_list }}
+      <div class="inner">
+        <h2>{% blocktrans with client as client %} Client: {{ client }}. Total duration: {{ time_all }}{% endblocktrans %}</h2>
+      </div>
+      <h2 class="title">
+        {% blocktrans with user as user and client as client %}{{ user }}'s tasks in {{ client }}. Total duration: {{ time_user }}{% endblocktrans %}
+      </h2>
+      {{ user_list }}
+      <h2 class="title">
+        {% blocktrans with client as client %}Other's tasks in {{ client }}. Total duration: {{ time_other }}{% endblocktrans %}
+      </h2>
+      {{ other_list }}
+    </div>
+  </div>
 {% endblock %}

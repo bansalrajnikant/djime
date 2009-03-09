@@ -9,26 +9,48 @@
 {% endblock %}
 
 {% block content %}
-  <div id="dialog-box"></div>
-  <h2>
-    <div class="edit" id="div-1">{{ slip.name }}</div>
-  </h2>
-  <p>{% trans "Project: " %}{{ slip.project }}</p>
-  <p>{% trans "Client: " %}{{ slip.client }}</p>
-  <p>{% trans "Total time:" %} <span id="slip-total-time">{{ slip.display_time }}</span></p>
-  <div id="slip-timer-button" class="{{ timer.class }}"><div class="timeclock">0:00</div></div>
+  <div id="block-text" class="block">
+    <div class="content">
+      <div id="dialog-box"></div>
+      <h2 class="title">
+        <div class="edit" id="div-1">{{ slip.name }}</div>
+      </h2>
+      <div class="inner">
+        <p>{% trans "Project: " %}{{ slip.project }}</p>
+        <p>{% trans "Client: " %}{{ slip.client }}</p>
+        <p>{% trans "Total time:" %} <span id="slip-total-time">{{ slip.display_time }}</span></p>
+        <div id="slip-timer-button" class="{{ timer.class }}"><div class="timeclock">0:00</div></div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block sidebar %}
-  <input type="button" name="delete-slip" id="delete-slip-button" value="Delete this slip" />
+  <div class="block">
+    <h3 class="title">
+      <input type="button" name="delete-slip" id="delete-slip-button" value="Delete this slip" />
+    </h3>
+  </div>
   {% if slip_change_form %}
-  <p>{% trans "Assign new project or client to your task." %}</p>
-  <form method="post" action="">
+  <div class="block">
+    <h3>{% trans "Create a new task" %}</h3>
+    <form class="form" method="post" action="{% url slip_create %}">
+      {{ form.errors }}
       <ul class="form-items">
-          {{ slip_change_form.as_ul }}
+        <div class="group">
+          {{ slip_change_form.project.errors }}
+          <label for="id_project">Project:</label>
+          {{ slip_change_form.project }}
+        </div>
+        <div class="group">
+          {{ slip_change_form.client.errors }}
+          <label for="id_client">Client:</label>
+          {{ slip_change_form.client }}
+        </div>
+        <input type="submit" value="Update task" />
       </ul>
-      <input type="submit" value="Update task" />
-  </form>
+    </form>
+  </div>
   {% endif %}
 {% endblock %}
 

@@ -5,9 +5,22 @@
 {% block head_title %}{% trans "Statistics" %}{% endblock %}
 
 {% block content %}
-  {% trans "Choose a user whose billing hours you would like to see" %}
-  {% for user in users %}
-    <p><a href="{% url billing_page user.id %}">{{ user }}</a></p>
-  {% endfor %}
+  <div id="block-text" class="block">
+    <div class="secondary-navigation">
+      <ul>
+        {% include "statistics/navigation.html" %}
+        <li><a href="{% url billing_index %}">{% trans "Billing index" %}</a></li>
+      </ul>
+      <div class="clear"></div>
+    </div>
+    <div class="content">
+      <h2 class="title">{% blocktrans with user as user %}Statistics for user {{ user }}{% endblocktrans %}</h2>
+      <div class="inner">
+        <h3>{% trans "Choose a user whose billing hours you would like to see" %}</h3>
+        {% for user in users %}
+          <p><a href="{% url billing_page user.id %}">{{ user }}</a></p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 {% endblock %}
-

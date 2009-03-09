@@ -10,48 +10,49 @@
 {% endif %}
 {% load i18n %}
 
-<table>
-  <thead>
-    <tr>
-      <th>{% trans "Name" %}</th>
-      <th>{% trans "Time" %}</th>
-      {% if not list_exclude_project %}
-      <th>{% trans "Project" %}</th>
-      {% endif %}
-      {% if not list_exclude_client %}
-      <th>{% trans "Client" %}</th>
-      {% endif %}
-    </tr>
-  </thead>
-  <tbody>
-    {% for slip in slip_list %}
-    <tr id="slip-{{ slip.id }}" class="slip {% cycle 'even' 'odd' %}">
-      <td class="slip-name">
-        <a href="{% url slip_page slip_id=slip.id %}">{{ slip.name }}</a>
-      </td>
-      <td class="slip-time">{{ slip.display_time }}</td>
-      {% if not list_exclude_project %}
-      <td class="slip-project-name">
-        {% if slip.project_id %}
-        <a href="{% url project_page project_id=slip.project_id %}">
-          {{ slip.project.name }}
-        </a>
-        {% endif %}
-      </td>
-      {% endif %}
-      {% if not list_exclude_client %}
-      <td class="slip-client-name">
-        {% if slip.project.client_id %}
-        <a href="{% url client_page client_id=slip.project.client_id %}">
-          {{ slip.project.client.name }}
-        </a>
-        {% endif %}
-      </td>
-      {% endif %}
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-
+  <div class="inner">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>{% trans "Name" %}</th>
+          <th>{% trans "Time" %}</th>
+          {% if not list_exclude_project %}
+          <th>{% trans "Project" %}</th>
+          {% endif %}
+          {% if not list_exclude_client %}
+          <th>{% trans "Client" %}</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for slip in slip_list %}
+        <tr id="slip-{{ slip.id }}" class="slip {% cycle 'even' 'odd' %}">
+          <td class="slip-name">
+            <a href="{% url slip_page slip_id=slip.id %}">{{ slip.name }}</a>
+          </td>
+          <td class="slip-time">{{ slip.display_time }}</td>
+          {% if not list_exclude_project %}
+          <td class="slip-project-name">
+            {% if slip.project_id %}
+            <a href="{% url project_page project_id=slip.project_id %}">
+              {{ slip.project.name }}
+            </a>
+            {% endif %}
+          </td>
+          {% endif %}
+          {% if not list_exclude_client %}
+          <td class="slip-client-name">
+            {% if slip.project.client_id %}
+            <a href="{% url client_page client_id=slip.project.client_id %}">
+              {{ slip.project.client.name }}
+            </a>
+            {% endif %}
+          </td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 {% paginate %}
 

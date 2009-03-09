@@ -4,9 +4,9 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   {% load i18n %}
   <title>Djime | {% block head_title %}Time tracker{% endblock %}</title>
-  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}css/reset-fonts-grids.css" />
-  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}css/djime.css" />
-  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}css/tracker.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}web-app-theme/base.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}web-app-theme/style.css" />
+
   <!--[if IE]><style>
     div {
       zoom: 1; /* trigger hasLayout */
@@ -18,45 +18,59 @@
 
 <body>
   {% block body %}
-  <div id="doc" class="yui-t4">
-    <div id="hd">
+    <div id="container">
       <div id="header">
-        <div class="login">
+        <h1><a href="{% url djime_index %}">Djime</a></h1>
+        <div id="user-navigation">
           {% block login %}{% endblock %}
           {% block locale_switcher %}{% endblock %}
+          <div class="clear"></div>
         </div>
-        <h1 id="site-header">Djime</h1>
-        &nbsp;
+        <div id="main-navigation">
+          {% block main_menu %}
+          {% endblock %}
+          <div class="clear"></div>
+        </div>
       </div>
-      <div id="main-menu-bar" class="clear-block">
-        {% block main_menu %}
-        {% endblock %}
-      </div>
-    </div>
-    <div id="bd">
-      <div id="yui-main">
-        <div id="content" class="yui-b">
+      <div id="wrapper">
+        <div id="main">
+          {% block secondary_navigation %}
+          {% endblock %}
+
           {% if messages %}
-            <ul id="messages">
-              {% for message in messages %}
-              <li id="message_{{ forloop.counter }}">{{ message }}</li>
-              {% endfor %}
-            </ul>
+            <div class ='content'>
+              <div class="flash">
+                <div class="message error">
+                  {% for message in messages %}
+                    <li id="message_{{ forloop.counter }}">{{ message }}</li>
+                  {% endfor %}
+                </div>
+                {% comment %}
+                these are two other kind of messages, that we might at a later
+                point implement to display messages differently.
+                <div class="message warning"></div>
+                <div class="message notice"></div>
+                {% endcomment %}
+              </div>
+            </div>
           {% endif %}
 
           {% block content %}
           {% endblock %}
 
+          <div id="footer">
+            {% block footer %}
+            {% endblock %}
+          </div>
+
         </div>
+        <div id="sidebar">
+          {% block sidebar %}
+          {% endblock %}
+        </div>
+        <div class="clear"/></div>
       </div>
-      <div id="sidebar" class="yui-b">
-        {% block sidebar %}
-        {% endblock %}
-      </div>
-    </div>
-    <div id="ft">{% block footer %}{% endblock %}</div>
-  </div>
-  <div id="closure">
+    <div id="closure">
     <script type="text/javascript">
       {# Define a djime object in JavaScript that other templates can put attributes into #}
       var djime = {
@@ -70,7 +84,6 @@
     {# Final closing code JavaScript loading and HTML used in JavaScript. #}
     {% block closure %}
     {% endblock %}
-  </div>
   {% endblock %}
 </body>
 </html>

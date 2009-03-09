@@ -5,8 +5,20 @@
 {% block head_title %}{% trans "Statistics" %}{% endblock %}
 
 {% block content %}
-    <div id="flash-chart">
+<div id="block-text" class="block">
+  <div class="secondary-navigation">
+    <ul>
+      <li><a href="{% url billing_index %}">{% trans "Billing index" %}</a></li>
+    </ul>
+    <div class="clear"></div>
+  </div>
+  <div class="content">
+    <h2 class="title">{% blocktrans with team as team %}Statistics for team {{ team }}{% endblocktrans %}</h2>
+    <div class="inner">
+      <div id="flash-chart"></div>
     </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block closure %}

@@ -5,37 +5,98 @@
 {% block head_title %}{% trans "Projects" %}{% endblock %}
 
 {% block content %}
-  {% if projects_active %}
-    <h2>{% trans "Active projects" %}</h2>
-    {% for project in projects_active %}
-      <ul><a href="{% url project_page project_id=project.id %}">{{ project }}</a></ul>
-    {% endfor %}
-  {% endif %}
-    {% if projects_on_hold %}
-    <h2>{% trans "Projects on hold" %}</h2>
-    {% for project in projects_on_hold %}
-      <ul><a href="{% url project_page project_id=project.id %}">{{ project }}</a></ul>
-    {% endfor %}
-  {% endif %}
-  {% if projects_completed %}
-    <h2>{% trans "Completed projects" %}</h2>
-    {% for project in projects_completed %}
-      <ul><a href="{% url project_page project_id=project.id %}">{{ project }}</a></ul>
-    {% endfor %}
-  {% endif %}
-  {% if projects_dropped %}
-    <h2>{% trans "Dropped projects" %}</h2>
-    {% for project in projects_dropped %}
-      <ul><a href="{% url project_page project_id=project.id %}">{{ project }}</a></ul>
-    {% endfor %}
-  {% endif %}
+  <div id="block-list" class="block">
+    <div class="content">
+      {% if projects_active %}
+        <h2 class="title">{% trans "Active projects" %}</h2>
+        <div class="inner">
+          <ul class="list">
+            {% for project in projects_active %}
+              <li>
+                <div class="left">*</div>
+                <div class="right">
+                  <a href="{% url project_page project_id=project.id %}">{{ project }}</a>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      {% if projects_on_hold %}
+        <h2 class="title">{% trans "Projects on hold" %}</h2>
+        <div class="inner">
+          <ul class="list">
+            {% for project in projects_on_hold %}
+              <li>
+                <div class="left">*</div>
+                <div class="right">
+                  <a href="{% url project_page project_id=project.id %}">{{ project }}</a>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      {% if projects_completed %}
+        <h2 class="title">{% trans "Completed projects" %}</h2>
+        <div class="inner">
+          <ul class="list">
+            {% for project in projects_completed %}
+              <li>
+                <div class="left">*</div>
+                <div class="right">
+                  <a href="{% url project_page project_id=project.id %}">{{ project }}</a>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      {% if projects_dropped %}
+        <h2 class="title">{% trans "Dropped projects" %}</h2>
+        <div class="inner">
+          <ul class="list">
+            {% for project in projects_dropped %}
+              <li>
+                <div class="left">*</div>
+                <div class="right">
+                  <a href="{% url project_page project_id=project.id %}">{{ project }}</a>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}
 {% block sidebar %}
-    <p>{% trans "Create new project" %}</p
-  <form method="post" action="">
-      <ul class="form-items">
-          {{ project_add_form.as_ul }}
-      </ul>
-      <input type="submit" value="Create Project" />
-  </form>
+  {% if project_add_form %}
+    <div class="block">
+      <h3>{% trans "Create a new project" %}</h3>
+      <div class="inner">
+      <form class="form" method="post" action="">
+        {{ project_add_form.errors }}
+        <ul class="form-items">
+          <div class="group">
+            {{ project_add_form.name.errors }}
+            <label for="id_name">Name:</label>
+            {{ project_add_form.name }}
+          </div>
+          <div class="group">
+            {{ project_add_form.team.errors }}
+            <label for="id_project">Team:</label>
+            {{ project_add_form.team }}
+          </div>
+          <div class="group">
+            {{ project_add_form.client.errors }}
+            <label for="id_client">Client:</label>
+            {{ project_add_form.client }}
+          </div>
+          <input type="submit" value="Create project" />
+        </ul>
+      </form>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}

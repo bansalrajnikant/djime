@@ -5,35 +5,68 @@
 {% block head_title %}{%trans "Project | " %}{{ project }}{% endblock %}
 
 {% block content %}
-
+  <div id="block-tables" class="block">
   {% comment %}
     Here blocktrans is using "with" for the user submitted variables. The
     reason for this, is that when not using with, it the variables will inside
     the blocktrans tags will not be escaped.
   {% endcomment %}
 
-  <h1>{% blocktrans with project as project %}Project: {{ project }}. Total duration: {{ time_all }}{% endblocktrans %}<h1>
+  <h1 class="title">
+    {% blocktrans with project as project %}Project: {{ project }}. Total duration: {{ time_all }}{% endblocktrans %}
+  <h1>
   <p>{% trans "Client: " %}{{ project.client }}</p>
   {% if user_list %}
-    <h2>{% blocktrans with user as username and project as project %}{{ username }}'s tasks in {{ project }}. Total duration: {{ time_user }}{% endblocktrans %}</h2>
+
+    <h2 class="title">
+      {% blocktrans with user as username and project as project %}{{ username }}'s tasks in {{ project }}. Total duration: {{ time_user }}{% endblocktrans %}
+    </h2>
     {{ user_list }}
   {% endif %}
 
   {% if other_list %}
-    <h2>{% blocktrans with project as project %}Other's tasks in {{ project }}. Total duration: {{ time_other }}{% endblocktrans %}</h2>
+    <h2 class="title">
+      {% blocktrans with project as project %}Other's tasks in {{ project }}. Total duration: {{ time_other }}{% endblocktrans %}
+    </h2>
     {{ other_list }}
   {% endif %}
-
+  </div>
 {% endblock %}
 
 {% block sidebar %}
-  <p>{% trans "Update project" %}</p>
-  <form method="post" action="">
-      <ul class="form-items">
-          {{ form.as_ul }}
-      </ul>
-      <input type="submit" value="Update Project" />
-  </form>
+  {% if form %}
+    <div class="block">
+      <h3>{% trans "Update the project" %}</h3>
+      <div class="inner">
+      <form class="form" method="post" action="">
+        {{ form.errors }}
+        <ul class="form-items">
+          <div class="group">
+            {{ form.name.errors }}
+            <label for="id_name">Name:</label>
+            {{ form.name }}
+          </div>
+          <div class="group">
+            {{ form.team.errors }}
+            <label for="id_project">Project:</label>
+            {{ form.team }}
+          </div>
+          <div class="group">
+            {{ form.client.errors }}
+            <label for="id_client">Client:</label>
+            {{ form.client }}
+          </div>
+          <div class="group">
+            {{ form.state.errors }}
+            <label for="id_client">State:</label>
+            {{ form.state }}
+          </div>
+          <input type="submit" value="Update Project" />
+        </ul>
+      </form>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}
 
 {% block closure %}

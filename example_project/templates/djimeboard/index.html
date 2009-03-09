@@ -3,46 +3,69 @@
 {% load i18n %}
 
 {% block content %}
-
-<div class="yui-g">
-  <div class="yui-u first current-slips">
-    <h4>{% trans "Current tasks" %}</h4>
-    <ul class="item-list slip-list">
-      {% for slip in slip_list %}
-        <li class="slip slip-{{ slip.id }}">
-          <a href="{% url slip_page slip_id=slip.id %}">
-            <span class="elapsed-time">{{ slip.display_time }}</span>
-            {{slip.name}}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
+  <div id="block-list" class="block">
+    <div class="content">
+      <h2 class="title">{% trans "Current tasks" %}</h2>
+      <div class="inner">
+        <ul class="item-list slip-list list">
+          {% for slip in slip_list %}
+            <li class="slip slip-{{ slip.id }}">
+              <div class="left">*</div>
+              <div class="right">
+                <a href="{% url slip_page slip_id=slip.id %}">
+                  <span class="elapsed-time">{{ slip.display_time }}</span>
+                  {{slip.name}}
+                </a>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <h2 class="title">{% trans "Current projects" %}</h2>
+      <div class="inner">
+        <ul class="item-list project-list list">
+          {% for project in project_list %}
+            <li class="project project-{{ project.id }}">
+              <div class="left">*</div>
+              <div class="right">
+                <a href="{% url project_page project_id=project.id %}">
+                  <span class="elapsed-time">{{ project.elapsed_time }}</span>
+                    {{project.name}}
+                </a>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
   </div>
-  <div class="yui-u current-projects">
-    <h4>{% trans "Current projects" %}</h4>
-    <ul class="item-list project-list">
-      {% for project in project_list %}
-        <li class="project project-{{ project.id }}">
-          <a href="{% url project_page project_id=project.id %}">
-            <span class="elapsed-time">{{ project.elapsed_time }}</span>
-              {{project.name}}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-</div>
-
 {% endblock %}
 
 {% block sidebar %}
     {% if slip_add_form %}
-    <form method="post" action="{% url slip_create %}">
+    <div class="block">
+      <h3>{% trans "Create a new task" %}</h3>
+      <form class="form" method="post" action="{% url slip_create %}">
         <ul class="form-items">
-            {{ slip_add_form.as_ul }}
+          <div class="group">
+            {{ slip_add_form.name.errors }}
+            <label for="id_name">Name:</label>
+            {{ slip_add_form.name }}
+          </div>
+          <div class="group">
+            {{ slip_add_form.project.errors }}
+            <label for="id_project">Project:</label>
+            {{ slip_add_form.project }}
+          </div>
+          <div class="group">
+            {{ slip_add_form.client.errors }}
+            <label for="id_client">Client:</label>
+            {{ slip_add_form.client }}
+          </div>
+          <input type="submit" value="Add a new task" />
         </ul>
-        <input type="submit" value="Add a new task" />
-    </form>
+      </form>
+    </div>
     {% endif %}
 {% endblock %}
 

@@ -12,17 +12,31 @@
 {% block head_title %}{% trans "hest" %}{% endblock %}
 
 {% block content %}
-    <form method="post" action="/statistics/team_stat/{{ team_id }}/date/selection/">
-        <fieldset>
-            {% trans "Date selection: " %}
-            <ol>
-                {{ form.as_ul }}
-                <li class="submit">
-                    <input type="submit" name="submit" value="{% trans 'Get Chart' %}" />
-                </li>
-            </ol>
-        </fieldset>
-    </form>
+  <div id="block-text" class="block">
+    <div class="secondary-navigation">
+      <ul>
+        <li><a href="{% url billing_index %}">{% trans "Billing index" %}</a></li>
+      </ul>
+      <div class="clear"></div>
+    </div>
+    <div class="content">
+      <h2 class="title">{% blocktrans with user as user %}Statistics for team: {{ team }}{% endblocktrans %}</h2>
+      <div class="inner">
+        <form method="post" action="/statistics/team_stat/{{ team_id }}/date/selection/">
+          <h3>{% trans "Date selection: " %}</h3>
+          {{ form.errors }}
+          <div class="group">
+            {{ form.date.errors }}
+            <label class="label">{% trans "Date" %}</label>
+            {{ form.date }}
+          </div>
+          <div class="group navform">
+            <input type="submit" name="submit" value="{% trans 'Get Chart' %}" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block closure %}

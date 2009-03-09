@@ -5,32 +5,30 @@
     {% url acct_logout as logout_url %}
     {% url acct_login as login_url %}
     {% url acct_signup as signup_url %}
-    {% if user.is_authenticated %}
-        {% blocktrans with user as user %}Hello, <em>{{ user }}</em>!{% endblocktrans %} |
-        {% if user.is_staff %}<a href="/admin/">{% trans "Admin" %}</a> | {% endif %}
-        <a href="{{ logout_url }}">{% trans "Logout" %}</a>
-    {% else %}
-        {% blocktrans %}<a href="{{ login_url }}">Login</a> or <a href="{{ signup_url }}"><b>Sign up</b></a>{% endblocktrans %}
-    {% endif %}
+    <ul>
+      {% if user.is_authenticated %}
+          <li>{% blocktrans with user as user %}Hello, <em>{{ user }}</em>!{% endblocktrans %}</li>
+          {% if user.is_staff %}<li><a href="/admin/">{% trans "Admin" %}</a></li>{% endif %}
+          <li><a href="{{ logout_url }}">{% trans "Logout" %}</a></li>
+      {% else %}
+          {% blocktrans %}<li><a href="{{ login_url }}">Login</a> or <a href="{{ signup_url }}"><b>Sign up</b></a></li>{% endblocktrans %}
+      {% endif %}
+    </ul>
 {% endblock %}
 
 {% block main_menu %}
-  <ul class="menu right">
-{% comment %}
-  Due to the way the right menu is styled, these links will
-  appear in reverse order.
-{% endcomment %}
-    <li><a href="/misc/">{% trans "Miscellaneous" %}</a></li>
-    <li><a href="{% url statistics_index %}">{% trans "Statistics" %}</a></li>
-  </ul>
-  <ul class="menu">
+  <ul>
     <li><a href="{% url djime_index %}">{% trans "Overview" %}</a></li>
     <li><a href="{% url slip_index %}">{% trans "Tasks" %}</a></li>
     <li><a href="{% url project_index %}">{% trans "Projects" %}</a></li>
     <li><a href="{% url client_index %}">{% trans "Clients" %}</a></li>
+    <li><a href="/misc/">{% trans "Miscellaneous" %}</a></li>
+    <li><a href="{% url statistics_index %}">{% trans "Statistics" %}</a></li>
   </ul>
 {% endblock %}
 
 {% block footer %}
-  <div class="legal">&copy; 2008 Reveal IT</div>
+  <div class="block">
+    <div class="legal">&copy; 2009 Reveal IT</div>
+  </div>
 {% endblock %}

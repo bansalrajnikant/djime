@@ -5,18 +5,41 @@
 {% block head_title %}{% trans "Welcome to Djime tracker." %}{% endblock %}
 
 {% block content %}
-    {% include "tracker/slip_list.html" %}
+<div id="block-tables" class="block">
+  <h2 class="title">{% trans "Your tasks" %}</h2>
+  {% include "tracker/slip_list.html" %}
+</div>
 {% endblock %}
 
 {% block sidebar %}
 
   {% if slip_add_form %}
-    <form method="post" action="{% url slip_create %}">
-      <ul class="form-items">
-        {{ slip_add_form.as_ul }}
-      </ul>
-    <input type="submit" value="Add a new task" />
-  </form>
+    <div class="block">
+      <h3>{% trans "Create a new task" %}</h3>
+      <div class="inner">
+      <form class="form" method="post" action="{% url slip_create %}">
+        {{ form.errors }}
+        <ul class="form-items">
+          <div class="group">
+            {{ slip_add_form.name.errors }}
+            <label for="id_name">Name:</label>
+            {{ slip_add_form.name }}
+          </div>
+          <div class="group">
+            {{ slip_add_form.project.errors }}
+            <label for="id_project">Project:</label>
+            {{ slip_add_form.project }}
+          </div>
+          <div class="group">
+            {{ slip_add_form.client.errors }}
+            <label for="id_client">Client:</label>
+            {{ slip_add_form.client }}
+          </div>
+          <input type="submit" value="Add a new task" />
+        </ul>
+      </form>
+      </div>
+    </div>
   {% endif %}
 
 {% endblock %}

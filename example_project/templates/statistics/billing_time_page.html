@@ -12,20 +12,53 @@
 {% endblock %}
 
 {% block content %}
-  <p>{% trans "Choose what time period for the user that you would like to see for user: " %}{{ user }}</p>
-  <p>{% trans "Week selections:" %}</p>
-  <form method="POST" action="">
-  <p><input id="billing-date" type="textfield" name="start-date"/>{% trans " start date" %}</p>
-  <p><input type="textfield" name="number-of-weeks" value="" />{% trans "number of weeks (max 4)" %}</p>
-  <input type="submit" value="{% trans 'Get' %}"/>
-  </form>
-  <p>{% trans "Date selections:" %}</p>
-  <form method="POST" action="">
-   {{ form.as_ul }}
-  <input type="submit" value="{% trans 'Get' %}"/>
-  </form>
-  
-  
+  <div id="block-text" class="block">
+    <div class="secondary-navigation">
+      <ul>
+        {% include "statistics/navigation.html" %}
+        <li><a href="{% url billing_index %}">{% trans "Billing index" %}</a></li>
+      </ul>
+      <div class="clear"></div>
+    </div>
+    <div class="content">
+      <h2 class="title">{% blocktrans with user as user %}Statistics for user {{ user }}{% endblocktrans %}</h2>
+      <div class="inner">
+        <h3>{% trans "Get billing for user: " %}{{ sellected_user }}</h3>
+        <form method="POST" action="" class="form">
+          <p>
+            {% trans "Get billing by sellecting a start day and a number of weeks you would like to see." %}
+            {% trans "Note that a week is 7 whole days, like friday to thursday." %}
+          </p>
+          <div class="group">
+            <label class="label">{% trans "Start date" %}</label>
+            <input id="billing-date" type="textfield" name="start-date"/>
+          </div>
+          <div class="group">
+            <label class="label">{% trans "number of weeks (max 4)" %}</label>
+            <input type="textfield" name="number-of-weeks" value=""/>
+          </div>
+        <div class"group navform">
+          <input type="submit" value="{% trans 'Get' %}"/>
+          </div>
+        </form>
+        <form method="POST" action="" class="form">
+          <p>
+            {% trans "Get billing by selecting a from and to date. Use the date picker for a fast selection of a time period of your choosing." %}
+          </p>
+          {{ form.errors }}
+            <div class="group">
+              {{ form.date.errors }}
+              <label class="label">{% trans "Date" %}</label>
+              {{ form.date }}
+            </div>
+            <div class"group navform">
+              <input type="submit" value="{% trans 'Get' %}"/>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block closure %}

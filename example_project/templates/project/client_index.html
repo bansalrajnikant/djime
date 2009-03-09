@@ -5,20 +5,39 @@
 {% block head_title %}{% trans "Clients" %}{% endblock %}
 
 {% block content %}
-  <h2>{% trans "All Clients" %}</h2>
-  {% for client in clients %}
-  <ul>
-    <a href="{% url client_page client_id=client.id %}">{{ client }}</a>
-  </ul>
-  {% endfor %}
+  <div id="block-list" class="block">
+    <div class="content">
+      <h2 class="title">{% trans "All Clients" %}</h2>
+      <div class="inner">
+        {% for client in clients %}
+          <ul class="list">
+            <li>
+              <a href="{% url client_page client_id=client.id %}">{{ client }}</a>
+            </li>
+          </ul>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block sidebar %}
-  <p>{% trans "Create new client" %}</p>
-  <form method="post" action="">
-      <ul class="form-items">
-          {{ client_add_form.as_ul }}
-      </ul>
-      <input type="submit" value="Create client" />
-  </form>
+  {% if client_add_form %}
+    <div class="block">
+      <h3>{% trans "Create a new client" %}</h3>
+      <div class="inner">
+        <form class="form" method="post" action="">
+          {{ client_add_form.errors }}
+          <ul class="form-items">
+            <div class="group">
+              {{ client_add_form.name.errors }}
+              <label for="id_name">Name:</label>
+              {{ client_add_form.name }}
+            </div>
+            <input type="submit" value="Create Client" />
+          </ul>
+        </form>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}
