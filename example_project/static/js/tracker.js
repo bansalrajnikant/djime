@@ -3,7 +3,7 @@ $(document).ready(function () {
   $("div.ui-dialog").hide();
 
   $("#delete-slip-button").click(function () {
-    $("#content").before('<div id="delete-dialog" class="ui-dialog"/>');
+    $("#main").before('<div id="delete-dialog" class="ui-dialog"/>');
     var dialog_box = $("div#delete-dialog");
     dialog_box.dialog({
       buttons: {
