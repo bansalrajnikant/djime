@@ -259,8 +259,10 @@ def slip_create(request):
             new_slip = form.save(commit=False)
             new_slip.user = request.user
             new_slip.save()
-            return HttpResponseRedirect(reverse('slip_page',
-                                                kwargs={'slip_id': new_slip.id}))
+            return HttpResponse("slip/%s" % new_slip.pk)
+            # the below code was used before jQuery dialog form.js was introduced.
+            # return HttpResponseRedirect(reverse('slip_page',
+            #                                        kwargs={'slip_id': new_slip.id}))
 
         else:
             return render_to_response('tracker/slip_create.html',
