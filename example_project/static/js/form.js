@@ -31,6 +31,7 @@ $(document).ready(function () {
 				container.show();
 				$("#id_project").remove();
 				container.append('<select id="id_project" name="project">' + djime.client_list[parseInt($("#id_client").val())] + '</select>');
+				project = $("#id_project");
 			}
 		}
 		else {
@@ -38,6 +39,7 @@ $(document).ready(function () {
 			$("#id_project").remove();
 			container.append('<input type="text" id="id_project" name="project" autocomplete="off" class="ac_input"/>');
 			$("#id_project").autocomplete(djime.autocomplete_projectnames);
+			project = $("#id_project");
 			$("#id_project").keyup(function () {
 				var i=0;
 				while (djime.autocomplete_projectnames[i]) {

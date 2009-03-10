@@ -2,6 +2,10 @@
 
 {% load i18n %}
 
+{% block extra_head %}
+  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc6/themes/redmond/ui.all.css" />
+{% endblock %}
+
 {% block content %}
   <div id="block-list" class="block">
     <div class="content">
@@ -42,44 +46,44 @@
 {% endblock %}
 
 {% block sidebar %}
-    {% if slip_add_form %}
+  {% if slip_add_form %}
     <div class="block">
+      <h3 class="title">
+        <input type="button" name="create-slip" id="create-slip-button" value="Create new slip" />
+      </h3>
+      <div id="slip-add-form">
       <h3>{% trans "Create a new task" %}</h3>
-      <form class="form" method="post" action="{% url slip_create %}">
-        <ul class="form-items">
-          <div class="group">
-            {{ slip_add_form.name.errors }}
-            <label for="id_name">Name:</label>
-            {{ slip_add_form.name }}
-          </div>
-          <div class="group">
-            {{ slip_add_form.project.errors }}
-            <label for="id_project">Project:</label>
-            {{ slip_add_form.project }}
-          </div>
-          <div class="group">
-            {{ slip_add_form.client.errors }}
-            <label for="id_client">Client:</label>
-            {{ slip_add_form.client }}
-          </div>
-          <input type="submit" value="Add a new task" />
-        </ul>
-      </form>
+      <div class="inner">
+        <div id="validateTips"></div>
+        <form class="form" method="post" action="{% url slip_create %}">
+          {{ form.errors }}
+          <ul class="form-items">
+            <div class="group">
+              {{ slip_add_form.name.errors }}
+              <label for="id_name">Name:</label>
+              {{ slip_add_form.name }}
+            </div>
+            <div class="group">
+              {{ slip_add_form.project.errors }}
+              <label for="id_project">Project:</label>
+              {{ slip_add_form.project }}
+            </div>
+            <div class="group">
+              {{ slip_add_form.client.errors }}
+              <label for="id_client">Client:</label>
+              {{ slip_add_form.client }}
+            </div>
+          </ul>
+        </form>
+      </div>
+      </div>
     </div>
-    {% endif %}
+  {% endif %}
 {% endblock %}
 
 {% block closure %}
-  <script type="text/javascript" src="{{ STATIC_URL }}js/djime.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/form.js"></script>
   <script type="text/javascript" src="{{ DEMO_STATIC_URL }}/js/jquery.autocomplete.js"></script>
-  <script type="text/javascript">
-  djime.autocomplete_projectnames = new Array()
-  {% for project in project_js_list %}
-    djime.autocomplete_projectnames[{{ forloop.counter0 }}] = new Array("{{ project }}", "{{ project.client.id }}");
-  {% endfor %}
-  </script>
-  <script type="text/javascript">
-  djime.client_list = {{ client_list|safe }}
-  </script>
+  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc6/ui/jquery.ui.all.js"></script>
 {% endblock %}
 
