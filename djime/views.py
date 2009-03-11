@@ -34,10 +34,11 @@ def dashboard(request):
     # choice for nothing and will have a value of a empty string. The rest will
     # have same value as their name. Escape is used on rojectname because we
     # need to use the json version unescaped in the template.
-    for client in Client.objects.all():
-        if client_dict.has_key(client.id):
+    client_id_max = Client.objects.all().order_by('-id')[0].id
+    for client_id in range(1, client_id_max+1)
+        if client_dict.has_key(client_id):
             options = '<option value="">-----------</option>'
-            for project in client_dict[client.id]:
+            for project in client_dict[client_id]:
                 options += '<option>%s</option>' % escape(project.name)
             client_list.append(options)
         else:
