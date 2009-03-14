@@ -92,7 +92,7 @@ def show_project(request, project_id):
     # Note, when the 10_paginate variable is set to TRUE, a pagination
     # displaying 10 items per page instead of the default 20.
     if data['slip_user']:
-        data['user_list'] = render_to_string('tracker/slip_list.html',
+        data['user_list'] = render_to_string('djime/slip_list.html',
                               {'slip_list': data['slip_user'], '10_paginate': True,
                                'list_exclude_project': True,
                                'list_exclude_client': True,
@@ -100,7 +100,7 @@ def show_project(request, project_id):
                               context_instance=RequestContext(request))
 
     if data['slip_rest']:
-        data['other_list'] = render_to_string('tracker/slip_list.html',
+        data['other_list'] = render_to_string('djime/slip_list.html',
                               {'slip_list': data['slip_rest'], '10_paginate': True,
                                'list_exclude_project': True,
                                'list_exclude_client': True,
@@ -178,14 +178,14 @@ def show_client(request, client_id):
             seconds += slice.duration
         duration += seconds
     data['time_other'] ='%02i:%02i' % (duration/3600, duration%3600/60)
-    
-    data['user_list'] = render_to_string('tracker/slip_list.html',
+
+    data['user_list'] = render_to_string('djime/slip_list.html',
                               {'slip_list': data['slip_user'], '10_paginate': True,
                               'list_exclude_client': True
                               },
                               context_instance=RequestContext(request))
 
-    data['other_list'] = render_to_string('tracker/slip_list.html',
+    data['other_list'] = render_to_string('djime/slip_list.html',
                               {'slip_list': data['slip_rest'], '10_paginate': True,
                               'list_exclude_client': True
                               },

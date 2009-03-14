@@ -51,7 +51,7 @@ def dashboard(request):
         'client_list': json.dumps(client_list),
         'slip_add_form': SlipAddForm()
     }
-    return render_to_response('djimeboard/index.html', display_data,
+    return render_to_response('djime/index.html', display_data,
                               context_instance=RequestContext(request))
 
 
@@ -77,7 +77,7 @@ def index(request):
             client_list.append(0)
 
     slip_list = Slip.objects.filter(user=request.user)
-    return render_to_response('tracker/index.html',
+    return render_to_response('djime/slip_index.html',
                               {'slip_list': slip_list,
                                'project_js_list': project_js_list,
                                'client_list': json.dumps(client_list),
@@ -128,7 +128,7 @@ def slip(request, slip_id):
             slice_time = ''
 
         if request.method == 'GET':
-            return render_to_response('tracker/slip.html',
+            return render_to_response('djime/slip.html',
                                         {'slip': slip,
                                         'project_js_list': project_js_list,
                                         'client_list': json.dumps(client_list),
@@ -158,7 +158,7 @@ def slip(request, slip_id):
                     form.save()
                     # After saving the form, reinitiate the form to clear the data on return.
                     form = SlipChangeForm()
-                return render_to_response('tracker/slip.html',
+                return render_to_response('djime/slip.html',
                                                         {'slip_id': slip_id,
                                                         'slip': slip,
                                                         'timer': timer,
@@ -263,7 +263,7 @@ def slip_create(request):
             #                                        kwargs={'slip_id': new_slip.id}))
 
         else:
-            return render_to_response('tracker/slip_create.html',
+            return render_to_response('djime/slip_create.html',
                                         {'slip_add_form': form,
                                          'project_js_list': project_js_list,
                                          'client_list': json.dumps(client_list),
@@ -272,7 +272,7 @@ def slip_create(request):
 
     if request.method == 'GET':
         slip_add_form = SlipAddForm()
-        return render_to_response('tracker/slip_create.html',
+        return render_to_response('djime/slip_create.html',
                                   {'slip_add_form': SlipAddForm(),
                                     'project_js_list': project_js_list,
                                     'client_list': json.dumps(client_list),
