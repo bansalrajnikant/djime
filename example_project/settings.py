@@ -53,6 +53,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "django.core.context_processors.request",
     "djime.context_processors.static_urls",
+    "djime.context_processors.statusbar",
 )
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a

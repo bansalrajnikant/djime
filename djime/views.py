@@ -130,9 +130,6 @@ def slip(request, slip_id):
         if request.method == 'GET':
             return render_to_response('tracker/slip.html',
                                         {'slip': slip,
-                                        'timer': timer,
-                                        'timeslice': timeslice,
-                                        'slice_time': slice_time,
                                         'project_js_list': project_js_list,
                                         'client_list': json.dumps(client_list),
                                         'slip_change_form': SlipChangeForm()
