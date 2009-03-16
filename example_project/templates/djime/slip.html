@@ -6,6 +6,7 @@
 
 {% block extra_head %}
   <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc6/themes/redmond/ui.all.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}css/tracker.css" />
 {% endblock %}
 
 {% block content %}
@@ -19,6 +20,7 @@
         <p>{% trans "Project: " %}{{ slip.project }}</p>
         <p>{% trans "Client: " %}{{ slip.client }}</p>
         <p>{% trans "Total time:" %} <span id="slip-total-time">{{ slip.display_time }}</span></p>
+        <div id="slip-timer-button" class="{{ timer.class }}"><div class="timeclock">0:00</div></div>
       </div>
     </div>
   </div>

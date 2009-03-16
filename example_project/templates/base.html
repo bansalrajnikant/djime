@@ -68,7 +68,9 @@
         </div>
         <div id="sidebar">
           {% if timer %}
-            {% include 'djime/statusbar.html' %}
+            {% comment %}
+              {% include 'djime/statusbar.html' %}
+            {% endcomment %}
           {% endif %}
           {% block sidebar %}
           {% endblock %}

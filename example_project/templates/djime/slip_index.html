@@ -10,8 +10,10 @@
 
 {% block content %}
 <div id="block-tables" class="block">
-  <h2 class="title">{% trans "Your tasks" %}</h2>
-  {% include "djime/slip_list.html" %}
+  <div class="content">
+    <h2 class="title">{% trans "Your tasks" %}</h2>
+    {% include "djime/slip_list.html" %}
+  </div>
 </div>
 {% endblock %}
 
@@ -19,9 +21,7 @@
 
   {% if slip_add_form %}
     <div class="block">
-      <h3 class="title">
-        <input type="button" name="create-slip" id="create-slip-button" value="Create new slip" />
-      </h3>
+      <input type="button" name="create-slip" id="create-slip-button" value="Create new slip" />
       <div id="slip-add-form">
       <h3>{% trans "Create a new task" %}</h3>
       <div class="inner">
