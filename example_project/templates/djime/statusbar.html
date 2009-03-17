@@ -10,12 +10,14 @@
       <script type="text/javascript">
         djime.current_time = new Date({{ timer.time.year }}, {{ timer.time.month }}, {{ timer.time.day }}, {{ timer.time.hour }}, {{ timer.time.minute }}, {{ timer.time.second }});
         djime.slip_id = {{ timer.slice.slip.id }}
+        djime.slip_name = '{{ timer.slice.slip }}'
       </script>
       {% endif %}
     {% else %}
       <p>{% trans "You have no active slip." %}</p>
       <script>
         djime.slip_id = {{ slip.id }}
+        djime.slip_name = '{{ slip.name }}'
       </script>
     {% endif %}
   </div>
