@@ -30,33 +30,9 @@ $(document).ready(function () {
     dialog_box.text(djime.messages.slip_delete_body);
   });
 
-  $("#create-slip").click(function () {
-    $.post(document.URL + 'slip/add/', {name: $("#slip-name").val()}, function(data) {
-      $.getJSON(document.URL + 'slip/add/', function(data) {
-        document.location.href = '/tracker/slip/' + data.slip
-      });
-    });
-  });
-
   $('.edit').editable(document.URL, {
     indicator : 'Saving...',
     tooltip   : 'Click to edit...',
     name: 'name'
-  });
- 
-  $('#slip-timer-button.timer-running').timeclock({since: djime.current_time});
-
-  $('#slip-timer-button').click(function () {
-    if ($(this).hasClass($.timeclock.markerClassName)) {
-      var elapsed = $(this).timeclock('destroy');
-      $.post(document.URL + 'stop/', {elapsed: elapsed});
-      $.getJSON(document.URL + 'get_json/', function(data) {
-        $("#slip-total-time").text(data.slip_time);
-      });
-    }
-    else {
-      $.post(document.URL + 'start/');
-      $(this).timeclock();
-    }
   });
 });

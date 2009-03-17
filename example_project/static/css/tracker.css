@@ -12,7 +12,7 @@
 
 /* @group Slip timer button */
 
-#slip-timer-button {
+#slip-timer-button, #slip-timer-sidebar-button {
 	display: block;
     font-size: 250%;
     color: white;
@@ -24,15 +24,18 @@
     border-radius: 25px;
     width: 12%;
 }
+#slip-timer-sidebar-button {
+  width: 33%;
+}
 
-#slip-timer-button:hover {
+#slip-timer-button:hover, #slip-timer-sidebar-button:hover {
     background-color: #01B8DE;
 }
 
-#slip-timer-button.hasTimeClock {
+#slip-timer-button.hasTimeClock, #slip-timer-sidebar-button.hasTimeClock {
     }
 
-#slip-timer-button.hasTimeClock:hover {
+#slip-timer-button.hasTimeClock:hover, #slip-timer-sidebar-button.hasTimeClock:hover {
     }
 
 /* @end */

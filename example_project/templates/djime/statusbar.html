@@ -1,13 +1,22 @@
+{% load i18n %}
+
 <div id="djime-statusbar" class="block">
   <h3>Current status</h3>
   <div class="content">
-    Her skal der så være en timer.
-    {{ timer|pprint }}
-    <div id="slip-timer-button" class="{{ timer.class }}"><div class="timeclock">0:00</div></div>
-    {% if slip.is_active %}
-    <script type="text/javascript">
-      djime.current_time = new Date({{ timer.time.year }}, {{ timer.time.month }}, {{ timer.time.day }}, {{ timer.time.hour }}, {{ timer.time.minute }}, {{ timer.time.second }});
-    </script>
+    {% if timer %}
+      <p>Task: {{ timer.slice.slip }}</p>
+      <div id="slip-timer-sidebar-button" class="{{ timer.class }}"><div class="timeclock">0:00</div></div>
+      {% if timer.slice.slip.is_active %}
+      <script type="text/javascript">
+        djime.current_time = new Date({{ timer.time.year }}, {{ timer.time.month }}, {{ timer.time.day }}, {{ timer.time.hour }}, {{ timer.time.minute }}, {{ timer.time.second }});
+        djime.slip_id = {{ timer.slice.slip.id }}
+      </script>
+      {% endif %}
+    {% else %}
+      <p>{% trans "You have no active slip." %}</p>
+      <script>
+        djime.slip_id = {{ slip.id }}
+      </script>
     {% endif %}
   </div>
 </div>

@@ -54,10 +54,13 @@
 {% endblock %}
 
 {% block closure %}
-  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc6/ui/jquery.ui.all.js"></script>
-  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.jeditable.js"></script>
+  {% if not timer %}
+  <script type="text/javascript" src="{{ STATIC_URL }}js/timer.js"></script>
   <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.timeclock.js"></script>
+  {% endif %}
   <script type="text/javascript" src="{{ STATIC_URL }}js/tracker.js"></script>
+  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.jeditable.js"></script>
+  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc6/ui/jquery.ui.all.js"></script>
   <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.autocomplete.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/djime.js"></script>
   <script type="text/javascript">
