@@ -18,37 +18,9 @@ except ImportError:
 
 @login_required()
 def dashboard(request):
-    # Client list is to be used to create a js array. So we need an initial value for position 0.
-    # This value should not be 0+ so -1 is chosen. could be anything really.
-    client_list = [-1]
-    client_dict = {}
-    project_js_list = Project.objects.filter(members=request.user, state__in=['active', 'on_hold'])
-    for project in project_js_list:
-        if project.client:
-            if not client_dict.has_key((project.client.id)):
-                client_dict[(project.client.id)] = []
-                client_dict[(project.client.id)].append(project)
-            else:
-                client_dict[(project.client.id)].append(project)
-    # this loop is to create a set of options tags, the first will will be the
-    # choice for nothing and will have a value of a empty string. The rest will
-    # have same value as their name. Escape is used on rojectname because we
-    # need to use the json version unescaped in the template.
-    client_id_max = Client.objects.all().order_by('-id')[0].id
-    for client_id in range(1, client_id_max+1):
-        if client_dict.has_key(client_id):
-            options = '<option value="">-----------</option>'
-            for project in client_dict[client_id]:
-                options += '<option>%s</option>' % escape(project.name)
-            client_list.append(options)
-        else:
-            client_list.append(0)
-
     display_data = {
         'slip_list': Slip.objects.filter(user=request.user).order_by('-updated')[:10],
         'project_list': Project.objects.filter(members=request.user.id, state='active')[:10],
-        'project_js_list': project_js_list,
-        'client_list': json.dumps(client_list),
         'slip_add_form': SlipAddForm()
     }
     return render_to_response('djime/index.html', display_data,
@@ -57,30 +29,8 @@ def dashboard(request):
 
 @login_required
 def index(request):
-    client_list = [-1]
-    client_dict = {}
-    project_js_list = Project.objects.filter(members=request.user, state__in=['active', 'on_hold'])
-    for project in project_js_list:
-        if project.client:
-            if not client_dict.has_key((project.client.id)):
-                client_dict[(project.client.id)] = []
-                client_dict[(project.client.id)].append(project)
-            else:
-                client_dict[(project.client.id)].append(project)
-    for client in Client.objects.all():
-        if client_dict.has_key(client.id):
-            options = '<option value="">-----------</option>'
-            for project in client_dict[client.id]:
-                options += '<option>%s</option>' % escape(project.name)
-            client_list.append(options)
-        else:
-            client_list.append(0)
-
-    slip_list = Slip.objects.filter(user=request.user)
     return render_to_response('djime/slip_index.html',
-                              {'slip_list': slip_list,
-                               'project_js_list': project_js_list,
-                               'client_list': json.dumps(client_list),
+                              {'slip_list': Slip.objects.filter(user=request.user),
                                'slip_add_form': SlipAddForm()
                                },
                               context_instance=RequestContext(request))
@@ -96,41 +46,9 @@ def slip(request, slip_id):
         if request.user != slip.user:
             return HttpResponseForbidden(trans('Access denied'))
 
-        # data generated to be used by js.
-        client_list = [-1]
-        client_dict = {}
-        project_js_list = Project.objects.filter(members=request.user, state__in=['active', 'on_hold'])
-        for project in project_js_list:
-            if project.client:
-                if not client_dict.has_key((project.client.id)):
-                    client_dict[(project.client.id)] = []
-                    client_dict[(project.client.id)].append(project)
-                else:
-                    client_dict[(project.client.id)].append(project)
-        for client in Client.objects.all():
-            if client_dict.has_key(client.id):
-                options = '<option value="">-----------</option>'
-                for project in client_dict[client.id]:
-                    options += '<option>%s</option>' % escape(project.name)
-                client_list.append(options)
-            else:
-                client_list.append(0)
-
-        timer = {}
-        if slip.is_active():
-            timer['class'] = 'timer-running'
-            timeslice = slip.timeslice_set.filter(user = slip.user, end = None)[0]
-            slice_time = {'year': timeslice.begin.year, 'month': timeslice.begin.month-1, 'day': timeslice.begin.day, 'hour': timeslice.begin.hour, 'minute': timeslice.begin.minute, 'second': timeslice.begin.second}
-        else:
-            timer['class'] = ''
-            timeslice = ''
-            slice_time = ''
-
         if request.method == 'GET':
             return render_to_response('djime/slip.html',
                                         {'slip': slip,
-                                        'project_js_list': project_js_list,
-                                        'client_list': json.dumps(client_list),
                                         'slip_change_form': SlipChangeForm()
                                         },
                                         context_instance=RequestContext(request))
@@ -160,12 +78,7 @@ def slip(request, slip_id):
                 return render_to_response('djime/slip.html',
                                                         {'slip_id': slip_id,
                                                         'slip': slip,
-                                                        'timer': timer,
-                                                        'timeslice': timeslice,
-                                                        'slice_time': slice_time,
                                                         'slip_change_form': form,
-                                                        'project_js_list': project_js_list,
-                                                        'client_list': json.dumps(client_list),
                                                         },
                                                         context_instance=RequestContext(request))
 
@@ -226,25 +139,6 @@ def slip_create(request):
     if request.method not in ('GET', 'POST'):
         return HttpResponseNotAllowed(('POST', 'GET'))
 
-    client_list = [-1]
-    client_dict = {}
-    project_js_list = Project.objects.filter(members=request.user, state__in=['active', 'on_hold'])
-    for project in project_js_list:
-        if project.client:
-            if not client_dict.has_key((project.client.id)):
-                client_dict[(project.client.id)] = []
-                client_dict[(project.client.id)].append(project)
-            else:
-                client_dict[(project.client.id)].append(project)
-    for client in Client.objects.all():
-        if client_dict.has_key(client.id):
-            options = '<option value="">-----------</option>'
-            for project in client_dict[client.id]:
-                options += '<option>%s</option>' % escape(project.name)
-            client_list.append(options)
-        else:
-            client_list.append(0)
-
     if request.method == 'POST':
         post_data = request.POST.copy()
         # Inject the user into the post data, so we can validate based
@@ -264,8 +158,6 @@ def slip_create(request):
         else:
             return render_to_response('djime/slip_create.html',
                                         {'slip_add_form': form,
-                                         'project_js_list': project_js_list,
-                                         'client_list': json.dumps(client_list),
                                         },
                                         context_instance=RequestContext(request))
 
@@ -273,8 +165,6 @@ def slip_create(request):
         slip_add_form = SlipAddForm()
         return render_to_response('djime/slip_create.html',
                                   {'slip_add_form': SlipAddForm(),
-                                    'project_js_list': project_js_list,
-                                    'client_list': json.dumps(client_list),
                                   },
                                   context_instance=RequestContext(request))
 

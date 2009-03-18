@@ -66,13 +66,6 @@
   <script type="text/javascript">
     djime.messages['slip_delete_title'] = '{% trans "Delete this slip?" %}';
     djime.messages['slip_delete_body'] = '{% trans "If you delete this slip, you will lose all the time records associated with it. This is irrevocable." %}';
-  djime.autocomplete_projectnames = new Array()
-  {% for project in project_js_list %}
-    djime.autocomplete_projectnames[{{ forloop.counter0 }}] = new Array("{{ project }}", "{{ project.client.id }}");
-  {% endfor %}
-  </script>
-  <script type="text/javascript">
-  djime.client_list = {{ client_list|safe }}
   </script>
 {% endblock %}
 
