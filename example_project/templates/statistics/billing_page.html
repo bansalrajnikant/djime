@@ -6,30 +6,49 @@
 
 {% block content %}
   <div class="block">
-    <h2 class="title">{% blocktrans %}Billing info for user: {{ user }}, from {{ start_date }} to {{ end_date }}{% endblocktrans %}</h2>
-    <div class="inner">
-      <table class='table'>
-        <thead>
-          <tr>
-            <th>{% trans "Client" %}</th>
-            <th>{% trans "Project" %}</th>
-            <th>{% trans "Time" %}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for key, list in time_dict.items %}
-            <tr class="{% cycle 'even' 'odd' %}">
+    <div class="content">
+      <h2 class="title">{% blocktrans %}Billing info for user: {{ user }}, from {{ start_date }} to {{ end_date }}{% endblocktrans %}</h2>
+      <div class="inner">
+        <table class='table'>
+          <thead>
+            <tr>
+              <th>{% trans "Client" %}</th>
+              <th>{% trans "Project" %}</th>
+              <th>{% trans "Task" %}</th>
+              <th>{% trans "Time" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for key_project, value_project in project_dict.items %}
+            <tr class="total">
               <td class="client-name">
-                {{ list.0 }}
+                {{ value_project.project.client }}
               </td>
               <td class="project-name">
-                {{ list.1 }}
+                {{ value_project.project }}
               </td>
-              <td class="client-time">{{ list.2 }}</td>
+              <td class="task-name">
+              </td>
+              <td class="task-time">{{ value_project.duration }}</td>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+              {% for key_slips, value_slips in value_project.slips.items %}
+              <tr class="{% cycle 'even' 'odd' %}">
+                <td class="client-name">
+                  {{ value_slips.0.client }}
+                </td>
+                <td class="project-name">
+                  {{ value_slips.0.project }}
+                </td>
+                <td class="task-name">
+                  {{ value_slips.0 }}
+                </td>
+                <td class="task-time">{{ value_slips.1 }}</td>
+              </tr>
+              {% endfor %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 {% endblock %}

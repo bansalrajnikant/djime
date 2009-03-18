@@ -10,6 +10,7 @@ import djime.statistics.flashcharts as flashcharts
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from exceptions import ValueError
+from math import floor
 
 @login_required()
 def index(request):
@@ -314,6 +315,7 @@ def user_billing(request, user_id):
                 return render_to_response('statistics/billing_time_page.html', {'sellected_user': user, 'form': form},
                                           context_instance=RequestContext(request))
 
+
 @login_required()
 def user_billing_weeks(request, user_id, date, number_of_weeks):
     user = get_object_or_404(User, pk=user_id)
@@ -326,34 +328,28 @@ def user_billing_weeks(request, user_id, date, number_of_weeks):
         return HttpResponse(_('Invalid date, must be yyyy-mm-dd'))
     end_date = start_date + datetime.timedelta(days=number_of_weeks*7)
     slice_set = TimeSlice.objects.filter(user=user, begin__range=(start_date, end_date))
-    time_dict = {}
-    for timeslice in slice_set:
-        project = timeslice.slip.project
-        client = timeslice.slip.client
-        if project and not client:
-            if time_dict.has_key(project.name):
-                time_dict[project.name][2] += timeslice.duration
-            else:
-                time_dict[project.name] = ['None', project.name, timeslice.duration]
-        elif client and not project:
-            if time_dict.has_key(client.name):
-                time_dict[client.name][2] += timeslice.duration
-            else:
-                time_dict[client.name] = [client.name, 'None', timeslice.duration]
-        elif project and client:
-            if time_dict.has_key(client.name+project.name):
-                time_dict[client.name+project.name][2] += timeslice.duration
-            else:
-                time_dict[client.name+project.name] = [client.name, project.name, timeslice.duration]
+    project_dict = {}
+    for time_slice in slice_set:
+        if time_slice.slip.project not in project_dict.keys():
+            project_dict[time_slice.slip.project] = {}
+            project_dict[time_slice.slip.project]['slips'] = {}
+            project_dict[time_slice.slip.project]['slips'][time_slice.slip] = [time_slice.slip, time_slice.duration]
+            project_dict[time_slice.slip.project]['duration'] = time_slice.duration
+            project_dict[time_slice.slip.project]['project'] = time_slice.slip.project
         else:
-            if time_dict.has_key('None'):
-                time_dict['None'][2] += timeslice.duration
+            if time_slice.slip not in project_dict[time_slice.slip.project]['slips'].keys():
+                project_dict[time_slice.slip.project]['slips'][time_slice.slip] = [time_slice.slip, time_slice.duration]
+                project_dict[time_slice.slip.project]['duration'] += time_slice.duration
             else:
-                time_dict['None'] = ['None', 'None', timeslice.duration]
+                project_dict[time_slice.slip.project]['slips'][time_slice.slip][1] += time_slice.duration
+                project_dict[time_slice.slip.project]['duration'] += time_slice.duration
 
-    for key in time_dict.keys():
-        time_dict[key][2] = '%02i:%02i' % (time_dict[key][2]/3600, time_dict[key][2]%3600/60)
-    return render_to_response('statistics/billing_page.html', {'user': user, 'time_dict': time_dict, 'start_date': start_date, 'end_date': end_date},
+    for key in project_dict.keys():
+        project_dict[key]['duration'] = '%02i:%02i' % (floor(project_dict[key]['duration'] / 3600), floor(project_dict[key]['duration'] % 3600 ) / 60)
+        for key_slip in project_dict[key]['slips'].keys():
+            project_dict[key]['slips'][key_slip][1] = '%02i:%02i' % (floor(project_dict[key]['slips'][key_slip][1] / 3600), floor(project_dict[key]['slips'][key_slip][1] % 3600 ) / 60)
+
+    return render_to_response('statistics/billing_page.html', {'user': user, 'start_date': start_date, 'end_date': end_date, 'project_dict': project_dict},
                                 context_instance=RequestContext(request))
 
 
@@ -365,32 +361,26 @@ def user_billing_date(request, user_id, start_date, end_date):
     except ValueError:
         return HttpResponse('Invalid dateformat, must be yyyy-mm-dd')
     slice_set = TimeSlice.objects.filter(user=user, begin__range=(start_date, end_date))
-    time_dict = {}
-    for timeslice in slice_set:
-        project = timeslice.slip.project
-        client = timeslice.slip.client
-        if project and not client:
-            if time_dict.has_key(project.name):
-                time_dict[project.name][2] += timeslice.duration
-            else:
-                time_dict[project.name] = ['None', project.name, timeslice.duration]
-        elif client and not project:
-            if time_dict.has_key(client.name):
-                time_dict[client.name][2] += timeslice.duration
-            else:
-                time_dict[client.name] = [client.name, 'None', timeslice.duration]
-        elif project and client:
-            if time_dict.has_key(client.name+project.name):
-                time_dict[client.name+project.name][2] += timeslice.duration
-            else:
-                time_dict[client.name+project.name] = [client.name, project.name, timeslice.duration]
+    project_dict = {}
+    for time_slice in slice_set:
+        if time_slice.slip.project not in project_dict.keys():
+            project_dict[time_slice.slip.project] = {}
+            project_dict[time_slice.slip.project]['slips'] = {}
+            project_dict[time_slice.slip.project]['slips'][time_slice.slip] = [time_slice.slip, time_slice.duration]
+            project_dict[time_slice.slip.project]['duration'] = time_slice.duration
+            project_dict[time_slice.slip.project]['project'] = time_slice.slip.project
         else:
-            if time_dict.has_key('None'):
-                time_dict['None'][2] += timeslice.duration
+            if time_slice.slip not in project_dict[time_slice.slip.project]['slips'].keys():
+                project_dict[time_slice.slip.project]['slips'][time_slice.slip] = [time_slice.slip, time_slice.duration]
+                project_dict[time_slice.slip.project]['duration'] += time_slice.duration
             else:
-                time_dict['None'] = ['None', 'None', timeslice.duration]
+                project_dict[time_slice.slip.project]['slips'][time_slice.slip][1] += time_slice.duration
+                project_dict[time_slice.slip.project]['duration'] += time_slice.duration
 
-    for key in time_dict.keys():
-        time_dict[key][2] = '%02i:%02i' % (time_dict[key][2]/3600, time_dict[key][2]%3600/60)
-    return render_to_response('statistics/billing_page.html', {'user': user, 'time_dict': time_dict, 'start_date': start_date, 'end_date': end_date},
+    for key in project_dict.keys():
+        project_dict[key]['duration'] = '%02i:%02i' % (floor(project_dict[key]['duration'] / 3600), floor(project_dict[key]['duration'] % 3600 ) / 60)
+        for key_slip in project_dict[key]['slips'].keys():
+            project_dict[key]['slips'][key_slip][1] = '%02i:%02i' % (floor(project_dict[key]['slips'][key_slip][1] / 3600), floor(project_dict[key]['slips'][key_slip][1] % 3600 ) / 60)
+
+    return render_to_response('statistics/billing_page.html', {'user': user, 'start_date': start_date, 'end_date': end_date, 'project_dict': project_dict},
                                 context_instance=RequestContext(request))
