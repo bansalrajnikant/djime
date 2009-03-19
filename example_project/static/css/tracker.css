@@ -22,10 +22,7 @@
 	-moz-border-radius: 25px;
     -webkit-border-radius: 25px;
     border-radius: 25px;
-    width: 12%;
-}
-#slip-timer-sidebar-button {
-  width: 33%;
+    width: 138px;
 }
 
 #slip-timer-button:hover, #slip-timer-sidebar-button:hover {
