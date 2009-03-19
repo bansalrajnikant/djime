@@ -47,8 +47,12 @@ def slip(request, slip_id):
             return HttpResponseForbidden(trans('Access denied'))
 
         if request.method == 'GET':
+            timer_class = ''
+            if slip.is_active():
+                timer_class = 'timer-running'
             return render_to_response('djime/slip.html',
                                         {'slip': slip,
+                                        'timer_class': timer_class,
                                         'slip_change_form': SlipChangeForm()
                                         },
                                         context_instance=RequestContext(request))
