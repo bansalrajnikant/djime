@@ -132,10 +132,4 @@ $(document).ready(function () {
 		tips.text('');
 		checkProject(project, project.val(), "Project does not exist.");
 	});
-	
-	name.blur(function () {
-		name.removeClass('ui-state-error');
-		tips.text('');
-		checkName(name, name.val(), "This field is required.");
-	});
 });
