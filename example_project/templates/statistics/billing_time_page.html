@@ -37,8 +37,8 @@
             <label class="label">{% trans "number of weeks (max 4)" %}</label>
             <input type="textfield" name="number-of-weeks" value=""/>
           </div>
-        <div class"group navform">
-          <input type="submit" value="{% trans 'Get' %}"/>
+          <div class"group navform">
+            <input type="submit" value="{% trans 'Get' %}"/>
           </div>
         </form>
         <form method="POST" action="" class="form">
@@ -46,16 +46,15 @@
             {% trans "Get billing by selecting a from and to date. Use the date picker for a fast selection of a time period of your choosing." %}
           </p>
           {{ form.errors }}
-            <div class="group">
-              {{ form.date.errors }}
-              <label class="label">{% trans "Date" %}</label>
-              {{ form.date }}
-            </div>
-            <div class"group navform">
-              <input type="submit" value="{% trans 'Get' %}"/>
-            </div>
-          </form>
-        </div>
+          <div class="group">
+            {{ form.date.errors }}
+            <label class="label">{% trans "Date" %}</label>
+            {{ form.date }}
+          </div>
+          <div class"group navform">
+            <input type="submit" value="{% trans 'Get' %}"/>
+          </div>
+        </form>
       </div>
     </div>
   </div>

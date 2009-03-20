@@ -12,24 +12,26 @@
     the blocktrans tags will not be escaped.
   {% endcomment %}
 
-  <h1 class="title">
-    {% blocktrans with project as project %}Project: {{ project }}. Total duration: {{ time_all }}{% endblocktrans %}
-  <h1>
-  <p>{% trans "Client: " %}{{ project.client }}</p>
-  {% if user_list %}
+    <div class="content">
+      <h1 class="title">
+        {% blocktrans with project as project %}Project: {{ project }}. Total duration: {{ time_all }}{% endblocktrans %}
+      <h1>
+      <p>{% trans "Client: " %}{{ project.client }}</p>
+      {% if user_list %}
 
-    <h2 class="title">
-      {% blocktrans with user as username and project as project %}{{ username }}'s tasks in {{ project }}. Total duration: {{ time_user }}{% endblocktrans %}
-    </h2>
-    {{ user_list }}
-  {% endif %}
+        <h2 class="title">
+          {% blocktrans with user as username and project as project %}{{ username }}'s tasks in {{ project }}. Total duration: {{ time_user }}{% endblocktrans %}
+        </h2>
+        {{ user_list }}
+      {% endif %}
 
-  {% if other_list %}
-    <h2 class="title">
-      {% blocktrans with project as project %}Other's tasks in {{ project }}. Total duration: {{ time_other }}{% endblocktrans %}
-    </h2>
-    {{ other_list }}
-  {% endif %}
+      {% if other_list %}
+        <h2 class="title">
+          {% blocktrans with project as project %}Other's tasks in {{ project }}. Total duration: {{ time_other }}{% endblocktrans %}
+        </h2>
+        {{ other_list }}
+      {% endif %}
+    </div>
   </div>
 {% endblock %}
 
