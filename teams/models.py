@@ -26,5 +26,5 @@ class Team(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return ("team_detail", [self.slug])
+        return ("team_display", [self.slug])
     get_absolute_url = models.permalink(get_absolute_url)
