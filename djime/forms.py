@@ -39,7 +39,7 @@ class SlipChangeForm(forms.ModelForm):
             if project:
                 return project[0]
             else:
-                raise forms.ValidationError(_('%s is not a valid project.' % cleaned_data))
+                raise forms.ValidationError(_('%s is not a valid project.' % self.cleaned_data['project']))
         else:
             return None
 
