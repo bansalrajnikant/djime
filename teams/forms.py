@@ -24,7 +24,7 @@ class TeamForm(forms.ModelForm):
 
     class Meta:
         model = Team
-        fields = ('name', 'slug', 'description', 'tags')
+        fields = ('name', 'slug', 'description')
 
 
 # @@@ is this the right approach, to have two forms where creation and update fields differ?
@@ -41,4 +41,4 @@ class TeamUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Team
-        fields = ('name', 'description', 'tags')
+        fields = ('name', 'description')
