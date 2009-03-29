@@ -106,7 +106,7 @@ $(document).ready(function () {
 				bValid = bValid && checkName(name, name.val(), "This field is required")
 
 				if (bValid) {
-					$.post("/slip/add/", { 'name': name.val(), 'project': project.val(), 'client': client.val(), 'ajax': true},
+					$.post("/slip/add/", { 'name': name.val(), 'project': project.val(), 'client': client.val()},
 						function(data){
 							document.location.href = '/' + data
 					});
