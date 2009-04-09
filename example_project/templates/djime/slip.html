@@ -32,8 +32,8 @@
   </div>
   {% if slip_change_form %}
   <div class="block">
-    <h3>{% trans "Create a new task" %}</h3>
-    <form class="form" method="post" action="{% url slip_create %}">
+    <h3>{% trans "Update the task" %}</h3>
+    <form class="form" method="post" action="{% url slip_page slip.id %}">
       {{ form.errors }}
       <ul class="form-items">
         <div class="group">
@@ -63,6 +63,7 @@
   <script type="text/javascript" src="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc6/ui/jquery.ui.all.js"></script>
   <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.autocomplete.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/djime.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/form.js"></script>
   <script type="text/javascript">
     djime.messages['slip_delete_title'] = '{% trans "Delete this slip?" %}';
     djime.messages['slip_delete_body'] = '{% trans "If you delete this slip, you will lose all the time records associated with it. This is irrevocable." %}';
