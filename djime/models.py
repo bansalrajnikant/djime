@@ -13,6 +13,7 @@ class Slip(models.Model):
     user = models.ForeignKey(User, related_name="slips", blank=True, null=True, verbose_name=_('user'))
     project = models.ForeignKey(Project, blank = True, null=True, verbose_name=_('project'))
     client = models.ForeignKey(Client, blank = True, null=True, verbose_name=_('client'))
+    description = models.TextField(blank=True)
     #type = models.CharField(max_length=32)
     due = models.DateField(null=True, blank=True, verbose_name=_('due'))
     created = models.DateTimeField(auto_now_add=True, verbose_name=_('created'))
@@ -52,8 +53,8 @@ class TimeSlice(models.Model):
     end = models.DateTimeField(null=True, blank=True, verbose_name=_('end'))
     slip = models.ForeignKey(Slip, verbose_name=_('slip'))
     user = models.ForeignKey(User, related_name="timeslices", blank=True, null=True, verbose_name=_('user'))
+    description = models.TextField(blank=True)
     duration = models.PositiveIntegerField(editable=False, default=0, verbose_name=_('duration'))
-    week_number = models.PositiveIntegerField(default=datetime.datetime.now().isocalendar()[1], verbose_name=_('week number'))
 
     def __unicode__(self):
         if self.end:
@@ -67,7 +68,6 @@ class DataImport(models.Model):
     completed = models.DateTimeField(blank=True, null=True, verbose_name=_('completed'))
     complete_data = models.FileField(upload_to='import_data/complete/%Y/%m/', verbose_name=_('complete data'))
     partial_data = models.FileField(upload_to='import_data/partial/%Y/%m/', verbose_name=_('partial data'))
-
 
 pre_save.connect(timeslice_save, sender=TimeSlice)
 

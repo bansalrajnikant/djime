@@ -28,6 +28,7 @@ class Project(models.Model):
         ('dropped', 'Dropped'),
     )
     name = models.CharField(max_length=128, verbose_name=_('name'))
+    description = models.TextField(blank=True)
     team = models.ForeignKey(Team, null=True, blank = True, verbose_name=_('team'))
     client = models.ForeignKey(Client, null=True, blank=True, verbose_name=_('client'))
     members = models.ManyToManyField(User, verbose_name=_('members'))
