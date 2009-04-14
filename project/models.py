@@ -22,10 +22,10 @@ class Project(models.Model):
     Acts as a basic container for Slips (tasks)
     """
     STATE_CHOICES = (
-        ('active', 'Active'),
-        ('on_hold', 'On Hold'),
-        ('completed', 'Completed'),
-        ('dropped', 'Dropped'),
+        ('active', _('Active')),
+        ('on_hold', _('On Hold')),
+        ('completed', _('Completed')),
+        ('dropped', _('Dropped')),
     )
     name = models.CharField(max_length=128, verbose_name=_('name'))
     description = models.TextField(blank=True)
