@@ -1,15 +1,15 @@
 import random
 import time
-import unittest
+#import unittest
 import urllib
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.test.client import *
 from django.utils.http import urlencode
 from djime.models import Slip, TimeSlice
-from djime.tests import RESTClient
+from djime.tests.djime_test import RESTClient
 from exceptions import ImportError
-from statistics.colour import colour
+from djime.statistics.colour import colour
 from teams.models import Team
 import datetime
 try:
@@ -120,7 +120,7 @@ class StatisticsRESTActionsTestCase(TestCase):
                 while end_date.month != start_date.month:
                     end_date -= datetime.timedelta(days=1)        
                 
-                slice_set = user.timeslices.filter(create_date__range=(start_date, end_date))
+                slice_set = user.timeslices.filter(begin__range=(start_date, end_date))
                 slip_dict = {}
                 for slic in slice_set:
                     if not slip_dict.has_key(slic.begin.date()):
@@ -172,7 +172,7 @@ class StatisticsRESTActionsTestCase(TestCase):
                 response = self.client.get('/statistics/data/user/%s/date/%s/%s/' % (user.id, start_date, end_date))
                 json_content = json.loads(response.content)
                 
-                slice_set = user.timeslices.filter(create_date__range=(start_date, end_date))
+                slice_set = user.timeslices.filter(begin__range=(start_date, end_date))
                 slip_dict = {}
                 for slic in slice_set:
                     if not slip_dict.has_key(slic.begin.date()):
@@ -226,7 +226,7 @@ class StatisticsRESTActionsTestCase(TestCase):
                 members_id = []
                 for member in members:
                     members_id.append(member.id)
-                slice_set = TimeSlice.objects.filter(week_number=week, create_date__year=year, user__in=members_id)
+                slice_set = TimeSlice.objects.filter(week_number=week, begin__year=year, user__in=members_id)
                 
                 slip_dict = {}
                 for slic in slice_set:
@@ -291,7 +291,7 @@ class StatisticsRESTActionsTestCase(TestCase):
                 members_id = []
                 for member in members:
                     members_id.append(member.id)
-                slice_set = TimeSlice.objects.filter(create_date__range=(start_date, end_date), user__in=members_id)
+                slice_set = TimeSlice.objects.filter(begin__range=(start_date, end_date), user__in=members_id)
                 
                 slip_dict = {}
                 for slic in slice_set:
@@ -349,7 +349,7 @@ class StatisticsRESTActionsTestCase(TestCase):
                 for member in members:
                     members_id.append(member.id)
                 
-                slice_set = TimeSlice.objects.filter(create_date__range=(start_date, end_date), user__in=members_id)
+                slice_set = TimeSlice.objects.filter(begin__range=(start_date, end_date), user__in=members_id)
                 slip_dict = {}
                 for slic in slice_set:
                     if not slip_dict.has_key(slic.begin.date()):
@@ -404,7 +404,7 @@ class StatisticsRESTActionsTestCase(TestCase):
                 for member in members:
                     members_id.append(member.id)
                 
-                slice_set = TimeSlice.objects.filter(week_number=week, create_date__year=year, user__in=members_id)
+                slice_set = TimeSlice.objects.filter(week_number=week, begin__year=year, user__in=members_id)
                 
                 # new slip_dict has keys equal to the team members id, and values equal to a new dict.
                 slip_dict = {}
@@ -484,7 +484,7 @@ class StatisticsRESTActionsTestCase(TestCase):
                 while end_date.month != start_date.month:
                     end_date -= datetime.timedelta(days=1)
         
-                slice_set = TimeSlice.objects.filter(create_date__range=(start_date, end_date), user__in=members_id)
+                slice_set = TimeSlice.objects.filter(begin__range=(start_date, end_date), user__in=members_id)
                 
         
                 slip_dict = {}
@@ -549,7 +549,7 @@ class StatisticsRESTActionsTestCase(TestCase):
                 for member in members:
                     members_id.append(member.id)
         
-                slice_set = TimeSlice.objects.filter(create_date__range=(start_date, end_date), user__in=members_id)
+                slice_set = TimeSlice.objects.filter(begin__range=(start_date, end_date), user__in=members_id)
                                 
                 slip_dict = {}
                 for member in members_id:

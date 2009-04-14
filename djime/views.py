@@ -92,13 +92,22 @@ def slip_action(request, slip_id, action):
     if request.method not in ('GET', 'POST'):
         return HttpResponseNotAllowed(('POST', 'GET'))
 
+    slip = get_object_or_404(Slip, pk=slip_id)
+    if request.user != slip.user:
+        return HttpResponseForbidden(trans('Access denied'))
     if action == 'start':
         # Make sure the user doesn't already have an active time slice
         # for this Slip
         if not TimeSlice.objects.filter(user=request.user,
                                         slip=slip_id, end=None):
             if request.POST.has_key('begin'):
-                start_time = request.POST['begin']
+                start_time = 0
+                time = request.POST['begin']
+                if type(time) == unicode:
+                    time = time.split(', ')
+                    start_time = datetime(int(time[0]), int(time[1]), int(time[2]), int(time[3]), int(time[4]), int(time[5]), int(time[6]))
+                else:
+                    start_time = datetime.now()
             else:
                 start_time = datetime.now()
 
@@ -117,9 +126,14 @@ def slip_action(request, slip_id, action):
 
     elif action == 'stop':
         slice = TimeSlice.objects.get(user = request.user, slip = slip_id, end = None)
-
         if request.POST.has_key('end'):
-            slice.end = request.POST['end']
+            time = request.POST['end']
+            if type(time) == unicode:
+                time = time.split(', ')
+                end_time = datetime(int(time[0]), int(time[1]), int(time[2]), int(time[3]), int(time[4]), int(time[5]), int(time[6]))
+                slice.end = end_time
+            else:
+                slice.end = datetime.now()
         else:
             slice.end = datetime.now()
         # Saving the TimeSlice model also updates the duration. This is done
