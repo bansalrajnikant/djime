@@ -34,7 +34,7 @@
   <div class="block">
     <h3>{% trans "Update the task" %}</h3>
     <form class="form" method="post" action="{% url slip_page slip.id %}">
-      {{ form.errors }}
+      {{ slip_change_form.errors }}
       <ul class="form-items">
         <div class="group">
           {{ slip_change_form.project.errors }}
