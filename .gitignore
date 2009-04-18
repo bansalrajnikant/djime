@@ -11,6 +11,9 @@
 # Local settings override file.
 local_settings.py
 
+# SQLite development database
+dev.db
+
 # All contents of site_media
 example_project/site_media/*
 
