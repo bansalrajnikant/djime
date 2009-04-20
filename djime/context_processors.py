@@ -5,8 +5,7 @@ from django.conf import settings
 from djime.models import Slip, TimeSlice
 
 def static_urls(request):
-    return {'STATIC_URL': settings.STATIC_URL,
-            'DEMO_STATIC_URL': settings.EXTERNAL_STATIC_URL}
+    return {'STATIC_URL': settings.STATIC_URL}
 
 def statusbar(request):
     """

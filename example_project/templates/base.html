@@ -7,8 +7,8 @@
   {% if timer %}
     <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}css/tracker.css"/>
   {% endif %}
-  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}web-app-theme/base.css" />
-  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}web-app-theme/style.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}external/web-app-theme/base.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}external/web-app-theme/style.css" />
 
   <!--[if IE]><style>
     div {
@@ -78,13 +78,13 @@
         <div class="clear"/></div>
       </div>
     <div id="closure">
-    <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/swfobject.js"></script>
-    <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery-1.3.2.min.js"></script>
-    <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.rest.js"></script>
-    <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.curvycorners.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}external/misc/swfobject.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}external/jquery.ui/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}external/misc/jquery.rest.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}external/misc/jquery.curvycorners.js"></script>
      {% if timer %}
       <script type="text/javascript" src="{{ STATIC_URL }}js/timer.js"></script>
-      <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.timeclock.js"></script>
+      <script type="text/javascript" src="{{ STATIC_URL }}external/misc/jquery.timeclock.js"></script>
     {% endif %}
     {# Final closing code JavaScript loading and HTML used in JavaScript. #}
     {% block closure %}

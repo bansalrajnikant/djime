@@ -5,7 +5,7 @@
 {% block head_title %}{{ slip.name }}{% endblock %}
 
 {% block extra_head %}
-  <link type="text/css" rel="stylesheet" media="all" href="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc6/themes/redmond/ui.all.css" />
+  <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}external/jquery.ui/redmond/jquery-ui-1.7.1.custom.css" />
   <link type="text/css" rel="stylesheet" media="all" href="{{ STATIC_URL }}css/tracker.css" />
 {% endblock %}
 
@@ -56,12 +56,12 @@
 {% block closure %}
   {% if not timer %}
   <script type="text/javascript" src="{{ STATIC_URL }}js/timer.js"></script>
-  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.timeclock.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.timeclock.js"></script>
   {% endif %}
   <script type="text/javascript" src="{{ STATIC_URL }}js/tracker.js"></script>
-  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.jeditable.js"></script>
-  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}jquery.ui-1.6rc6/ui/jquery.ui.all.js"></script>
-  <script type="text/javascript" src="{{ DEMO_STATIC_URL }}js/jquery.autocomplete.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}external/misc/jquery.jeditable.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}external/jquery.ui/jquery-ui-1.7.1.custom.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}external/misc/jquery.autocomplete.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/djime.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/form.js"></script>
   <script type="text/javascript">
