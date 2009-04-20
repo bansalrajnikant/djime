@@ -1,0 +1,3 @@
+[submodule "example_project/static/external"]
+	path = example_project/static/external
+	url = git://github.com/djime/djime-externals.git
