@@ -1,1 +1,50 @@
-[{"pk": 1, "model": "teams.team", "fields": {"description": "Torp!", "creator": 1, "deleted": false, "created": "2000-02-06 09:00:13", "members": [1], "slug": "torp", "name": "Torp"}}, {"pk": 2, "model": "teams.team", "fields": {"description": "A team for testing", "creator": 2, "deleted": false, "created": "2008-12-19 14:49:16", "members": [2, 3, 4], "slug": "team_13", "name": "team_13"}}, {"pk": 3, "model": "teams.team", "fields": {"description": "A team for testing", "creator": 5, "deleted": false, "created": "2008-12-19 14:50:08", "members": [6, 7], "slug": "team_45", "name": "team_45"}}]
+[
+    {
+        "pk": 1, 
+        "model": "teams.team", 
+        "fields": {
+            "description": "Torp!", 
+            "created": "2000-02-06 09:00:13", 
+            "deleted": false, 
+            "creator": 1, 
+            "members": [
+                1
+            ], 
+            "slug": "torp", 
+            "name": "Torp"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "teams.team", 
+        "fields": {
+            "description": "A team for testing", 
+            "created": "2008-12-19 14:49:16", 
+            "deleted": false, 
+            "creator": 2, 
+            "members": [
+                2, 
+                3, 
+                4
+            ], 
+            "slug": "team_13", 
+            "name": "team_13"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "teams.team", 
+        "fields": {
+            "description": "A team for testing", 
+            "created": "2008-12-19 14:50:08", 
+            "deleted": false, 
+            "creator": 5, 
+            "members": [
+                6, 
+                7
+            ], 
+            "slug": "team_45", 
+            "name": "team_45"
+        }
+    }
+]

@@ -1,1 +1,434 @@
-[{"pk": 36, "model": "djime.timeslice", "fields": {"begin": "2008-11-16 09:00:00", "end": "2008-11-16 16:00:00", "user": 7, "slip": 12, "week_number": 46, "duration": 25200}}, {"pk": 33, "model": "djime.timeslice", "fields": {"begin": "2008-11-14 16:00:00", "end": "2008-11-14 22:00:00", "user": 6, "slip": 10, "week_number": 46, "duration": 21600}}, {"pk": 30, "model": "djime.timeslice", "fields": {"begin": "2008-11-13 15:00:00", "end": "2008-11-13 21:00:00", "user": 5, "slip": 8, "week_number": 46, "duration": 21600}}, {"pk": 27, "model": "djime.timeslice", "fields": {"begin": "2008-11-12 12:00:00", "end": "2008-11-05 15:00:00", "user": 4, "slip": 6, "week_number": 46, "duration": 10800}}, {"pk": 21, "model": "djime.timeslice", "fields": {"begin": "2008-11-10 05:00:00", "end": "2008-11-10 22:00:00", "user": 2, "slip": 2, "week_number": 46, "duration": 61200}}, {"pk": 35, "model": "djime.timeslice", "fields": {"begin": "2008-11-09 09:00:00", "end": "2008-11-09 16:00:00", "user": 7, "slip": 12, "week_number": 45, "duration": 25200}}, {"pk": 32, "model": "djime.timeslice", "fields": {"begin": "2008-11-07 09:00:00", "end": "2008-11-07 15:00:00", "user": 6, "slip": 10, "week_number": 45, "duration": 21600}}, {"pk": 29, "model": "djime.timeslice", "fields": {"begin": "2008-11-06 08:00:00", "end": "2008-11-06 13:00:00", "user": 5, "slip": 8, "week_number": 45, "duration": 18000}}, {"pk": 26, "model": "djime.timeslice", "fields": {"begin": "2008-11-05 07:00:00", "end": "2008-11-05 17:00:00", "user": 4, "slip": 6, "week_number": 45, "duration": 36000}}, {"pk": 24, "model": "djime.timeslice", "fields": {"begin": "2008-11-04 09:00:00", "end": "2008-11-04 15:00:00", "user": 3, "slip": 4, "week_number": 45, "duration": 21600}}, {"pk": 20, "model": "djime.timeslice", "fields": {"begin": "2008-11-03 11:00:00", "end": "2008-11-03 13:00:00", "user": 2, "slip": 2, "week_number": 45, "duration": 7200}}, {"pk": 34, "model": "djime.timeslice", "fields": {"begin": "2008-11-02 09:00:00", "end": "2008-11-02 16:00:00", "user": 7, "slip": 12, "week_number": 44, "duration": 25200}}, {"pk": 31, "model": "djime.timeslice", "fields": {"begin": "2008-10-31 14:00:00", "end": "2008-10-31 17:00:00", "user": 6, "slip": 10, "week_number": 44, "duration": 10800}}, {"pk": 28, "model": "djime.timeslice", "fields": {"begin": "2008-10-30 09:00:00", "end": "2008-10-30 14:00:00", "user": 5, "slip": 8, "week_number": 44, "duration": 18000}}, {"pk": 25, "model": "djime.timeslice", "fields": {"begin": "2008-10-29 09:00:00", "end": "2008-10-29 14:00:00", "user": 4, "slip": 6, "week_number": 44, "duration": 18000}}, {"pk": 19, "model": "djime.timeslice", "fields": {"begin": "2008-10-27 09:00:00", "end": "2008-10-27 15:00:00", "user": 2, "slip": 2, "week_number": 44, "duration": 21600}}, {"pk": 18, "model": "djime.timeslice", "fields": {"begin": "2008-10-26 09:00:00", "end": "2008-10-26 12:00:00", "user": 7, "slip": 11, "week_number": 43, "duration": 10800}}, {"pk": 15, "model": "djime.timeslice", "fields": {"begin": "2008-10-24 10:00:00", "end": "2008-10-24 15:00:00", "user": 6, "slip": 9, "week_number": 43, "duration": 18000}}, {"pk": 12, "model": "djime.timeslice", "fields": {"begin": "2008-10-23 06:00:00", "end": "2008-10-23 12:00:00", "user": 5, "slip": 7, "week_number": 43, "duration": 21600}}, {"pk": 9, "model": "djime.timeslice", "fields": {"begin": "2008-10-22 09:00:00", "end": "2008-10-22 17:00:00", "user": 4, "slip": 5, "week_number": 43, "duration": 28800}}, {"pk": 6, "model": "djime.timeslice", "fields": {"begin": "2008-10-21 17:00:00", "end": "2008-10-21 23:00:00", "user": 3, "slip": 3, "week_number": 43, "duration": 21600}}, {"pk": 23, "model": "djime.timeslice", "fields": {"begin": "2008-10-21 13:00:00", "end": "2008-10-21 17:00:00", "user": 3, "slip": 4, "week_number": 43, "duration": 14400}}, {"pk": 22, "model": "djime.timeslice", "fields": {"begin": "2008-10-21 08:00:00", "end": "2008-10-21 12:00:00", "user": 3, "slip": 4, "week_number": 43, "duration": 14400}}, {"pk": 3, "model": "djime.timeslice", "fields": {"begin": "2008-10-20 09:00:00", "end": "2008-10-20 16:00:00", "user": 2, "slip": 1, "week_number": 43, "duration": 25200}}, {"pk": 17, "model": "djime.timeslice", "fields": {"begin": "2008-10-19 09:00:00", "end": "2008-10-19 16:00:00", "user": 7, "slip": 11, "week_number": 42, "duration": 25200}}, {"pk": 14, "model": "djime.timeslice", "fields": {"begin": "2008-10-17 09:00:00", "end": "2008-10-17 22:00:00", "user": 6, "slip": 9, "week_number": 42, "duration": 46800}}, {"pk": 11, "model": "djime.timeslice", "fields": {"begin": "2008-10-16 12:00:00", "end": "2008-10-16 16:00:00", "user": 5, "slip": 7, "week_number": 42, "duration": 14400}}, {"pk": 8, "model": "djime.timeslice", "fields": {"begin": "2008-10-15 10:00:00", "end": "2008-10-15 13:00:00", "user": 4, "slip": 5, "week_number": 42, "duration": 10800}}, {"pk": 5, "model": "djime.timeslice", "fields": {"begin": "2008-10-14 14:00:00", "end": "2008-10-14 17:00:00", "user": 3, "slip": 3, "week_number": 42, "duration": 10800}}, {"pk": 2, "model": "djime.timeslice", "fields": {"begin": "2008-10-13 11:00:00", "end": "2008-10-13 12:00:00", "user": 2, "slip": 1, "week_number": 42, "duration": 3600}}, {"pk": 16, "model": "djime.timeslice", "fields": {"begin": "2008-10-12 09:00:00", "end": "2008-10-12 15:00:00", "user": 7, "slip": 11, "week_number": 41, "duration": 21600}}, {"pk": 13, "model": "djime.timeslice", "fields": {"begin": "2008-10-10 09:00:00", "end": "2008-10-10 14:00:00", "user": 6, "slip": 9, "week_number": 41, "duration": 18000}}, {"pk": 10, "model": "djime.timeslice", "fields": {"begin": "2008-10-09 09:00:00", "end": "2008-10-09 14:00:00", "user": 5, "slip": 7, "week_number": 41, "duration": 18000}}, {"pk": 7, "model": "djime.timeslice", "fields": {"begin": "2008-10-08 09:00:00", "end": "2008-10-08 15:00:00", "user": 4, "slip": 5, "week_number": 41, "duration": 21600}}, {"pk": 4, "model": "djime.timeslice", "fields": {"begin": "2008-10-07 09:00:00", "end": "2008-10-07 15:00:00", "user": 3, "slip": 3, "week_number": 41, "duration": 21600}}, {"pk": 1, "model": "djime.timeslice", "fields": {"begin": "2008-10-06 10:00:00", "end": "2008-10-06 14:00:00", "user": 2, "slip": 1, "week_number": 41, "duration": 14400}}]
+[
+    {
+        "pk": 36, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-11-16 09:00:00", 
+            "end": "2008-11-16 16:00:00", 
+            "user": 7, 
+            "slip": 12, 
+            "week_number": 46, 
+            "duration": 25200
+        }
+    }, 
+    {
+        "pk": 33, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-11-14 16:00:00", 
+            "end": "2008-11-14 22:00:00", 
+            "user": 6, 
+            "slip": 10, 
+            "week_number": 46, 
+            "duration": 21600
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-11-13 15:00:00", 
+            "end": "2008-11-13 21:00:00", 
+            "user": 5, 
+            "slip": 8, 
+            "week_number": 46, 
+            "duration": 21600
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-11-12 12:00:00", 
+            "end": "2008-11-05 15:00:00", 
+            "user": 4, 
+            "slip": 6, 
+            "week_number": 46, 
+            "duration": 10800
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-11-10 05:00:00", 
+            "end": "2008-11-10 22:00:00", 
+            "user": 2, 
+            "slip": 2, 
+            "week_number": 46, 
+            "duration": 61200
+        }
+    }, 
+    {
+        "pk": 35, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-11-09 09:00:00", 
+            "end": "2008-11-09 16:00:00", 
+            "user": 7, 
+            "slip": 12, 
+            "week_number": 45, 
+            "duration": 25200
+        }
+    }, 
+    {
+        "pk": 32, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-11-07 09:00:00", 
+            "end": "2008-11-07 15:00:00", 
+            "user": 6, 
+            "slip": 10, 
+            "week_number": 45, 
+            "duration": 21600
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-11-06 08:00:00", 
+            "end": "2008-11-06 13:00:00", 
+            "user": 5, 
+            "slip": 8, 
+            "week_number": 45, 
+            "duration": 18000
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-11-05 07:00:00", 
+            "end": "2008-11-05 17:00:00", 
+            "user": 4, 
+            "slip": 6, 
+            "week_number": 45, 
+            "duration": 36000
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-11-04 09:00:00", 
+            "end": "2008-11-04 15:00:00", 
+            "user": 3, 
+            "slip": 4, 
+            "week_number": 45, 
+            "duration": 21600
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-11-03 11:00:00", 
+            "end": "2008-11-03 13:00:00", 
+            "user": 2, 
+            "slip": 2, 
+            "week_number": 45, 
+            "duration": 7200
+        }
+    }, 
+    {
+        "pk": 34, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-11-02 09:00:00", 
+            "end": "2008-11-02 16:00:00", 
+            "user": 7, 
+            "slip": 12, 
+            "week_number": 44, 
+            "duration": 25200
+        }
+    }, 
+    {
+        "pk": 31, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-31 14:00:00", 
+            "end": "2008-10-31 17:00:00", 
+            "user": 6, 
+            "slip": 10, 
+            "week_number": 44, 
+            "duration": 10800
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-30 09:00:00", 
+            "end": "2008-10-30 14:00:00", 
+            "user": 5, 
+            "slip": 8, 
+            "week_number": 44, 
+            "duration": 18000
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-29 09:00:00", 
+            "end": "2008-10-29 14:00:00", 
+            "user": 4, 
+            "slip": 6, 
+            "week_number": 44, 
+            "duration": 18000
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-27 09:00:00", 
+            "end": "2008-10-27 15:00:00", 
+            "user": 2, 
+            "slip": 2, 
+            "week_number": 44, 
+            "duration": 21600
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-26 09:00:00", 
+            "end": "2008-10-26 12:00:00", 
+            "user": 7, 
+            "slip": 11, 
+            "week_number": 43, 
+            "duration": 10800
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-24 10:00:00", 
+            "end": "2008-10-24 15:00:00", 
+            "user": 6, 
+            "slip": 9, 
+            "week_number": 43, 
+            "duration": 18000
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-23 06:00:00", 
+            "end": "2008-10-23 12:00:00", 
+            "user": 5, 
+            "slip": 7, 
+            "week_number": 43, 
+            "duration": 21600
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-22 09:00:00", 
+            "end": "2008-10-22 17:00:00", 
+            "user": 4, 
+            "slip": 5, 
+            "week_number": 43, 
+            "duration": 28800
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-21 17:00:00", 
+            "end": "2008-10-21 23:00:00", 
+            "user": 3, 
+            "slip": 3, 
+            "week_number": 43, 
+            "duration": 21600
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-21 13:00:00", 
+            "end": "2008-10-21 17:00:00", 
+            "user": 3, 
+            "slip": 4, 
+            "week_number": 43, 
+            "duration": 14400
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-21 08:00:00", 
+            "end": "2008-10-21 12:00:00", 
+            "user": 3, 
+            "slip": 4, 
+            "week_number": 43, 
+            "duration": 14400
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-20 09:00:00", 
+            "end": "2008-10-20 16:00:00", 
+            "user": 2, 
+            "slip": 1, 
+            "week_number": 43, 
+            "duration": 25200
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-19 09:00:00", 
+            "end": "2008-10-19 16:00:00", 
+            "user": 7, 
+            "slip": 11, 
+            "week_number": 42, 
+            "duration": 25200
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-17 09:00:00", 
+            "end": "2008-10-17 22:00:00", 
+            "user": 6, 
+            "slip": 9, 
+            "week_number": 42, 
+            "duration": 46800
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-16 12:00:00", 
+            "end": "2008-10-16 16:00:00", 
+            "user": 5, 
+            "slip": 7, 
+            "week_number": 42, 
+            "duration": 14400
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-15 10:00:00", 
+            "end": "2008-10-15 13:00:00", 
+            "user": 4, 
+            "slip": 5, 
+            "week_number": 42, 
+            "duration": 10800
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-14 14:00:00", 
+            "end": "2008-10-14 17:00:00", 
+            "user": 3, 
+            "slip": 3, 
+            "week_number": 42, 
+            "duration": 10800
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-13 11:00:00", 
+            "end": "2008-10-13 12:00:00", 
+            "user": 2, 
+            "slip": 1, 
+            "week_number": 42, 
+            "duration": 3600
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-12 09:00:00", 
+            "end": "2008-10-12 15:00:00", 
+            "user": 7, 
+            "slip": 11, 
+            "week_number": 41, 
+            "duration": 21600
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-10 09:00:00", 
+            "end": "2008-10-10 14:00:00", 
+            "user": 6, 
+            "slip": 9, 
+            "week_number": 41, 
+            "duration": 18000
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-09 09:00:00", 
+            "end": "2008-10-09 14:00:00", 
+            "user": 5, 
+            "slip": 7, 
+            "week_number": 41, 
+            "duration": 18000
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-08 09:00:00", 
+            "end": "2008-10-08 15:00:00", 
+            "user": 4, 
+            "slip": 5, 
+            "week_number": 41, 
+            "duration": 21600
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-07 09:00:00", 
+            "end": "2008-10-07 15:00:00", 
+            "user": 3, 
+            "slip": 3, 
+            "week_number": 41, 
+            "duration": 21600
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "djime.timeslice", 
+        "fields": {
+            "begin": "2008-10-06 10:00:00", 
+            "end": "2008-10-06 14:00:00", 
+            "user": 2, 
+            "slip": 1, 
+            "week_number": 41, 
+            "duration": 14400
+        }
+    }
+]
